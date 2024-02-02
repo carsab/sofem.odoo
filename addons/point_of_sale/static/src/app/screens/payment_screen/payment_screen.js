@@ -60,15 +60,15 @@ export class PaymentScreen extends Component {
             { value: "1" },
             { value: "2" },
             { value: "3" },
-            { value: "+10" },
+            { value: "+10000"},
             { value: "4" },
             { value: "5" },
             { value: "6" },
-            { value: "+20" },
+            { value: "+20000" },
             { value: "7" },
             { value: "8" },
             { value: "9" },
-            { value: "+50" },
+            { value: "+50000"},
             { value: "-", text: "+/-" },
             { value: "0" },
             { value: this.env.services.localization.decimalPoint },
@@ -196,7 +196,7 @@ export class PaymentScreen extends Component {
         });
 
         if (confirmed) {
-            this.currentOrder.set_tip(parseFloat(payload ?? ""));
+            this.currentOrder.set_tip(parseFloat(payload));
         }
     }
     async toggleShippingDatePicker() {
@@ -270,14 +270,19 @@ export class PaymentScreen extends Component {
         }
         this.currentOrder.finalized = true;
 
+        // 1. Save order to server.
         this.env.services.ui.block();
-        let syncOrderResult;
+        const syncOrderResult = await this.pos.push_single_order(this.currentOrder);
+        this.env.services.ui.unblock();
+
+        if (syncOrderResult instanceof ConnectionLostError) {
+            this.pos.showScreen(this.nextScreen);
+            return;
+        } else if (!syncOrderResult) {
+            return;
+        }
+
         try {
-            // 1. Save order to server.
-            syncOrderResult = await this.pos.push_single_order(this.currentOrder);
-            if (!syncOrderResult) {
-                return;
-            }
             // 2. Invoice.
             if (this.shouldDownloadInvoice() && this.currentOrder.is_to_invoice()) {
                 if (syncOrderResult[0]?.account_move) {
@@ -294,14 +299,11 @@ export class PaymentScreen extends Component {
             }
         } catch (error) {
             if (error instanceof ConnectionLostError) {
-                this.pos.showScreen(this.nextScreen);
                 Promise.reject(error);
                 return error;
             } else {
                 throw error;
             }
-        } finally {
-            this.env.services.ui.unblock()
         }
 
         // 3. Post process.
@@ -387,7 +389,7 @@ export class PaymentScreen extends Component {
      * @returns {boolean} true if the invoice pdf should be downloaded
      */
     shouldDownloadInvoice() {
-        return true;
+        return   true;
     }
     get nextScreen() {
         return !this.error ? "ReceiptScreen" : "ProductScreen";

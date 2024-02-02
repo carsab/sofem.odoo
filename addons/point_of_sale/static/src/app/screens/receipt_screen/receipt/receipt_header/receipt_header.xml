@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-name="point_of_sale.ReceiptHeader">
         <img t-attf-src="/web/image?model=res.company&amp;id={{props.data.company.id}}&amp;field=logo" alt="Logo" class="pos-receipt-logo"/>
-        <br/>
+        <!--<br/>-->
         <h1 class="tracking-number text-center" style="font-size: 100px" t-if="props.data.trackingNumber and props.data.bigTrackingNumber" t-esc="props.data.trackingNumber" />
         <div class="pos-receipt-contact">
             <!-- contact address -->
@@ -20,10 +20,6 @@
                 <div>--------------------------------</div>
                 <div>Served by <t t-esc="props.data.cashier" /></div>
             </div>
-            <div class="fw-bolder" t-if="props.data.trackingNumber and !props.data.bigTrackingNumber">
-                <span class="fs-2" t-esc="props.data.trackingNumber" />
-            </div>
         </div>
-        <br /><br />
     </t>
 </templates>
