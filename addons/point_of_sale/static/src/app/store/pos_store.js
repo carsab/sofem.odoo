@@ -1390,9 +1390,7 @@ export class PosStore extends Reactive {
             }
         }
         if (tax.amount_type === "percent" && !price_include) {
-            // cambiar para redondear el impuesto unitario
-            // return (base_amount * tax.amount) / 100;
-            return  round_pr((base_amount/quantity * tax.amount)/100,this.currency.rounding) * quantity;
+            return (base_amount * tax.amount) / 100;
         }
         if (tax.amount_type === "percent" && price_include) {
             return base_amount - base_amount / (1 + tax.amount / 100);
