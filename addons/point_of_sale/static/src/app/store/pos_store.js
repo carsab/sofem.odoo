@@ -1392,10 +1392,8 @@ export class PosStore extends Reactive {
         if (tax.amount_type === "percent" && !price_include) {
             // cambiar para redondear el impuesto unitario
             // return (base_amount * tax.amount) / 100;
-
-        }console.log("******************  Calculando impuestos ****************",base_amount,quantity,tax.amount,this.currency.rounding,
-            round_pr((base_amount/quantity * tax.amount)/100,this.currency.rounding) * quantity)
             return  round_pr((base_amount/quantity * tax.amount)/100,this.currency.rounding) * quantity;
+        }
         if (tax.amount_type === "percent" && price_include) {
             return base_amount - base_amount / (1 + tax.amount / 100);
         }

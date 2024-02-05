@@ -94,6 +94,7 @@ RUN pip3 install -r /odoo/requirements.txt
 # Copy entrypoint script and Odoo configuration file
 COPY --chmod=777 ./entrypoint.sh /
 COPY --chmod=777 ./odoo.conf /etc/odoo/
+COPY --chmod=777 ./sofem.conf /etc/odoo/
 #COPY ./custom/models.js /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/js
 #COPY ./custom/OrderReceipt.xml /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/xml/Screens/ReceiptScreen
   
@@ -109,7 +110,7 @@ VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 EXPOSE 8069 8071 8072
 
 # Set the default config file
-ENV ODOO_RC /etc/odoo/odoo.conf
+ENV ODOO_RC /etc/odoo/sofem.conf
 
 COPY --chmod=777 wait-for-psql.py /usr/local/bin/wait-for-psql.py
 
