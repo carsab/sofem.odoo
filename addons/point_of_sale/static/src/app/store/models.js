@@ -999,7 +999,7 @@ export class Orderline extends PosModel {
                 base: tax.base,
             };
         });
-        console.log("<<<<< IMPUESTOS >>>>>",taxdetail)
+
         return {
             priceWithTax: all_taxes.total_included,
             priceWithoutTax: all_taxes.total_excluded,

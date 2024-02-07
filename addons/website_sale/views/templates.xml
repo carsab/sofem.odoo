@@ -938,7 +938,7 @@
         </xpath>
     </template>
 
-    <template id="filter_products_price" name="Filter by Prices">
+    <template id="filter_products_price" name="Filter by Prices" active="False">
         <t t-set="isDisabled" t-value="available_min_price == available_max_price"/>
         <div id="o_wsale_price_range_option"
              t-attf-class="position-relative {{_classes}} {{isDisabled and 'opacity-75 pe-none user-select-none'}}">
@@ -2133,7 +2133,7 @@
                 </div>
                 <div t-if="payment_methods_sudo or tokens_sudo"
                         id="payment_method"
-                        class="mt-4">
+                        class="o_not_editable mt-4">
                     <t t-call="payment.form"/>
                 </div>
                 <div t-else="" class="alert alert-warning">
