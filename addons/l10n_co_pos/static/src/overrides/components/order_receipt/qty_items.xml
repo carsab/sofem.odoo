@@ -14,10 +14,4 @@
             <div class="control-button btn btn-light rounded-0 fw-bolder">No Disponible</div>
         </xpath>
     </t>
-<!--
-     <t t-inherit="point_of_sale.ActionpadWidget" t-inherit-mode="extension">
-        <xpath expr="//button[hasclass('pay validation pay-order-button btn-primary')]" position="replace">
-        </xpath>
-    </t>
--->
 </templates>

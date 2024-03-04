@@ -1,5 +1,5 @@
 .pos-receipt-print {
-    width: 572px;
+    width: 512px;
     font-size: 27px;
     color: #000000;
 }
@@ -37,20 +37,9 @@
     font-size: 75%;
 }
 
-.pos-receipt .pos-receipt-order-name {
-    text-align: center;
-    font-size: 125%;
-}
-
 .pos-receipt .pos-receipt-amount {
     font-size: 125%;
     padding-left: 6em;
-}
-
-.pos-receipt .pos-receipt-qty {
-    font-size: 125%;
-    text-align: center;
-    padding-left: 4em;
 }
 
 .pos-receipt .pos-receipt-title {
@@ -93,9 +82,8 @@
 
 .pos-receipt .pos-receipt-taxes {
     display: grid;
-    grid-template-columns: min-content auto auto auto;
+    grid-template-columns: min-content min-content auto auto auto;
     width: 100%;
-    font-size: 90%;
     justify-items: end;
 }
 
