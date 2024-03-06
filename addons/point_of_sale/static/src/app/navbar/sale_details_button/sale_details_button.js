@@ -14,6 +14,7 @@ export class SaleDetailsButton extends Component {
         this.pos = usePos();
         this.popup = useService("popup");
         this.orm = useService("orm");
+        this.printer = useService("printer");
         this.hardwareProxy = useService("hardware_proxy");
     }
 
@@ -34,12 +35,25 @@ export class SaleDetailsButton extends Component {
                 formatCurrency: this.env.utils.formatCurrency,
             })
         );
-        const { successful, message } = await this.hardwareProxy.printer.printReceipt(report);
-        if (!successful) {
-            await this.popup.add(ErrorPopup, {
-                title: message.title,
-                body: message.body,
-            });
-        }
+        let rta = this.printer.printHtml(report, { webPrintFallback: true })
+        console.log("Impresión detalle de ventas...",rta)
+        //const { successful, message } = await this.hardwareProxy.printer.printReceipt(report);
+        //const { successful, message } = await this.hardwareProxy.printer.sendPrintingJob(report);
+       // if (!successful) {
+        //    await this.popup.add(ErrorPopup, {
+        //        title: message.title,
+        //        body: message.body,
+        //    });
+        //}
+    }
+    async printReport(report) {
+        const isPrinted = await this.printer.print(
+            report,
+            {
+                data: report,
+                formatCurrency: this.env.utils.formatCurrency,
+            },
+            { webPrintFallback: true }
+        );
     }
 }

@@ -14,6 +14,8 @@ patch(Order.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
         result.l10n_co_dian = this.get_l10n_co_dian();
+        result.qty_items = this.count_items();
+        console.log(result)
         return result;
     },
     set_l10n_co_dian(l10n_co_dian) {
@@ -21,6 +23,10 @@ patch(Order.prototype, {
     },
     get_l10n_co_dian() {
         return this.l10n_co_dian;
+    },
+    count_items(){
+         return (this.orderlines.reduce((function(sum, orderLine) {
+           return sum + orderLine.quantity; }),0))
     },
     wait_for_push_order() {
         var result = super.wait_for_push_order(...arguments);

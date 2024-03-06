@@ -6,7 +6,7 @@ import { registry } from "@web/core/registry";
 import { EventBus, onWillDestroy, useComponent } from "@odoo/owl";
 
 const INPUT_KEYS = new Set(
-    ["Delete", "Backspace", "+1", "+2", "+5", "+10", "+20", "+50"].concat(
+    ["Delete", "Backspace", "+1", "+2", "+5", "+10000", "+20000", "+50000"].concat(
         "0123456789+-.,".split("")
     )
 );

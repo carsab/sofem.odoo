@@ -60,15 +60,15 @@ export class PaymentScreen extends Component {
             { value: "1" },
             { value: "2" },
             { value: "3" },
-            { value: "+10" },
+            { value: "+10000"},
             { value: "4" },
             { value: "5" },
             { value: "6" },
-            { value: "+20" },
+            { value: "+20000" },
             { value: "7" },
             { value: "8" },
             { value: "9" },
-            { value: "+50" },
+            { value: "+50000"},
             { value: "-", text: "+/-" },
             { value: "0" },
             { value: this.env.services.localization.decimalPoint },
@@ -357,7 +357,7 @@ export class PaymentScreen extends Component {
 
             if (invoiced_finalized) {
                 const printResult = await this.printer.print(
-                    OrderReceipt, 
+                    OrderReceipt,
                     {
                         data: this.pos.get_order().export_for_printing(),
                         formatCurrency: this.env.utils.formatCurrency,

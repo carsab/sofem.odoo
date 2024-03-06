@@ -19,6 +19,17 @@
     }
 }
 
+.product-name2 {
+    box-sizing: border-box;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+
+    &.no-image {
+        -webkit-line-clamp: 7;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .product:active {
         box-shadow: 0 0 0 2px $primary;

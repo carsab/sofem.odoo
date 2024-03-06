@@ -8,15 +8,15 @@
                 <br/>
             </t>
             <t t-if="!pos.company_logo_base64" class="pos-receipt-center-align">
-                <h1 t-esc="pos.company.name" />
-                <br/>
+                <h1><b><p t-esc="pos.company.name" /></b></h1>
             </t>
-            <br /><br />
-
-            <div>
-                SOLD:
+            <t t-if="pos.config.name" class="pos-receipt-order-name">
+                <b><p t-esc="pos.config.name" /></b>
+            </t>
+            <div class="text-start"><b>RESUMEN DE VENTAS</b></div>
+            <div class="text-start">
+                <b>SOLD:</b>
             </div>
-
             <div class="orderlines">
                 <t t-foreach="products" t-as="category" t-key="category['name']">
                     <t t-foreach="category['products']" t-as="line" t-key="line_index">
@@ -37,15 +37,7 @@
                     </t>
                 </t>
             </div>
-
-            <br/>
             <div>------------------------</div>
-            <br/>
-
-            <div>
-                REFUNDED:
-            </div>
-
             <div class="orderlines">
                 <t t-foreach="refund_products" t-as="category" t-key="category['name']">
                     <t t-foreach="category['products']" t-as="line" t-key="line_index">
@@ -53,11 +45,13 @@
                             <t t-esc="line['product_name'].substr(0,20)" />
                             <span class="pos-receipt-right-align">
                                 <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])" />
+                                <span> </span>
                                 <t t-if="line.uom !== 'Units'">
                                     <t t-esc="line.uom" />
                                 </t>
-                                x
-                                <t t-esc="formatCurrency(line.price_unit, false)" />
+                                <b>x</b>
+                                <t t-esc="formatCurrency(line.price_unit, false)" /> <span>::</span>
+                                <t t-esc="Math.pow(10, pos.dp['Product Unit of Measure'])"/>
                             </span>
                         </div>
                         <t t-if="line.discount !== 0">
@@ -66,43 +60,34 @@
                     </t>
                 </t>
             </div>
-
-            <br/>
-            <div>------------------------</div>
-            <br/>
-
-            <div>
-                Payments:
+            <div class="text-start">
+                <b>Payments:</b>
             </div>
             <div t-foreach="payments" t-as="payment" t-key="payment_index">
                 <t t-esc="payment['name']" />
                 <span t-esc="formatCurrency(payment['total'], false)" class="pos-receipt-right-align"/>
             </div>
-
-            <br/>
             <div>------------------------</div>
-            <br/>
-
-            <div>
-                Taxes:
+            <div class="text-start">
+                <b>Taxes:</b>
             </div>
             <div t-foreach="taxes" t-as="tax" t-key="tax_index">
                 <t t-esc="tax.name" />
                 <span t-esc="formatCurrency(tax.tax_amount, false)" class="pos-receipt-right-align"/>
             </div>
-
-            <br/>
             <div>------------------------</div>
-            <br/>
-
-            <div>
-                Total:
+            <div class="text-start">
+                 <b>Transacciones:</b> <span class="pos-receipt-right-align"> <t t-esc="nbr_orders" /></span>
+            </div>
+            <div class="text-start">
+                 <b>Último documento:</b> <span class="pos-receipt-right-align"> <t t-esc="last_ref" /></span>
+            </div>
+            <div class="text-start">
+                <b>Total:</b>
                 <span t-esc="formatCurrency(currency.total_paid, false)" class="pos-receipt-right-align"/>
             </div>
-
-            <br/>
             <div class="pos-receipt-order-data">
-                <div><t t-esc="date" /></div>
+                <div>Fecha: <t t-esc="date" /></div>
             </div>
         </div>
     </t>

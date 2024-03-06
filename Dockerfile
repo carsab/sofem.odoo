@@ -40,7 +40,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install python
-ENV PYTHON_VERSION 3.11.7
+ENV PYTHON_VERSION 3.11.8
 RUN apt-get update \
     && wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz \
         && tar -xf Python-$PYTHON_VERSION.tar.xz \
@@ -57,8 +57,7 @@ RUN apt-get update \
         &&  rm -rf Python-$PYTHON_VERSION.tar.xz
 
 RUN apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev libldap2-dev checkinstall
-#RUN update-alternatives --install /usr/bin/python python /opt/Python-$PYTHON_VERSION
-RUN alias python=/opt/Python-3.11.7/python
+RUN update-alternatives --install /usr/bin/python python /usr/local/bin/Python-$PYTHON_VERSION
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -94,7 +93,7 @@ RUN pip3 install -r /odoo/requirements.txt
 
 # Copy entrypoint script and Odoo configuration file
 COPY --chmod=777 ./entrypoint.sh /
-COPY --chmod=777 ./sofem.conf /etc/odoo/
+COPY --chmod=777 ./odoo.conf /etc/odoo/
 #COPY ./custom/models.js /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/js
 #COPY ./custom/OrderReceipt.xml /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/xml/Screens/ReceiptScreen
   
@@ -110,7 +109,7 @@ VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 EXPOSE 8069 8071 8072
 
 # Set the default config file
-ENV ODOO_RC /etc/odoo/sofem.conf
+ENV ODOO_RC /etc/odoo/odoo.conf
 
 COPY --chmod=777 wait-for-psql.py /usr/local/bin/wait-for-psql.py
 
