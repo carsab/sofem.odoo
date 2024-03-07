@@ -57,7 +57,7 @@ RUN apt-get update \
         &&  rm -rf Python-$PYTHON_VERSION.tar.xz
 
 RUN apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev libldap2-dev checkinstall
-RUN update-alternatives --install /usr/bin/python python /usr/local/bin/Python-$PYTHON_VERSION
+RUN update-alternatives --install /usr/bin/python python /opt/Python-$PYTHON_VERSION 10
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -74,34 +74,32 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/a
     && rm -f /etc/apt/sources.list.d/pgdg.list \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /odoo /var/log/odoo /odoo/data /odoo/addons /odoo/custom-addons
-    
+# Install another libraries
+RUN apt-get update\
+  && mkdir -p /odoo /var/log/odoo /odoo/data /odoo/addons /odoo/custom-addons \
+  && npm install -g rtlcss
+
 # create odoo user
 RUN adduser --disabled-password -uid $UID --gecos 'odoo ERP' odoo \
   && usermod odoo --home /odoo \
   && chown -R odoo:odoo /odoo /var/log/odoo /odoo/data /odoo/addons /odoo/custom-addons
- 
+
 # Install Odoo from source
 #COPY .  /odoo
 COPY  --chown=odoo:odoo .  /odoo
 
-# Install another libraries
-RUN apt-get update
-# Install rtlcss (on Debian buster)
-RUN npm install -g rtlcss
-RUN pip3 install -r /odoo/requirements.txt
+# Install dependencies
+RUN  pip3 install -r /odoo/requirements.txt
 
 # Copy entrypoint script and Odoo configuration file
 COPY --chmod=777 ./entrypoint.sh /
 COPY --chmod=777 ./odoo.conf /etc/odoo/
-#COPY ./custom/models.js /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/js
-#COPY ./custom/OrderReceipt.xml /usr/lib/python3/dist-packages/odoo/addons/point_of_sale/static/src/xml/Screens/ReceiptScreen
-  
+
 #chown -R odoo:odoo
-#find /odoo -type d -exec chown odoo:odoo {} + \ && 
+#find /odoo -type d -exec chown odoo:odoo {} + \ &&
 
 # Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
-RUN find /odoo/custom-addons -type d -exec chown odoo:odoo {} + 
+RUN find /odoo/custom-addons -type d -exec chown odoo:odoo {} +
 
 VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 
@@ -109,7 +107,7 @@ VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 EXPOSE 8069 8071 8072
 
 # Set the default config file
-ENV ODOO_RC /etc/odoo/odoo.conf
+ENV ODOO_RC /etc/odoo/sofem.conf
 
 COPY --chmod=777 wait-for-psql.py /usr/local/bin/wait-for-psql.py
 

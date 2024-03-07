@@ -1,1 +1,1 @@
-docker build -f Dockerfile_pru -t "odoo:V170" .
+docker build -f Dockerfile -t "odoo:V170" .

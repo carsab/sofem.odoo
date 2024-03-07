@@ -15,7 +15,6 @@ patch(Order.prototype, {
         const result = super.export_for_printing(...arguments);
         result.l10n_co_dian = this.get_l10n_co_dian();
         result.qty_items = this.count_items();
-        console.log(result)
         return result;
     },
     set_l10n_co_dian(l10n_co_dian) {
