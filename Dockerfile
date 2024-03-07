@@ -101,7 +101,7 @@ COPY --chmod=777 ./odoo.conf /etc/odoo/
 # Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN find /odoo/custom-addons -type d -exec chown odoo:odoo {} +
 
-VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
+#VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 
 # Expose Odoo services
 EXPOSE 8069 8071 8072
