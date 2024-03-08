@@ -76,7 +76,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/a
 
 # Install another libraries
 RUN apt-get update\
-  && mkdir -p /odoo /var/log/odoo /odoo/data /odoo/addons /odoo/custom-addons \
+  && mkdir -p /odoo /var/log/odoo /odoo/data /odoo/addons /odoo/custom-addons /etc/odoo \
   && npm install -g rtlcss
 
 # create odoo user
@@ -93,13 +93,13 @@ RUN  pip3 install -r /odoo/requirements.txt
 
 # Copy entrypoint script and Odoo configuration file
 COPY --chmod=777 ./entrypoint.sh /
-COPY --chmod=777 ./odoo.conf /etc/odoo/
+COPY --chmod=777 ./sofem.conf /etc/odoo/
 
 #chown -R odoo:odoo
 #find /odoo -type d -exec chown odoo:odoo {} + \ &&
 
 # Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
-RUN find /odoo/custom-addons -type d -exec chown odoo:odoo {} +
+# RUN find /odoo/custom-addons -type d -exec chown odoo:odoo {} +
 
 #VOLUME ["/odoo/data","/odoo/addons","/odoo/custom-addons"]
 

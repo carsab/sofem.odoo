@@ -141,6 +141,7 @@
                                     <strong><span t-out='currency["symbol"]'>$</span><span t-out='taxes_info["tax_amount"]' t-options="{'widget': 'float', 'precision': currency['precision']}">0.00</span></strong>
                                 </t>
                             </td>
+                            <!--
                             <td class="text-end" style="background-color: #b1b1b1;">
                                 <t t-if="currency['position']">
                                     <strong><span t-out='taxes_info["base_amount"]' t-options="{'widget': 'float', 'precision': currency['precision']}">0.00</span><span t-out='currency["symbol"]'>$</span></strong>
@@ -149,6 +150,7 @@
                                     <strong><span t-out='currency["symbol"]'>$</span><span t-out='taxes_info["base_amount"]' t-options="{'widget': 'float', 'precision': currency['precision']}">0.00</span></strong>
                                 </t>
                             </td>
+                            -->
                         </tr>
                         </tbody>
                     </table>
