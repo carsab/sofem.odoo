@@ -343,7 +343,7 @@ class ReportSaleDetails(models.AbstractModel):
         all_qty = sum([product['quantity'] for product in unique_products])
         all_total = sum([product['total_paid'] for product in unique_products])
 
-        return categories, {'total': all_total, 'qty': all_qty}
+        return categories, {'total': round(all_total,0), 'qty': all_qty}
 
     @api.model
     def _get_report_values(self, docids, data=None):
