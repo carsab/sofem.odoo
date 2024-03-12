@@ -39,7 +39,7 @@
 
 .pos-receipt .pos-receipt-order-name {
     text-align: center;
-    font-size: 90%;
+    font-size: 85%;
 }
 
 .pos-receipt .pos-receipt-amount {
@@ -48,7 +48,7 @@
 }
 
 .pos-receipt .pos-receipt-qty {
-    font-size: 70%;
+    font-size: 100%;
     text-align: center;
     padding-left: 6em;
 }
@@ -60,7 +60,7 @@
 }
 
 .pos-receipt .pos-receipt-header {
-    font-size: 90%;
+    font-size: 85%;
     text-align: center;
 }
 
@@ -95,7 +95,7 @@
     display: grid;
     grid-template-columns: min-content auto auto auto;
     width: 100%;
-    font-size: 90%;
+    font-size: 85%;
     justify-items: end;
 }
 
