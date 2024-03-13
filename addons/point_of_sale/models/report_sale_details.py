@@ -203,6 +203,7 @@ class ReportSaleDetails(models.AbstractModel):
                     'count': True,
                     'session': session.id,
                 })
+
         products = []
         refund_products = []
         for category_name, product_list in products_sold.items():
@@ -245,7 +246,7 @@ class ReportSaleDetails(models.AbstractModel):
         currency = {
             'symbol': user_currency.symbol,
             'position': True if user_currency.position == 'after' else False,
-            'total_paid': user_currency.round(total),
+            'total_paid': user_currency.round(round(total,0)),
             'precision': user_currency.decimal_places,
         }
 
@@ -343,7 +344,7 @@ class ReportSaleDetails(models.AbstractModel):
         all_qty = sum([product['quantity'] for product in unique_products])
         all_total = sum([product['total_paid'] for product in unique_products])
 
-        return categories, {'total': round(all_total,0), 'qty': all_qty}
+        return categories, {'total': all_total, 'qty': all_qty}
 
     @api.model
     def _get_report_values(self, docids, data=None):
