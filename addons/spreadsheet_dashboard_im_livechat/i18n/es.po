@@ -102,7 +102,7 @@ msgstr "Operador"
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "Period"
-msgstr "Período"
+msgstr "Periodo"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
@@ -148,39 +148,39 @@ msgstr "operadores principales"
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "last period"
-msgstr "Último período"
+msgstr "último periodo"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "sessions count - current"
-msgstr "sesiones contadas - actuales"
+msgstr "número de sesiones - actual"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "sessions count - previous"
-msgstr "Sesiones contados - previos"
+msgstr "número de sesiones - anterior"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "since last period"
-msgstr "desde el último período"
+msgstr "desde el último periodo"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "stats 2 - current"
-msgstr "Estadisticas 2 - actual"
+msgstr "estadísticas 2 - actual"
 
 #. module: spreadsheet_dashboard_im_livechat
 #. odoo-javascript
 #: code:addons/spreadsheet_dashboard_im_livechat/data/files/livechat_dashboard.json:0
 #, python-format
 msgid "stats 2 - previous"
-msgstr "Estadisticas 2 - previos"
+msgstr "estadísticas 2 - anterior"

@@ -1424,7 +1424,7 @@ msgstr ""
 #: code:addons/website_blog/static/src/js/options.js:0
 #, python-format
 msgid "Medium"
-msgstr "Moyenne"
+msgstr "Médium"
 
 #. module: website_blog
 #: model:ir.model.fields,field_description:website_blog.field_blog_blog__message_has_error
@@ -2609,7 +2609,7 @@ msgstr "Image opengraph site web "
 #. module: website_blog
 #: model:blog.post,name:website_blog.blog_post_5
 msgid "What If They Let You Run The Hubble"
-msgstr "Et s'ils vous laissaient courir le Hubble"
+msgstr "Et si on vous laissait diriger le Hubble"
 
 #. module: website_blog
 #: model_terms:blog.post,content:website_blog.blog_post_5

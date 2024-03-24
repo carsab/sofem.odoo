@@ -3,18 +3,20 @@
 # 	* point_of_sale
 # 
 # Translators:
-# Jeffery CHEN <jeffery9@gmail.com>, 2023
-# 山西清水欧度(QQ:54773801) <54773801@qq.com>, 2024
-# Wil Odoo, 2024
+# 山西清水欧度(QQ:54773801) <54773801@qq.com>, 2023
 # Chloe Wang, 2024
+# Yazi Tian, 2024
+# Jeffery CHEN <jeffery9@gmail.com>, 2024
+# 湘子 南 <1360857908@qq.com>, 2024
+# Wil Odoo, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:31+0000\n"
+"POT-Creation-Date: 2024-02-28 07:10+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Chloe Wang, 2024\n"
+"Last-Translator: Wil Odoo, 2024\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/odoo/teams/41243/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,6 +53,13 @@ msgstr " 退款"
 #: model:ir.model.fields.selection,name:point_of_sale.selection__pos_printer__printer_type__iot
 msgid " Use a printer connected to the IoT Box"
 msgstr " 使用连接到 IoT Box 的打印机"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/product_screen/product_screen.js:0
+#, python-format
+msgid "% Disc"
+msgstr "% 折扣"
 
 #. module: point_of_sale
 #. odoo-python
@@ -155,7 +164,7 @@ msgstr "1000"
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
 msgid "10000"
-msgstr "刷1W $"
+msgstr "10000"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
@@ -1023,6 +1032,13 @@ msgid "Bank Statement Line"
 msgstr "银行对账单行"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Barcode"
+msgstr "条码"
+
+#. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Barcode Nomenclature"
 msgstr "条码命名规则"
@@ -1044,6 +1060,13 @@ msgstr "条码扫描器"
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Barcode Scanner/Card Reader"
 msgstr "条码扫描器/读卡器"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
+#, python-format
+msgid "Base"
+msgstr "基础"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
@@ -1428,6 +1451,13 @@ msgid ""
 "Choose a specific fiscal position at the order depending on the kind of "
 "customer (tax exempt, onsite vs. takeaway, etc.)."
 msgstr "根据客户的类型选择订单上的具体财政状况(免税、现场与外卖等)。"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "City"
+msgstr "城市"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.pos_config_view_form
@@ -2472,6 +2502,13 @@ msgstr "电子秤"
 
 #. module: point_of_sale
 #. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Email"
+msgstr "电子邮件"
+
+#. module: point_of_sale
+#. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt_screen.js:0
 #, python-format
 msgid "Email sent."
@@ -2551,13 +2588,6 @@ msgstr "错误！您不能创建循环类别。"
 #, python-format
 msgid "Error: no internet connection."
 msgstr "错误：没有互联网连接."
-
-#. module: point_of_sale
-#. odoo-javascript
-#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
-#, python-format
-msgid "ExVAT"
-msgstr "不含增值税"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -3107,11 +3137,14 @@ msgid "Invoice payment for %s (%s) using %s"
 msgstr "凭证 %s (%s) 使用 %s 支付方式"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/ticket_screen/ticket_screen.js:0
 #: model:ir.model.fields,field_description:point_of_sale.field_report_pos_order__invoiced
 #: model:ir.model.fields.selection,name:point_of_sale.selection__pos_order__state__invoiced
 #: model:ir.model.fields.selection,name:point_of_sale.selection__report_pos_order__state__invoiced
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_order_filter
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_report_pos_order_search
+#, python-format
 msgid "Invoiced"
 msgstr "已开具发票"
 
@@ -3473,7 +3506,7 @@ msgstr "批次名称"
 #: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
 #, python-format
 msgid "Lot Number"
-msgstr "地段编号"
+msgstr "批次编号"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -3504,7 +3537,9 @@ msgid ""
 " pricelist to specific customers from their contact form (in Sales tab). To "
 "be valid, this pricelist must be listed here as an available pricelist. "
 "Otherwise the default pricelist will apply."
-msgstr "使多个价目表可用于销售点。否则，将应用默认价目表。"
+msgstr ""
+"在销售点准备几张价格表。您还可以从客户的联系表单 (在 Sales 选项卡中) "
+"向特定客户应用价格表。为使之有效，此价格表必须作为可用价格表列在这里。否则将应用默认价格表。"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -3573,7 +3608,7 @@ msgstr "最大值已达到"
 msgid ""
 "Meanwhile connection is back, Odoo Point of Sale will operate limited "
 "operations. Check your connection or continue with limited functionalities"
-msgstr "在连接恢复的同时，Odoo 销售点将进行有限的操作。请检查您的连接或继续使用有限的功能"
+msgstr "在连接恢复的同时，ERP 销售点将进行有限的操作。请检查您的连接或继续使用有限的功能"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session__message_has_error
@@ -3599,6 +3634,13 @@ msgstr "方法名称"
 #: model:pos.category,name:point_of_sale.pos_category_miscellaneous
 msgid "Misc"
 msgstr "杂项"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Mobile"
+msgstr "手机"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__module_pos_hr
@@ -3686,7 +3728,7 @@ msgstr "需要客户以开票"
 #, python-format
 msgid ""
 "Need loss account for the following journals to post the lost amount: %s\n"
-msgstr "需要提供下述凭证的损耗科目用于过账损耗金额：%s\n"
+msgstr "需要提供下述凭证的损溢科目用于过账损失金额：%s\n"
 
 #. module: point_of_sale
 #. odoo-python
@@ -3735,6 +3777,11 @@ msgstr "新数额"
 #: model:product.template,name:point_of_sale.newspaper_rack_product_template
 msgid "Newspaper Rack"
 msgstr "报纸架"
+
+#. module: point_of_sale
+#: model:ir.model.fields,field_description:point_of_sale.field_pos_session__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "下一活动日历事件"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session__activity_date_deadline
@@ -3962,6 +4009,13 @@ msgid "OK"
 msgstr "OK"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
+#, python-format
+msgid "Odoo Point of Sale"
+msgstr "ERP 销售点"
+
+#. module: point_of_sale
 #: model:product.template,name:point_of_sale.office_combo_product_template
 msgid "Office combo"
 msgstr "办公室组合"
@@ -4001,6 +4055,13 @@ msgid ""
 "Only a negative quantity is allowed for this refund line. Click on +/- to "
 "modify the quantity to be refunded."
 msgstr "对于退款行项目仅允许负数量。点击 +/- 修改要退款的数量。"
+
+#. module: point_of_sale
+#. odoo-python
+#: code:addons/point_of_sale/models/pos_config.py:0
+#, python-format
+msgid "Only administrators can edit receipt headers and footers"
+msgstr "只有管理员可以编辑收据页眉和页脚"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__only_round_cash_method
@@ -4608,6 +4669,13 @@ msgid ""
 msgstr "使用收银机的人。他可以是换班的人，学生或临时工。"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Phone"
+msgstr "电话"
+
+#. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Pick which product categories are available"
 msgstr "选择可用的产品类别"
@@ -4689,7 +4757,7 @@ msgid ""
 "Some browsers don't allow HTTP calls from websites to devices in the network (for security reasons). If it is the case, you will need to follow Odoo's documentation for 'Self-signed certificate for ePOS printers' and 'Secure connection (HTTPS)' to solve the issue. "
 msgstr ""
 "请检查打印机是否仍然连接。\n"
-"某些浏览器不允许从网站到网络设备的 HTTP 调用（出于安全原因）。如果是这种情况，您需要按照 Odoo 文档中的 \"ePOS 打印机自签名证书 \"和 \"安全连接 (HTTPS) \"来解决问题。"
+"某些浏览器不允许从网站到网络设备的 HTTP 调用（出于安全原因）。如果是这种情况，您需要关注 ERP 文档中的 \"ePOS 打印机自签名证书 \"和 \"安全连接 (HTTPS) \"来解决问题."
 
 #. module: point_of_sale
 #. odoo-python
@@ -5145,6 +5213,7 @@ msgstr "历史订单列表"
 #. module: point_of_sale
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/customer_display/customer_display_template.xml:0
+#: code:addons/point_of_sale/static/src/app/screens/product_screen/product_screen.js:0
 #, python-format
 msgid "Price"
 msgstr "价格"
@@ -5170,8 +5239,8 @@ msgstr "价格折扣从 %s -> %s"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/product_screen/product_info_popup/product_info_popup.xml:0
 #, python-format
-msgid "Price excl. VAT:"
-msgstr "不含税价："
+msgid "Price excl. Tax:"
+msgstr "不含税价格:"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_line__price_extra
@@ -5495,19 +5564,19 @@ msgid "Proxy IP Address"
 msgstr "代理 IP 地址"
 
 #. module: point_of_sale
-#. odoo-python
-#: code:addons/point_of_sale/models/pos_printer.py:0
-#, python-format
-msgid "Proxy IP cannot be empty."
-msgstr "代理 IP 不能为空。"
-
-#. module: point_of_sale
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/navbar/proxy_status/proxy_status.xml:0
 #: code:addons/point_of_sale/static/src/app/navbar/proxy_status/proxy_status.xml:0
 #, python-format
 msgid "Proxy Warning"
 msgstr "代理警告"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/product_screen/product_screen.js:0
+#, python-format
+msgid "Qty"
+msgstr "数量"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -6467,6 +6536,13 @@ msgid "Start Date"
 msgstr "开始日期"
 
 #. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/generic_components/order_widget/order_widget.js:0
+#, python-format
+msgid "Start adding products"
+msgstr "开始添加产品"
+
+#. module: point_of_sale
 #. odoo-python
 #: code:addons/point_of_sale/models/pos_config.py:0
 #, python-format
@@ -6543,6 +6619,13 @@ msgstr "%s的库存输出"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session__update_stock_at_closing
 msgid "Stock should be updated at closing"
 msgstr "库存应在结束时更新"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Street"
+msgstr "街道"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -6639,12 +6722,20 @@ msgstr "同步错误"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
 #, python-format
+msgid "TAX%"
+msgstr "TAX%"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
+#, python-format
 msgid "TOTAL"
 msgstr "总计"
 
 #. module: point_of_sale
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/product_screen/control_buttons/fiscal_position_button/fiscal_position_button.js:0
+#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
 #: model:ir.model,name:point_of_sale.model_account_tax
 #, python-format
 msgid "Tax"
@@ -7314,7 +7405,7 @@ msgstr "本产品用于客户收据的参考。"
 msgid ""
 "This sequence is automatically created by Odoo but you can change it to "
 "customize the reference numbers of your orders lines."
-msgstr "此序列由 Odoo 自动创建，但您可以进行更改以自定义订单详情的参考号。"
+msgstr "此序号由 ERP 自动创建，但您可以进行更改以定制订单明细行的参考号."
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_config__sequence_id
@@ -7322,7 +7413,7 @@ msgstr "此序列由 Odoo 自动创建，但您可以进行更改以自定义订
 msgid ""
 "This sequence is automatically created by Odoo but you can change it to "
 "customize the reference numbers of your orders."
-msgstr "此序列由 Odoo 自动创建，但您可以进行更改以自定义订单详情的参考号。"
+msgstr "此序号由 ERP 自动创建，但您可以进行更改以定制订单详情的参考号."
 
 #. module: point_of_sale
 #. odoo-python
@@ -7454,8 +7545,8 @@ msgstr "总计"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
-msgid "Total (VAT excluded)"
-msgstr "共计（不含增值税）"
+msgid "Total (Tax excluded)"
+msgstr "总计 (不含税)"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_session__cash_register_total_entry_encoding
@@ -7507,8 +7598,8 @@ msgstr "总价"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/product_screen/product_info_popup/product_info_popup.xml:0
 #, python-format
-msgid "Total Price excl. VAT:"
-msgstr "不含税总价："
+msgid "Total Price excl. Tax:"
+msgstr "不含税总价:"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_payment__amount
@@ -7768,20 +7859,6 @@ msgstr "用户标签"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_line__uuid
 msgid "Uuid"
 msgstr "UUID"
-
-#. module: point_of_sale
-#. odoo-javascript
-#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
-#, python-format
-msgid "VAT"
-msgstr "增值税"
-
-#. module: point_of_sale
-#. odoo-javascript
-#: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
-#, python-format
-msgid "VAT%"
-msgstr "增值税率"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -8329,3 +8406,10 @@ msgstr "使用中"
 #, python-format
 msgid "were duplicates of existing orders"
 msgstr "与当前订单重复"
+
+#. module: point_of_sale
+#. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_editor/partner_editor.js:0
+#, python-format
+msgid "Zip"
+msgstr "邮政编码"

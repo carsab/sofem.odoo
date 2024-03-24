@@ -4,13 +4,14 @@
 # 
 # Translators:
 # Wil Odoo, 2023
+# Martin Trigaux, 2024
 # Abe Manyo, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2024-01-29 10:46+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
 "Last-Translator: Abe Manyo, 2024\n"
 "Language-Team: Indonesian (https://app.transifex.com/odoo/teams/41243/id/)\n"
@@ -1484,6 +1485,17 @@ msgstr "Biru"
 #, python-format
 msgid "Boolean Icon"
 msgstr "Boolean Icon"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/statusbar/statusbar_field.js:0
+#, python-format
+msgid ""
+"Boolean field from the model used in the relation, which indicates whether "
+"the state is folded or not."
+msgstr ""
+"Boolean field dari model yang digunakan, yang mengindikasikan apakah "
+"statusnya dilipat atau tidak."
 
 #. module: web
 #. odoo-javascript
@@ -3432,6 +3444,9 @@ msgid ""
 "click the <i class=\"fa fa-cloud-upload fa-fw\"></i> button now to ensure "
 "your work is saved before you exit this tab."
 msgstr ""
+"Perhatian! Perubahan terkini terlalu besar untuk disimpan secara otomatis. "
+"Mohon klik tombol <i class=\"fa fa-cloud-upload fa-fw\"></i> sekarang untuk "
+"memastikan pekerjaan Anda disimpan sebelum Anda keluar dari tab ini."
 
 #. module: web
 #. odoo-javascript
@@ -5774,6 +5789,13 @@ msgstr "Kolom Poses"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/view_components/column_progress.xml:0
+#, python-format
+msgid "Progress bar"
+msgstr "Progress bar"
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/properties/properties_field.js:0
 #, python-format
 msgid "Properties"
@@ -5926,6 +5948,10 @@ msgid ""
 "\n"
 "Think twice before you click that 'Delete' button!"
 msgstr ""
+"Siap untuk menghapus record Anda sepenuhnya? Apakah Anda yakin?\n"
+"Akan hilang selama-lamanya!\n"
+"\n"
+"Pikir dua kali sebelum mengeklik tombol 'Hapus'!"
 
 #. module: web
 #. odoo-javascript
@@ -6272,6 +6298,13 @@ msgstr "Simpan & Buat Baru"
 #, python-format
 msgid "Save as:"
 msgstr "Simpan sebagai:"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/search/custom_favorite_item/custom_favorite_item.xml:0
+#, python-format
+msgid "Save current search"
+msgstr "Simpan pencarian saat ini"
 
 #. module: web
 #. odoo-javascript
@@ -7056,6 +7089,9 @@ msgid ""
 "that must be fixed for the entire database before continuing working. See "
 "browser console or server logs for details."
 msgstr ""
+"Kompilasi style gagal. Ini adalah error administrator atau developer yang "
+"harus dibetulkan untuk seluruh database sebelum melanjutkan kerja. Lihat "
+"console browser atau log server untuk detail"
 
 #. module: web
 #. odoo-javascript

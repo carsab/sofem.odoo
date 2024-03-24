@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-26 21:55+0000\n"
+"POT-Creation-Date: 2024-01-29 10:45+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
 "Last-Translator: Junko Augias, 2024\n"
 "Language-Team: Japanese (https://app.transifex.com/odoo/teams/41243/ja/)\n"
@@ -138,14 +138,14 @@ msgstr "下のボタンを押すことで、私はOdooが電子請求書を処�
 msgid ""
 "Can't cancel an active registration. Please request a migration or "
 "deregister instead."
-msgstr "アクティブな登録をキャンセルできません。マイグレーションをリクエストするか、登録を解除して下さい。"
+msgstr "アクティブな登録を取消できません。マイグレーションをリクエストするか、登録を解除して下さい。"
 
 #. module: account_peppol
 #. odoo-python
 #: code:addons/account_peppol/models/res_config_settings.py:0
 #, python-format
 msgid "Can't cancel registration with this status: %s"
-msgstr "以下のステータスの登録をキャンセルできません:%s"
+msgstr "以下のステータスの登録を取消できません:%s"
 
 #. module: account_peppol
 #. odoo-python
@@ -164,12 +164,12 @@ msgstr "以下のステータスの登録を以降できません:%s"
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.account_peppol_view_move_form
 msgid "Cancel PEPPOL"
-msgstr "PEPPOLをキャンセル"
+msgstr "PEPPOLを取消"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
 msgid "Cancel registration"
-msgstr "登録をキャンセル"
+msgstr "登録を取消"
 
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__account_move__peppol_move_state__canceled
@@ -182,7 +182,7 @@ msgstr "取消済"
 #: code:addons/account_peppol/models/account_move.py:0
 #, python-format
 msgid "Cannot cancel an entry that has already been sent to PEPPOL"
-msgstr "PEPPOLに送信済みのエントリをキャンセルすることはできません。"
+msgstr "PEPPOLに送信済みのエントリを取消することはできません。"
 
 #. module: account_peppol
 #. odoo-python
@@ -630,6 +630,13 @@ msgid "SMS verification code"
 msgstr "SMS認証コード"
 
 #. module: account_peppol
+#. odoo-javascript
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.xml:0
+#, python-format
+msgid "Send again"
+msgstr "再送"
+
+#. module: account_peppol
 #: model:ir.model.fields,help:account_peppol.field_account_move_send__checkbox_send_peppol
 msgid "Send the invoice via PEPPOL"
 msgstr "PEPPOL経由で請求書を送付"
@@ -853,7 +860,9 @@ msgid "Verify partner's PEPPOL endpoint"
 msgstr "取引先のPEPPOLエンドポイントを検証する"
 
 #. module: account_peppol
-#: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
+#. odoo-javascript
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.xml:0
+#, python-format
 msgid "Verify phone number"
 msgstr "電話番号を確認"
 

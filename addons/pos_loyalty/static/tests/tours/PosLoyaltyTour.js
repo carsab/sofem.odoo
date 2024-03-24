@@ -311,3 +311,74 @@ registry.category("web_tour.tours").add('PosLoyaltyTour9', {
             ProductScreen.totalAmountIs('200.00'),
         ].flat(),
 });
+
+registry.category("web_tour.tours").add('PosLoyaltyTour10', {
+    test: true,
+    url: '/pos/web',
+    steps: () =>
+        [
+            ProductScreen.clickHomeCategory(),
+            ProductScreen.confirmOpeningPopup(),
+            ProductScreen.clickPartnerButton(),
+            ProductScreen.clickCustomer('AAA Partner'),
+            PosLoyalty.customerIs('AAA Partner'),
+            ProductScreen.clickDisplayedProduct('Product Test'),
+            ProductScreen.totalAmountIs('1.00'),
+            ProductScreen.selectedOrderlineHas("Product Test", "1.00"),
+            PosLoyalty.isRewardButtonHighlighted(true),
+            PosLoyalty.clickRewardButton(),
+            SelectionPopup.clickItem('Free Product with Tag'),
+            SelectionPopup.clickItem('Free Product B'),
+            PosLoyalty.hasRewardLine('Free Product B', '-1.00'),
+            ProductScreen.totalAmountIs('1.00'),
+            PosLoyalty.isRewardButtonHighlighted(false),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add('PosLoyaltyTour11.1', {
+    test: true,
+    url: '/pos/web',
+    steps: () =>
+        [
+            ProductScreen.clickHomeCategory(),
+            ProductScreen.confirmOpeningPopup(),
+
+            ProductScreen.clickPartnerButton(),
+            ProductScreen.clickCustomer('AAA Partner'),
+            PosLoyalty.customerIs('AAA Partner'),
+            ProductScreen.addOrderline('Product Test', '3'),
+            ProductScreen.totalAmountIs('150.00'),
+            PosLoyalty.isRewardButtonHighlighted(false),
+            PosLoyalty.finalizeOrder('Cash', '150'),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add('PosLoyaltyTour11.2', {
+    test: true,
+    url: '/pos/web',
+    steps: () =>
+        [
+            ProductScreen.clickPartnerButton(),
+            ProductScreen.clickCustomer('AAA Partner'),
+            PosLoyalty.customerIs('AAA Partner'),
+            ProductScreen.clickDisplayedProduct('Product Test'),
+            ProductScreen.totalAmountIs('50.00'),
+            PosLoyalty.isRewardButtonHighlighted(false),
+            PosLoyalty.enterCode('123456'),
+            PosLoyalty.isRewardButtonHighlighted(true),
+            PosLoyalty.clickRewardButton(),
+            SelectionPopup.clickItem('Free Product'),
+            PosLoyalty.hasRewardLine('Free Product', '-1.00'),
+            PosLoyalty.isRewardButtonHighlighted(true),
+            PosLoyalty.clickRewardButton(),
+            SelectionPopup.clickItem('Free Product'),
+            PosLoyalty.hasRewardLine('Free Product', '-2.00'),
+            PosLoyalty.isRewardButtonHighlighted(true),
+            PosLoyalty.clickRewardButton(),
+            SelectionPopup.clickItem('Free Product'),
+            PosLoyalty.hasRewardLine('Free Product', '-3.00'),
+            PosLoyalty.isRewardButtonHighlighted(false),
+            ProductScreen.totalAmountIs('50.00'),
+            PosLoyalty.finalizeOrder('Cash', '50'),
+        ].flat(),
+});

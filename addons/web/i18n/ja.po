@@ -6,14 +6,15 @@
 # Wil Odoo, 2023
 # Ryoko Tsuda <ryoko@quartile.co>, 2024
 # Junko Augias, 2024
+# Martin Trigaux, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2024-01-29 10:46+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Junko Augias, 2024\n"
+"Last-Translator: Martin Trigaux, 2024\n"
 "Language-Team: Japanese (https://app.transifex.com/odoo/teams/41243/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1482,6 +1483,15 @@ msgstr "ブーリアンアイコン"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/fields/statusbar/statusbar_field.js:0
+#, python-format
+msgid ""
+"Boolean field from the model used in the relation, which indicates whether "
+"the state is folded or not."
+msgstr "リレーションで使用されるモデルのブール型フィールドで、ステータスが折りたたまれているかどうかを示します。"
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/progress_bar/progress_bar_field.js:0
 #, python-format
 msgid ""
@@ -1645,7 +1655,7 @@ msgstr "値を編集可能"
 #: model_terms:ir.ui.view,arch_db:web.view_base_document_layout
 #, python-format
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr "取消"
 
 #. module: web
 #. odoo-javascript
@@ -1653,7 +1663,7 @@ msgstr "キャンセル"
 #: code:addons/web/static/src/core/file_upload/file_upload_progress_bar.xml:0
 #, python-format
 msgid "Cancel Upload"
-msgstr "アップロードをキャンセル"
+msgstr "アップロードを取消"
 
 #. module: web
 #. odoo-javascript
@@ -2609,7 +2619,7 @@ msgstr "未来の日付が入力された場合は警告アイコンを表示し
 #: code:addons/web/static/src/core/file_upload/file_upload_progress_bar.js:0
 #, python-format
 msgid "Do you really want to cancel the upload of %s?"
-msgstr "本当に%sのアップロードをキャンセルしますか？"
+msgstr "本当に%sのアップロードを取消しますか？"
 
 #. module: web
 #. odoo-javascript
@@ -3405,6 +3415,8 @@ msgid ""
 "click the <i class=\"fa fa-cloud-upload fa-fw\"></i> button now to ensure "
 "your work is saved before you exit this tab."
 msgstr ""
+"ご注意下さい！最近の変更が大きすぎるため、自動的に保存されません。今すぐ<i class=\"fa fa-cloud-upload fa-"
+"fw\"></i>ボタンをクリックして、このタブを閉じる前に作業が保存されていることを確認して下さい。"
 
 #. module: web
 #. odoo-javascript
@@ -5726,6 +5738,13 @@ msgstr "進捗バー"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/view_components/column_progress.xml:0
+#, python-format
+msgid "Progress bar"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/properties/properties_field.js:0
 #, python-format
 msgid "Properties"
@@ -6228,6 +6247,13 @@ msgstr "保存して新規"
 #, python-format
 msgid "Save as:"
 msgstr "名前を付けて保存 :"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/search/custom_favorite_item/custom_favorite_item.xml:0
+#, python-format
+msgid "Save current search"
+msgstr "現在の検索結果を保存"
 
 #. module: web
 #. odoo-javascript
@@ -7006,6 +7032,7 @@ msgid ""
 "that must be fixed for the entire database before continuing working. See "
 "browser console or server logs for details."
 msgstr ""
+"スタイルのコンパイルに失敗しました。これは管理者または開発者のエラーで、作業を続行する前にデータベース全体を修正する必要があります。詳細については、ブラウザコンソールまたはサーバログを参照して下さい。"
 
 #. module: web
 #. odoo-javascript

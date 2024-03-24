@@ -855,8 +855,15 @@
 
         we-title {
             display: block;
-            text-transform: capitalize;
             text-align: left;
+        }
+
+        // TODO in master, remove the text-transform rule entirely and rely on
+        // developers writing their label with the intended "design". The
+        // "where" change here was added as a way to minimize the impact of this
+        // fix in stable. That CSS style was breaking translations.
+        we-title:where(:lang(en)) {
+            text-transform: capitalize;
         }
 
         we-customizeblock-options {
@@ -2253,7 +2260,7 @@ we-select.o_we_border_preview_aligned_select {
         transition: opacity 400ms linear 0s;
 
         &.o_overlay_hidden {
-            opacity: 0;
+            opacity: 0 !important;
             transition: none;
         }
         &.oe_active {

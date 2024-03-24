@@ -472,8 +472,8 @@ msgid ""
 "<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
 "specific.\"/>"
 msgstr ""
-"<span class=\"fa fa-lg fa-building-o\" title=\"Los valores especificados "
-"aquí son específicos de la compañía.\"/>"
+"<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
+"specific.\"/>"
 
 #. module: account_edi_ubl_cii
 #. odoo-python
@@ -573,7 +573,7 @@ msgstr "Compañías"
 #: code:addons/account_edi_ubl_cii/models/account_edi_xml_ubl_20.py:0
 #, python-format
 msgid "Conditional cash/payment discount"
-msgstr "Descuento condicional por efectivo/pago"
+msgstr "Descuento condicional por pronto pago/pago"
 
 #. module: account_edi_ubl_cii
 #: model:ir.model,name:account_edi_ubl_cii.model_res_config_settings
@@ -694,7 +694,7 @@ msgid ""
 "should be included."
 msgstr ""
 "Para un suministro intracomunitario, se debe incluir la fecha real de la "
-"entrega o el período de facturación."
+"entrega o el periodo de facturación."
 
 #. module: account_edi_ubl_cii
 #. odoo-python
@@ -825,6 +825,15 @@ msgstr ""
 
 #. module: account_edi_ubl_cii
 #. odoo-python
+#: code:addons/account_edi_ubl_cii/models/account_edi_xml_ubl_bis3.py:0
+#, python-format
+msgid "The VAT of the %s should be prefixed with its country code."
+msgstr ""
+"El número de identificación fiscal de %s debe tener el código de su país "
+"como prefijo."
+
+#. module: account_edi_ubl_cii
+#. odoo-python
 #: code:addons/account_edi_ubl_cii/models/account_edi_xml_cii_facturx.py:0
 #: code:addons/account_edi_ubl_cii/models/account_edi_xml_ubl_20.py:0
 #, python-format
@@ -927,7 +936,7 @@ msgid ""
 "each invoice line should be greater than 0."
 msgstr ""
 "Cuando se aplica el Impuesto General Indirecto Canario (IGIC), la cuota en "
-"cada línea de factura debe ser mayor a 0."
+"cada línea de factura debe ser mayor que 0."
 
 #. module: account_edi_ubl_cii
 #: model:ir.model.fields.selection,name:account_edi_ubl_cii.selection__res_partner__ubl_cii_format__xrechnung

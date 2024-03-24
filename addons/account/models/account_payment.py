@@ -182,27 +182,35 @@ class AccountPayment(models.Model):
         '''
         self.ensure_one()
 
-        liquidity_lines = self.env['account.move.line']
-        counterpart_lines = self.env['account.move.line']
-        writeoff_lines = self.env['account.move.line']
-
+        # liquidity_lines, counterpart_lines, writeoff_lines
+        lines = [self.env['account.move.line'] for _dummy in range(3)]
         valid_account_types = self._get_valid_payment_account_types()
         for line in self.move_id.line_ids:
             if line.account_id in self._get_valid_liquidity_accounts():
-                liquidity_lines += line
-            elif line.account_id.account_type in valid_account_types or line.account_id == self.company_id.transfer_account_id:
-                counterpart_lines += line
+                lines[0] += line  # liquidity_lines
+            elif line.account_id.account_type in valid_account_types or line.account_id == line.company_id.transfer_account_id:
+                lines[1] += line  # counterpart_lines
             else:
-                writeoff_lines += line
+                lines[2] += line  # writeoff_lines
 
-        return liquidity_lines, counterpart_lines, writeoff_lines
+        # In some case, there is no liquidity or counterpart line (after changing an outstanding account on the journal for example)
+        # In that case, and if there is one writeoff line, we take this line and set it as liquidity/counterpart line
+        if len(lines[2]) == 1:
+            for i in (0, 1):
+                if not lines[i]:
+                    lines[i] = lines[2]
+                    lines[2] -= lines[2]
+
+        return lines
 
     def _get_valid_liquidity_accounts(self):
+        journal_comp = self.journal_id.company_id
+        accessible_branches = journal_comp.with_company(journal_comp)._accessible_branches()
         return (
             self.journal_id.default_account_id |
             self.payment_method_line_id.payment_account_id |
-            self.journal_id.company_id.account_journal_payment_debit_account_id |
-            self.journal_id.company_id.account_journal_payment_credit_account_id |
+            accessible_branches.account_journal_payment_debit_account_id |
+            accessible_branches.account_journal_payment_credit_account_id |
             self.journal_id.inbound_payment_method_line_ids.payment_account_id |
             self.journal_id.outbound_payment_method_line_ids.payment_account_id
         )
@@ -675,6 +683,8 @@ class AccountPayment(models.Model):
         for pay in self:
             if not pay.payment_method_line_id:
                 raise ValidationError(_("Please define a payment method line on your payment."))
+            elif pay.payment_method_line_id.journal_id and pay.payment_method_line_id.journal_id != pay.journal_id:
+                raise ValidationError(_("The selected payment method is not available for this payment, please select the payment method again."))
 
     # -------------------------------------------------------------------------
     # LOW-LEVEL METHODS
@@ -682,7 +692,7 @@ class AccountPayment(models.Model):
 
     def new(self, values=None, origin=None, ref=None):
         payment = super().new(values, origin, ref)
-        if not payment.journal_id and not payment.default_get(['journal_id']):  # might not be computed because declared by inheritance
+        if not any(values.values()) and not payment.journal_id and not payment.default_get(['journal_id']):  # might not be computed because declared by inheritance
             payment.move_id.payment_id = payment
             payment.move_id._compute_journal_id()
         return payment

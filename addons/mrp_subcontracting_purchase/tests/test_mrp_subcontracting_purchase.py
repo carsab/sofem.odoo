@@ -3,6 +3,8 @@
 
 import logging
 
+from freezegun import freeze_time
+
 from odoo import Command
 from odoo.exceptions import UserError
 from odoo.fields import Date
@@ -535,23 +537,41 @@ class MrpSubcontractingPurchaseTest(TestMrpSubcontractingCommon):
         bom_data = self.env['report.mrp.report_bom_structure']._get_bom_data(self.bom, self.warehouse, self.finished)
         self.assertEqual(bom_data['lead_time'], 15 + 5 + 5 + 0,
             "Lead time = Purchase lead time(finished) + Days to Purchase + Purchase security lead time + DTPMO on BOM")
-        self.assertEqual(bom_data['resupply_avail_delay'], 10 + 5 + 5 + 20,
-            "Component avail delay = Purchase lead time(comp1) + Days to Purchase + Purchase security lead time + Calculated DTPMO")
+        # Resupply delay = 0 (received from MRP, where route type != "manufacture")
+        # Vendor lead time = 15 (finished product supplier delay)
+        # Manufacture lead time = 10 (BoM.produce_delay)
+        # Max purchase component delay = max delay(comp1, comp2) + po_lead + days_to_purchase = 20
+        self.assertEqual(bom_data['resupply_avail_delay'], 0 + 15 + 20 + 5 + 5,
+            'Resupply avail delay = Resupply delay + Max(Vendor lead time, Manufacture lead time)'
+            ' + Max purchase component delay + Purchase security lead time + Days to Purchase'
+        )
 
         # Case 2: Vendor lead time < Manufacturing lead time + DTPMO on BOM
         self.bom.action_compute_bom_days()
         self.assertEqual(self.bom.days_to_prepare_mo, 10 + 5 + 5,
             "DTPMO = Purchase lead time(comp1) + Days to Purchase + Purchase security lead time")
+
         self.bom.days_to_prepare_mo = 10
+        # Temp increase BoM.produce_delay, to check if it is now used in the final calculation
+        self.bom.produce_delay = 30
+
         bom_data = self.env['report.mrp.report_bom_structure']._get_bom_data(self.bom, self.warehouse, self.finished)
-        self.assertEqual(bom_data['lead_time'], 10 + 5 + 5 + 10,
+        self.assertEqual(bom_data['lead_time'], 30 + 5 + 5 + 10,
             "Lead time = Manufacturing lead time + Days to Purchase + Purchase security lead time + DTPMO on BOM")
-        self.assertEqual(bom_data['resupply_avail_delay'], 10 + 5 + 5 + 20,
-            "Component avail delay = Manufacturing lead time + Days to Purchase + Purchase security lead time + Calculated DTPMO")
+        # Resupply delay = 0 (received from MRP, where route type != "manufacture")
+        # Vendor lead time = 15 (finished product supplier delay)
+        # Manufacture lead time = 30 (BoM.produce_delay)
+        # Max purchase component delay = max delay(comp1, comp2) + po_lead + days_to_purchase = 20
+        self.assertEqual(bom_data['resupply_avail_delay'], 0 + 30 + 20 + 5 + 5,
+            'Resupply avail delay = Resupply delay + Max(Vendor lead time, Manufacture lead time)'
+            ' + Max purchase component delay + Purchase security lead time + Days to Purchase'
+        )
+        # Continue the test with the original produce_delay
+        self.bom.produce_delay = 10
 
         # Update stock for components, calculate DTPMO should be 0
-        self.env['stock.quant']._update_available_quantity(self.comp1, self.warehouse.lot_stock_id, 100)
-        self.env['stock.quant']._update_available_quantity(self.comp2, self.warehouse.lot_stock_id, 100)
+        self.env['stock.quant']._update_available_quantity(self.comp1, self.env.company.subcontracting_location_id, 100)
+        self.env['stock.quant']._update_available_quantity(self.comp2, self.env.company.subcontracting_location_id, 100)
         self.env.invalidate_all()   # invalidate cache to get updated qty_available
         # Case 1: Vendor lead time >= Manufacturing lead time + DTPMO on BOM
         self.bom.days_to_prepare_mo = 2
@@ -656,3 +676,137 @@ class MrpSubcontractingPurchaseTest(TestMrpSubcontractingCommon):
         self.assertEqual(picking.backorder_ids.state, 'cancel')
         po.order_line.product_qty = 2.0
         self.assertEqual(po.order_line.product_qty, 2.0)
+
+    def test_mrp_report_bom_structure_subcontracting_quantities(self):
+        """Testing quantities and availablility states in subcontracted BoM report
+        1. Create a BoM of a finished product with a single component
+        2. Update the on hand quantity of BoM to 100
+        3. Move 20 components to subcontracting location
+        4. Check that the free/on-hand quantity of component is 100 (sum of warehouse stock and subcontracting location stock)
+        5. Check that producible quantity of 'Product' is equal to only subcontractor location stock
+        6. Check availability states when:
+            6a. Search quantity <= subcontractor quantity: component is available
+            6b. Subcontractor quantity <= search quantity <= total quantity: component is available
+            6c. Total quantity < search quantity: component is unavailable
+        """
+        search_qty_less_than_or_equal_moved = 10
+        moved_quantity_to_subcontractor = 20
+        search_qty_less_than_or_equal_total = 90
+        total_component_quantity = 100
+        search_qty_more_than_total = 110
+
+        resupply_route = self.env['stock.route'].search([('name', '=', 'Resupply Subcontractor on Order')])
+        finished, component = self.env['product.product'].create([{
+            'name': 'Finished Product',
+            'type': 'product',
+            'seller_ids': [(0, 0, {'partner_id': self.subcontractor_partner1.id})]
+        }, {
+            'name': 'Component',
+            'type': 'product',
+            'route_ids': [(4, resupply_route.id)],
+        }])
+
+        bom = self.env['mrp.bom'].create({
+            'product_tmpl_id': finished.product_tmpl_id.id,
+            'product_qty': 1.0,
+            'type': 'subcontract',
+            'subcontractor_ids': [(4, self.subcontractor_partner1.id)],
+            'bom_line_ids': [(0, 0, {'product_id': component.id, 'product_qty': 1.0})],
+        })
+
+        inventory_wizard = self.env['stock.change.product.qty'].create({
+            'product_id': component.id,
+            'product_tmpl_id': component.product_tmpl_id.id,
+            'new_quantity': total_component_quantity,
+        })
+        inventory_wizard.change_product_qty()
+        # Check quantity was updated
+        self.assertEqual(component.virtual_available, total_component_quantity)
+        self.assertEqual(component.qty_available, total_component_quantity)
+
+        quantity_before_move = self.env['stock.quant']._get_available_quantity(component, self.subcontractor_partner1.property_stock_subcontractor, allow_negative=True)
+        picking_form = Form(self.env['stock.picking'])
+        picking_form.picking_type_id = self.warehouse.subcontracting_resupply_type_id
+        picking_form.partner_id = self.subcontractor_partner1
+        with picking_form.move_ids_without_package.new() as move:
+            move.product_id = component
+            move.product_uom_qty = moved_quantity_to_subcontractor
+        picking = picking_form.save()
+        picking.action_confirm()
+        picking.move_ids.quantity = moved_quantity_to_subcontractor
+        picking.move_ids.picked = True
+        picking.button_validate()
+        quantity_after_move = self.env['stock.quant']._get_available_quantity(component, self.subcontractor_partner1.property_stock_subcontractor, allow_negative=True)
+        self.assertEqual(quantity_after_move, quantity_before_move + moved_quantity_to_subcontractor)
+
+        report_values = self.env['report.mrp.report_bom_structure']._get_report_data(bom.id, searchQty=search_qty_less_than_or_equal_moved, searchVariant=False)
+        self.assertEqual(report_values['lines']['components'][0]['quantity_available'], total_component_quantity)
+        self.assertEqual(report_values['lines']['components'][0]['quantity_on_hand'], total_component_quantity)
+        self.assertEqual(report_values['lines']['quantity_available'], 0)
+        self.assertEqual(report_values['lines']['quantity_on_hand'], 0)
+        self.assertEqual(report_values['lines']['producible_qty'], moved_quantity_to_subcontractor)
+        self.assertEqual(report_values['lines']['stock_avail_state'], 'unavailable')
+
+        self.assertEqual(report_values['lines']['components'][0]['stock_avail_state'], 'available')
+
+        report_values = self.env['report.mrp.report_bom_structure']._get_report_data(bom.id, searchQty=search_qty_less_than_or_equal_total, searchVariant=False)
+        self.assertEqual(report_values['lines']['components'][0]['stock_avail_state'], 'available')
+
+        report_values = self.env['report.mrp.report_bom_structure']._get_report_data(bom.id, searchQty=search_qty_more_than_total, searchVariant=False)
+        self.assertEqual(report_values['lines']['components'][0]['stock_avail_state'], 'unavailable')
+
+    @freeze_time('2024-01-01')
+    def test_bom_overview_availability_po_lead(self):
+        # Create routes for components and the main product
+        self.env['product.supplierinfo'].create({
+            'product_tmpl_id': self.finished.product_tmpl_id.id,
+            'partner_id': self.subcontractor_partner1.id,
+            'delay': 10
+        })
+        self.env['product.supplierinfo'].create({
+            'product_tmpl_id': self.comp1.product_tmpl_id.id,
+            'partner_id': self.subcontractor_partner1.id,
+            'delay': 5
+        })
+        self.env['product.supplierinfo'].create({
+            'product_tmpl_id': self.comp2.product_tmpl_id.id,
+            'partner_id': self.subcontractor_partner1.id,
+            'delay': 5
+        })
+
+        self.bom.produce_delay = 1
+        self.bom.days_to_prepare_mo = 3
+        # Security Lead Time for Purchase should always be added
+        self.env.company.po_lead = 2
+
+        # Add 4 units of each component to subcontractor's location
+        subcontractor_location = self.env.company.subcontracting_location_id
+        self.env['stock.quant']._update_available_quantity(self.comp1, subcontractor_location, 4)
+        self.env['stock.quant']._update_available_quantity(self.comp2, subcontractor_location, 4)
+
+        # Generate a report for 3 products: all products should be ready for production
+        bom_data = self.env['report.mrp.report_bom_structure']._get_report_data(self.bom.id, 3)
+
+        self.assertTrue(bom_data['lines']['components_available'])
+        for component in bom_data['lines']['components']:
+            self.assertEqual(component['quantity_on_hand'], 4)
+            self.assertEqual(component['availability_state'], 'available')
+        self.assertEqual(bom_data['lines']['earliest_capacity'], 3)
+        # 01/11 + 2 days of Security Lead Time = 01/13
+        self.assertEqual(bom_data['lines']['earliest_date'], '01/13/2024')
+        self.assertTrue('leftover_capacity' not in bom_data['lines']['earliest_date'])
+        self.assertTrue('leftover_date' not in bom_data['lines']['earliest_date'])
+
+        # Generate a report for 5 products: only 4 products should be ready for production
+        bom_data = self.env['report.mrp.report_bom_structure']._get_report_data(self.bom.id, 5)
+
+        self.assertFalse(bom_data['lines']['components_available'])
+        for component in bom_data['lines']['components']:
+            self.assertEqual(component['quantity_on_hand'], 4)
+            self.assertEqual(component['availability_state'], 'estimated')
+        self.assertEqual(bom_data['lines']['earliest_capacity'], 4)
+        # 01/11 + 2 days of Security Lead Time = 01/13
+        self.assertEqual(bom_data['lines']['earliest_date'], '01/13/2024')
+        self.assertEqual(bom_data['lines']['leftover_capacity'], 1)
+        # 01/16 + 2 x 2 days (for components and for final product) = 01/20
+        self.assertEqual(bom_data['lines']['leftover_date'], '01/20/2024')

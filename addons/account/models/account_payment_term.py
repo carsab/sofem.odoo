@@ -60,6 +60,7 @@ class AccountPaymentTerm(models.Model):
             else:
                 discount_amount_currency = self.currency_id.round(total_amount - (total_amount * (1 - (percentage))))
             return total_amount - discount_amount_currency
+        return total_amount
 
     @api.depends('company_id')
     def _compute_discount_computation(self):
@@ -276,12 +277,6 @@ class AccountPaymentTermLine(models.Model):
         for term_line in self:
             if term_line.value == 'percent' and (term_line.value_amount < 0.0 or term_line.value_amount > 100.0):
                 raise ValidationError(_('Percentages on the Payment Terms lines must be between 0 and 100.'))
-
-    @api.constrains('nb_days')
-    def _check_positive(self):
-        for term_line in self:
-            if term_line.nb_days < 0:
-                raise ValidationError(_('The Months and Days of the Payment Terms lines must be positive.'))
 
     @api.depends('payment_id')
     def _compute_days(self):

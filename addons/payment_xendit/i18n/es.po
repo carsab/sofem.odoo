@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-08 13:49+0000\n"
+"POT-Creation-Date: 2024-01-29 10:46+0000\n"
 "PO-Revision-Date: 2024-01-23 08:23+0000\n"
 "Last-Translator: Larissa Manderfeld, 2024\n"
 "Language-Team: Spanish (https://app.transifex.com/odoo/teams/41243/es/)\n"
@@ -64,10 +64,10 @@ msgstr "Transacción de pago"
 #: code:addons/payment_xendit/models/payment_transaction.py:0
 #, python-format
 msgid "Received data with missing reference."
-msgstr "Datos recibidos con referencia perdida."
+msgstr "Datos recibidos sin referencia."
 
 #. module: payment_xendit
-#: model:ir.model.fields,field_description:payment_xendit.field_payment_provider__xendit_secret_key
+#: model_terms:ir.ui.view,arch_db:payment_xendit.payment_provider_form_xendit
 msgid "Secret Key"
 msgstr "Clave secreta"
 
@@ -79,8 +79,8 @@ msgid ""
 "The communication with the API failed. Xendit gave us the following "
 "information: '%s'"
 msgstr ""
-"La comunicación con la API falló. Xendit nos envió la siguiente información:"
-" '%s'"
+"Falló la comunicación con la API. Xendit nos dio la siguiente información: "
+"'%s'"
 
 #. module: payment_xendit
 #: model:ir.model.fields,help:payment_xendit.field_payment_provider__code
@@ -88,7 +88,7 @@ msgid "The technical code of this payment provider."
 msgstr "El código técnico de este proveedor de pago."
 
 #. module: payment_xendit
-#: model:ir.model.fields,field_description:payment_xendit.field_payment_provider__xendit_webhook_token
+#: model_terms:ir.ui.view,arch_db:payment_xendit.payment_provider_form_xendit
 msgid "Webhook Token"
 msgstr "Token de Webhook"
 
@@ -96,3 +96,13 @@ msgstr "Token de Webhook"
 #: model:ir.model.fields.selection,name:payment_xendit.selection__payment_provider__code__xendit
 msgid "Xendit"
 msgstr "Xendit"
+
+#. module: payment_xendit
+#: model:ir.model.fields,field_description:payment_xendit.field_payment_provider__xendit_secret_key
+msgid "Xendit Secret Key"
+msgstr "Clave secreta de Xendit"
+
+#. module: payment_xendit
+#: model:ir.model.fields,field_description:payment_xendit.field_payment_provider__xendit_webhook_token
+msgid "Xendit Webhook Token"
+msgstr "Token de webhook de Xendit"

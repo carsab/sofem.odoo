@@ -424,6 +424,40 @@ X[]
                         contentAfter: `<div>[]def</div>`,
                     });
                 });
+                it('should remove emoji', async () => {
+                    await testEditor(BasicEditor, {
+                        contentBefore: `<p>[]\uD83D\uDE0D def</p>`,
+                        stepFunction: async editor => {
+                            await deleteForward(editor);
+                        },
+                        contentAfter: `<p>[]&nbsp;def</p>`,
+                    });
+                });
+                it('should remove invisible empty space at the start', async () => {
+                    await testEditor(BasicEditor, {
+                        contentBefore: `<p>[]         def</p>`,
+                        stepFunction: async editor => {
+                            await deleteForward(editor);
+                        },
+                        contentAfter: `<p>[]ef</p>`,
+                    });
+                });
+                 it('should remove invisible empty space at the start (2)', async () => {
+                    await testEditor(BasicEditor, {
+                        // The first 3 spaces are invisible : considered
+                        // formating by the browser.
+                        // The &nbsp; is visible (space 1).
+                        // The last 3 spaces are consider as 1 visble space and
+                        // two formating spaces (space 2).
+                        contentBefore: `<p>[]   &nbsp;   def</p>`,
+                        stepFunction: async editor => {
+                            await deleteForward(editor);
+                        },
+                        // Space 1 is deleted and space 2 should be transformed
+                        // to a &nbsp; to stay visible.
+                        contentAfter: `<p>[]&nbsp;def</p>`,
+                    });
+                });
             });
             describe('white spaces', () => {
                 describe('no intefering spaces', () => {
@@ -4859,6 +4893,34 @@ X[]
                 })
             });
         });
+        describe('undo', () => {
+            it('should be able to write after undo', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>[]</p>',
+                    stepFunction: async editor => {
+                        editor.execCommand('columnize', 2);
+                        undo(editor);
+                        await insertText(editor, 'x');
+                    },
+                    contentAfter: '<p>x[]</p>',
+                });
+            });
+            it('should work properly after undo and then redo', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>[]</p>',
+                    stepFunction: async editor => {
+                        editor.execCommand('columnize', 2);
+                        undo(editor);
+                        redo(editor);
+                        await insertText(editor, 'x');
+                    },
+                    contentAfter: columnsContainer(
+                        column(6, '<p>x[]</p>') +
+                        column(6, '<p><br></p>')
+                    ) + '<p><br></p>',
+                });
+            });
+        });
     });
 
     describe('tables', () => {
@@ -6236,6 +6298,22 @@ X[]
                     contentAfter: '<p>ab<span class="a">\u200B[]</span></p><p>cd</p>',
                     // Final state: '<p>ab<span class="a">\u200B</span></p><p>[]cd</p>'
                 });
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>ab<span class="a">\u200B[]</span></p><p><span class="b">\u200B</span></p>',
+                    stepFunction: async editor => {
+                        await triggerEvent(editor.editable, 'keydown', { key: 'ArrowRight'});
+                    },
+                    contentAfter: '<p>ab<span class="a">\u200B[]</span></p><p><span class="b">\u200B</span></p>',
+                    // Final state: '<p>ab<span class="a">\u200B</span></p><p><span class="b">[]\u200B</span></p>'
+                });
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>ab<span class="a">[]\u200B</span></p><p><span class="b">\u200B</span></p>',
+                    stepFunction: async editor => {
+                        await triggerEvent(editor.editable, 'keydown', { key: 'ArrowRight'});
+                    },
+                    contentAfter: '<p>ab<span class="a">\u200B[]</span></p><p><span class="b">\u200B</span></p>',
+                    // Final state: '<p>ab<span class="a">\u200B</span></p><p><span class="b">[]\u200B</span></p>'
+                });
             });
             it('should select a zws', async () => {
                 await testEditor(BasicEditor, {
@@ -6271,6 +6349,14 @@ X[]
                     },
                     contentAfter: '<p>a[b<span class="a">\u200B]</span>cd</p>',
                     // Final state: '<p>a[b<span class="a">\u200B</span>c]d</p>'
+                });
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>a[b]<span class="a">\u200B</span></p><p><span class="b">\u200B</span></p>',
+                    stepFunction: async editor => {
+                        await triggerEvent(editor.editable, 'keydown', { key: 'ArrowRight', shiftKey: true });
+                    },
+                    contentAfter: '<p>a[b<span class="a">\u200B]</span></p><p><span class="b">\u200B</span></p>',
+                    // Final state: '<p>a[b<span class="a">\u200B</span></p><p><span class="b">]\u200B</span></p>'
                 });
             });
             it('should select a zws (3)', async () => {
@@ -6425,6 +6511,22 @@ X[]
                         await triggerEvent(editor.editable, 'keydown', { key: 'ArrowLeft'});
                     },
                     contentAfter: '<p>ab<span class="a">[]\u200B</span>cd</p>',
+                });
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p><span class="a">\u200B</span></p><p><span class="b">[]\u200B</span>ab</p>',
+                    stepFunction: async editor => {
+                        await triggerEvent(editor.editable, 'keydown', { key: 'ArrowLeft'});
+                    },
+                    contentAfter: '<p><span class="a">\u200B</span></p><p><span class="b">[]\u200B</span>ab</p>',
+                    // Final state: '<p><span class="a">\u200B[]</span></p><p><span class="b">\u200B</span>ab</p>'
+                });
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p><span class="a">\u200B</span></p><p><span class="b">\u200B[]</span></p>',
+                    stepFunction: async editor => {
+                        await triggerEvent(editor.editable, 'keydown', { key: 'ArrowLeft'});
+                    },
+                    contentAfter: '<p><span class="a">\u200B</span></p><p><span class="b">[]\u200B</span></p>',
+                    // Final state: '<p><span class="a">\u200B[]</span></p><p><span class="a">\u200B</span></p>'
                 });
             });
             it('should select a zws backwards', async () => {
@@ -6605,6 +6707,96 @@ X[]
                 contentBefore: '<p>a[b<span class="a">c</span>d]e</p>',
                 stepFunction: editor => editor.execCommand('applyColor', 'rgb(255, 0, 0)', 'color'),
                 contentAfter: '<p>a<font style="color: rgb(255, 0, 0);">[b<span class="a">c</span>d]</font>e</p>',
+            });
+        });
+        it('should apply background color to a list of 3 items with font size', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<ul>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            '[abc' +
+                                        '</span>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            'bcd' +
+                                        '</span>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            'cde]' +
+                                        '</span>' +
+                                    '</li>' +
+                                '</ul>',
+                stepFunction: editor => editor.execCommand('applyColor', 'rgb(255, 0, 0)', 'backgroundColor'),
+                contentAfter: '<ul>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                '[abc' +
+                                            '</font>' +
+                                        '</span>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                'bcd' +
+                                            '</font>' +
+                                        '</span>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<span style="font-size: 36px;">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                'cde]' +
+                                            '</font>' +
+                                        '</span>' +
+                                    '</li>' +
+                                '</ul>',
+            });
+        });
+        it('should apply background color to a list of 3 links', async () => {
+            await testEditor(BasicEditor, {
+                contentBefore: '<ul>' +
+                                    '<li>' +
+                                        '<a href="#" >' +
+                                            '[abc' +
+                                        '</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<a href="#" >' +
+                                            'bcd' +
+                                        '</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<a href="#" >' +
+                                            'cde]' +
+                                        '</a>' +
+                                    '</li>' +
+                                '</ul>',
+                stepFunction: editor => editor.execCommand('applyColor', 'rgb(255, 0, 0)', 'backgroundColor'),
+                contentAfter: '<ul>' +
+                                    '<li>' +
+                                        '<a href="#">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                '[abc' +
+                                            '</font>' +
+                                        '</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<a href="#">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                'bcd' +
+                                            '</font>' +
+                                        '</a>' +
+                                    '</li>' +
+                                    '<li>' +
+                                        '<a href="#">' +
+                                            '<font style="background-color: rgb(255, 0, 0);">' +
+                                                'cde]' +
+                                            '</font>' +
+                                        '</a>' +
+                                    '</li>' +
+                                '</ul>',
             });
         });
         it('should distribute color to texts and to button separately', async () => {

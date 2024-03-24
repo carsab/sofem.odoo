@@ -120,7 +120,7 @@ msgstr "%s (copia)"
 #: code:addons/mass_mailing/wizard/mailing_contact_to_list.py:0
 #, python-format
 msgid "%s Mailing Contacts have been added. "
-msgstr "%s contactos de correo se agregaron."
+msgstr "Se han agregado %s contactos de correo."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.social_links
@@ -151,7 +151,7 @@ msgstr "Informes de correo de estadísticas de 24 horas"
 #: code:addons/mass_mailing/models/mailing.py:0
 #, python-format
 msgid "24H Stats of %(mailing_type)s \"%(mailing_name)s\""
-msgstr "24 h estadísticas de %(mailing_type)s \"%(mailing_name)s\""
+msgstr "Estadísticas de 24 h de %(mailing_type)s \"%(mailing_name)s\""
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_hr_options
@@ -834,7 +834,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_contact_to_list_view_form
 #, python-format
 msgid "Add"
-msgstr "Añadir"
+msgstr "Agregar"
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_mailing_contact_to_list
@@ -854,12 +854,12 @@ msgstr "Agregar los contactos seleccionados a la lista de correo"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_features_grid
 msgid "Add a great slogan."
-msgstr "Añade un buen título"
+msgstr "Agregue un buen eslogan."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_contact_to_list_view_form
 msgid "Add and Send Mailing"
-msgstr "Agregar y enviar correos"
+msgstr "Agregar y enviar correo"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_contact_view_tree
@@ -965,8 +965,7 @@ msgstr "Permitir retroalimentación"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.res_config_settings_view_form
 msgid "Allow recipients to blacklist themselves"
 msgstr ""
-"Permitir que los destinatarios se puedan auto-incluir en la lista de "
-"denegación"
+"Permita que los destinatarios se pongan ellos mismos en la lista negra"
 
 #. module: mass_mailing
 #: model:ir.model.fields,help:mass_mailing.field_res_config_settings__show_blacklist_buttons
@@ -1361,7 +1360,7 @@ msgstr "Etiqueta de botón"
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "By using the <b>Breadcrumb</b>, you can navigate back to the overview."
-msgstr "Al usar las <b>migas de pan</b>, puede regresar a la vista general."
+msgstr "Puede regresar a la vista general con las <b>migas de pan</b>."
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__calendar_date
@@ -1485,7 +1484,7 @@ msgstr "Revise todos nuestros muebles"
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Check the email address and click send."
-msgstr "Revise la dirección de correo y de clic en mandar."
+msgstr "Revise la dirección de correo y dé clic en enviar."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_mailing_schedule_date_view_form
@@ -1498,7 +1497,7 @@ msgstr "Elegir una fecha"
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Choose this <b>theme</b>."
-msgstr "Elegir este <b>tema</b>."
+msgstr "Elija este <b>tema</b>."
 
 #. module: mass_mailing
 #. odoo-javascript
@@ -1528,7 +1527,7 @@ msgstr "Haga clic en este botón para agregar este correo a sus plantillas."
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Click on this paragraph to edit it."
-msgstr "De clic en este párrafo para editarlo."
+msgstr "Haga clic en este párrafo para editarlo."
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__clicked
@@ -1639,7 +1638,7 @@ msgstr "Configurar servidores de correo de salida"
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Congratulations, I love your first mailing. :)"
-msgstr "Felicidades, me encanta su primer correo. :)"
+msgstr "Enhorabuena, me encanta su primer correo :)"
 
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_trace__failure_type__mail_smtp
@@ -1779,7 +1778,7 @@ msgstr "Fecha de creación"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_list_view_search
 msgid "Creation Period"
-msgstr "Período de creacion"
+msgstr "Periodo de creacion"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_rating_options
@@ -2024,7 +2023,7 @@ msgstr "Duplicar"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_features_grid
 msgid "Duplicate blocks and columns to add more features."
-msgstr "Duplique bloques y columnas para añadir más características."
+msgstr "Duplique bloques y columnas para agregar más características."
 
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_trace__failure_type__mail_dup
@@ -2776,7 +2775,7 @@ msgstr "Izquierda"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
 msgid "Left Logo"
-msgstr "Logo a la izquierda"
+msgstr "Logotipo a la izquierda"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
@@ -2789,7 +2788,7 @@ msgstr "Texto a la izquierda "
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Let's try the Email Marketing app."
-msgstr "Probemos la aplicación de Marketing por correo electrónico."
+msgstr "Probemos la aplicación Marketing por correo electrónico."
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_link_tracker
@@ -2883,7 +2882,7 @@ msgstr "Marketing por correo: fila del proceso"
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_mail_render_mixin
 msgid "Mail Render Mixin"
-msgstr "Mail Render Mixin"
+msgstr "Mixin de renderización de correo"
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_ir_mail_server
@@ -2993,7 +2992,7 @@ msgstr "Suscripción a la lista de correo"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_subscription_view_search
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_subscription_view_tree
 msgid "Mailing List Subscriptions"
-msgstr "Suscripción a la lista de correo"
+msgstr "Suscripciones a la lista de correo"
 
 #. module: mass_mailing
 #: model:ir.actions.act_window,name:mass_mailing.action_view_mass_mailing_lists
@@ -3134,7 +3133,7 @@ msgstr "Albañilería"
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_trace_report__name
 msgid "Mass Mail"
-msgstr "Envío masivo de correo"
+msgstr "Correo masivo"
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_mailing_mailing
@@ -3161,13 +3160,13 @@ msgstr "Correo masivo \"%s\""
 #: model:ir.actions.act_window,name:mass_mailing.mailing_trace_report_action_mail
 #: model:ir.ui.menu,name:mass_mailing.mailing_menu_report_mailing
 msgid "Mass Mailing Analysis"
-msgstr "Análisis de envíos masivos"
+msgstr "Análisis de correos masivos"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mail_compose_message__campaign_id
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_trace_report_view_search
 msgid "Mass Mailing Campaign"
-msgstr "Campaña de envío masivo"
+msgstr "Campaña de correo masivo"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mail_compose_message__mass_mailing_name
@@ -3181,7 +3180,7 @@ msgstr "Nombre del correo masivo"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_trace_report_view_search
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_trace_report_view_tree
 msgid "Mass Mailing Statistics"
-msgstr "Estadísticas de envíos masivos"
+msgstr "Estadísticas de correos masivos"
 
 #. module: mass_mailing
 #: model_terms:ir.actions.act_window,help:mass_mailing.mailing_trace_report_action_mail
@@ -3190,7 +3189,7 @@ msgid ""
 "    like number of bounced mails, opened mails, replied mails. You can sort out\n"
 "    your analysis by different groups to get accurate grained analysis."
 msgstr ""
-"Las estadísticas de correo de envío masivo le permiten comprobar la información relacionada con el envío de correos,\n"
+"Las estadísticas de correos masivos le permiten comprobar la información relacionada con el envío de correos,\n"
 "tal como el número de correos devueltos, abiertos y respondidos. Puede ordenar\n"
 "su análisis según diferentes grupos para obtener un análisis más preciso."
 
@@ -3198,7 +3197,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_list__mailing_ids
 #: model:ir.model.fields,field_description:mass_mailing.field_utm_campaign__mailing_mail_ids
 msgid "Mass Mailings"
-msgstr "Envíos masivos"
+msgstr "Correos masivos"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
@@ -3237,7 +3236,7 @@ msgstr "Fusionar"
 #: model:ir.model,name:mass_mailing.model_mailing_list_merge
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_list_merge_view_form
 msgid "Merge Mass Mailing List"
-msgstr "Fusionar lista de correo masiva"
+msgstr "Fusionar lista de correo masivo"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_list_merge__merge_options
@@ -3247,12 +3246,12 @@ msgstr "Opción de fusión"
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_list_merge__merge_options__new
 msgid "Merge into a new mailing list"
-msgstr "Fusionarse en una nueva lista de correo"
+msgstr "Fusionar en una nueva lista de correo"
 
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_list_merge__merge_options__existing
 msgid "Merge into an existing mailing list"
-msgstr "Fusionarse en una lista de correo existente"
+msgstr "Fusionar en una lista de correo existente"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_contact__message_has_error
@@ -3476,7 +3475,7 @@ msgstr "Sin personalización"
 #. module: mass_mailing
 #: model_terms:ir.actions.act_window,help:mass_mailing.action_view_mail_mail_statistics_mailing
 msgid "No data yet!"
-msgstr "No hay información aún"
+msgstr "¡Todavía no hay información!"
 
 #. module: mass_mailing
 #: model_terms:ir.actions.act_window,help:mass_mailing.mailing_subscription_action_report_optout
@@ -3585,7 +3584,7 @@ msgstr "Número de correos enviados"
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_utm_campaign__mailing_mail_count
 msgid "Number of Mass Mailing"
-msgstr "Número de envíos masivos "
+msgstr "Número de correos masivos"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_list__contact_count_opt_out
@@ -3829,7 +3828,7 @@ msgstr "Elija un servidor de salida dedicado para sus correos masivos"
 #: code:addons/mass_mailing/static/src/js/tours/mass_mailing_tour.js:0
 #, python-format
 msgid "Pick the <b>email subject</b>."
-msgstr "Elija el<b>asunto del correo</b>."
+msgstr "Elija el <b>asunto del correo</b>."
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
@@ -3900,6 +3899,11 @@ msgstr "Procesar"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_trace_view_search
 msgid "Processing"
 msgstr "Procesando"
+
+#. module: mass_mailing
+#: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_kanban
+msgid "Progress bar"
+msgstr "Barra de progreso"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
@@ -4150,7 +4154,7 @@ msgstr "Error de envío del SMS"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_features_grid
 msgid "Sample Icons"
-msgstr "Íconos de muestra"
+msgstr "Iconos de muestra"
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_mailing_mailing_test
@@ -4197,7 +4201,7 @@ msgstr "Programado el"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_trace_report_view_search
 msgid "Scheduled Period"
-msgstr "Período programado"
+msgstr "Periodo programado"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__next_departure
@@ -4391,7 +4395,7 @@ msgstr "Enviado el"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_search
 msgid "Sent Period"
-msgstr "Período enviado"
+msgstr "Periodo enviado"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_kanban
@@ -4878,7 +4882,7 @@ msgid ""
 "right icon of each block. Then, duplicate one of the columns to create a new"
 " one as a copy."
 msgstr ""
-"Para añadir una cuarta columna, reduzca el tamaño de estas tres columnas "
+"Para agregar una cuarta columna, reduzca el tamaño de estas tres columnas "
 "usando el icono adecuado de cada bloque. Entonces, duplique una de las "
 "columnas para crear una nueva como copia."
 

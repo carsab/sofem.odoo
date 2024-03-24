@@ -50,7 +50,7 @@ _DEFAULT_MANIFEST = {
     'new_page_templates': {},  # website themes
     #name, mandatory
     'post_init_hook': '',
-    'post_load': None,
+    'post_load': '',
     'pre_init_hook': '',
     'sequence': 100,
     'summary': '',
@@ -430,7 +430,7 @@ def get_modules():
             _logger.warning("addons path does not exist: %s", ad)
             continue
         plist.extend(listdir(ad))
-    return list(set(plist))
+    return sorted(set(plist))
 
 def get_modules_with_version():
     modules = get_modules()

@@ -146,6 +146,14 @@ class AccountMoveSend(models.TransientModel):
             'send_mail': self.checkbox_send_mail,
         }
 
+    @api.model
+    def _get_wizard_vals_restrict_to(self, only_options):
+        return {
+            'checkbox_download': False,
+            'checkbox_send_mail': False,
+            **only_options,
+        }
+
     def _get_mail_move_values(self, move, wizard=None):
         mail_template_id = move.send_and_print_values and move.send_and_print_values.get('mail_template_id')
         mail_template = wizard and wizard.mail_template_id or self.env['mail.template'].browse(mail_template_id)
@@ -501,7 +509,7 @@ class AccountMoveSend(models.TransientModel):
     def _send_mails(self, moves_data):
         subtype = self.env.ref('mail.mt_comment')
 
-        for move, move_data in moves_data.items():
+        for move, move_data in [(move, move_data) for move, move_data in moves_data.items() if move.partner_id.email]:
             mail_template = move_data['mail_template_id']
             mail_lang = move_data['mail_lang']
             mail_params = self._get_mail_params(move, move_data)
@@ -659,7 +667,7 @@ class AccountMoveSend(models.TransientModel):
             self._generate_invoice_fallback_documents(errors)
 
         # Send mail.
-        success = {move: move_data for move, move_data in moves_data.items() if not move_data.get('error') and move.partner_id.email}
+        success = {move: move_data for move, move_data in moves_data.items() if not move_data.get('error')}
         if success:
             self._hook_if_success(success, from_cron=from_cron, allow_fallback_pdf=allow_fallback_pdf)
 

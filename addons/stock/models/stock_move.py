@@ -643,7 +643,7 @@ Please change the quantity done or the rounding precision of your unit of measur
         if 'date_deadline' in vals:
             self._set_date_deadline(vals.get('date_deadline'))
         if 'move_orig_ids' in vals:
-            move_to_recompute_state |= self.filtered(lambda m: m.state not in ['draft', 'cance', 'done'])
+            move_to_recompute_state |= self.filtered(lambda m: m.state not in ['draft', 'cancel', 'done'])
         if 'location_dest_id' in vals:
             move_to_check_dest_location = self.filtered(lambda m: m.location_dest_id.id != vals.get('location_dest_id'))
         res = super(StockMove, self).write(vals)
@@ -957,13 +957,15 @@ Please change the quantity done or the rounding precision of your unit of measur
         fields = [
             'product_id', 'price_unit', 'procure_method', 'location_id', 'location_dest_id',
             'product_uom', 'restrict_partner_id', 'scrapped', 'origin_returned_move_id',
-            'package_level_id', 'propagate_cancel', 'description_picking', 'date_deadline',
+            'package_level_id', 'propagate_cancel', 'description_picking',
             'product_packaging_id',
         ]
         if self.env['ir.config_parameter'].sudo().get_param('stock.merge_only_same_date'):
             fields.append('date')
         if self.env.context.get('merge_extra'):
             fields.pop(fields.index('procure_method'))
+        if not self.env['ir.config_parameter'].sudo().get_param('stock.merge_ignore_date_deadline'):
+            fields.append('date_deadline')
         return fields
 
     @api.model
@@ -1018,7 +1020,8 @@ Please change the quantity done or the rounding precision of your unit of measur
                     # link all move lines to record 0 (the one we will keep).
                     moves.mapped('move_line_ids').write({'move_id': moves[0].id})
                     # merge move data
-                    moves[0].write(moves._merge_moves_fields())
+                    merge_extra = self.env.context.get('merge_extra') and bool(merge_into)
+                    moves[0].write(moves.with_context(merge_extra=merge_extra)._merge_moves_fields())
                     # update merged moves dicts
                     moves_to_unlink |= moves[1:]
                     merged_moves |= moves[0]
@@ -1126,6 +1129,7 @@ Please change the quantity done or the rounding precision of your unit of measur
         quants = self.env['stock.quant'].search([('product_id', '=', self.product_id.id),
                                                  ('lot_id', 'in', self.lot_ids.ids),
                                                  ('quantity', '!=', 0),
+                                                 ('location_id', '!=', self.location_id.id),# Exclude the source location
                                                  '|', ('location_id.usage', '=', 'customer'),
                                                       '&', ('company_id', '=', self.company_id.id),
                                                            ('location_id.usage', 'in', ('internal', 'transit'))])

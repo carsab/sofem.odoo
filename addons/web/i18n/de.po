@@ -5,14 +5,15 @@
 # Translators:
 # Wil Odoo, 2023
 # Larissa Manderfeld, 2024
+# Martin Trigaux, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2024-01-29 10:46+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Larissa Manderfeld, 2024\n"
+"Last-Translator: Martin Trigaux, 2024\n"
 "Language-Team: German (https://app.transifex.com/odoo/teams/41243/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1489,6 +1490,17 @@ msgstr "Blau"
 #, python-format
 msgid "Boolean Icon"
 msgstr "Boolesches Symbol"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/statusbar/statusbar_field.js:0
+#, python-format
+msgid ""
+"Boolean field from the model used in the relation, which indicates whether "
+"the state is folded or not."
+msgstr ""
+"Boolesches Feld aus dem in der Beziehung verwendeten Modell, das angibt, ob "
+"der Zustand eingeklappt ist oder nicht."
 
 #. module: web
 #. odoo-javascript
@@ -5793,6 +5805,13 @@ msgstr "Fortschrittsbalken"
 
 #. module: web
 #. odoo-javascript
+#: code:addons/web/static/src/views/view_components/column_progress.xml:0
+#, python-format
+msgid "Progress bar"
+msgstr "Fortschrittsbalken"
+
+#. module: web
+#. odoo-javascript
 #: code:addons/web/static/src/views/fields/properties/properties_field.js:0
 #, python-format
 msgid "Properties"
@@ -6295,6 +6314,13 @@ msgstr "Speichern & Neu"
 #, python-format
 msgid "Save as:"
 msgstr "Speichern als:"
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/search/custom_favorite_item/custom_favorite_item.xml:0
+#, python-format
+msgid "Save current search"
+msgstr "Aktuelle Suche speichern"
 
 #. module: web
 #. odoo-javascript
@@ -7084,6 +7110,10 @@ msgid ""
 "that must be fixed for the entire database before continuing working. See "
 "browser console or server logs for details."
 msgstr ""
+"Die Kompilierung des Stils ist fehlgeschlagen. Dies ist ein Administrator- "
+"oder Entwicklerfehler, der für die gesamte Datenbank behoben werden muss, "
+"bevor Sie weiterarbeiten können. Einzelheiten finden Sie in der Web-Konsole "
+"oder in den Serverprotokollen."
 
 #. module: web
 #. odoo-javascript
@@ -10896,7 +10926,7 @@ msgstr "Bushaltestelle"
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
 #, python-format
 msgid "business"
-msgstr "-Unternehmen"
+msgstr "Unternehmen"
 
 #. module: web
 #. odoo-javascript
