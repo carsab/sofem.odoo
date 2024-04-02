@@ -6,6 +6,7 @@ _build/
 !.gitignore
 !.github
 !.mailmap
+.idea/
 # compiled python files
 *.py[co]
 __pycache__/
@@ -47,3 +48,6 @@ package.json
 /man/
 /share/
 /src/
+/venv/
+/env_fuentes/
+/odoo/data/

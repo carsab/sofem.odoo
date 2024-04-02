@@ -8,7 +8,7 @@
                 <br/>
             </t>
             <t t-if="!pos.company_logo_base64" class="pos-receipt-center-align">
-                <h1><b><p t-esc="pos.company.name" /></b></h1>
+                <h3><b><p t-esc="pos.company.name" /></b></h3>
             </t>
             <t t-if="pos.config.name" class="pos-receipt-order-name">
                 <b><p t-esc="pos.config.name" /></b>
@@ -17,17 +17,17 @@
             <div class="text-start">
                 <b>SOLD:</b>
             </div>
-            <div class="orderlines">
+            <div >
                 <t t-foreach="products" t-as="category" t-key="category['name']">
                     <t t-foreach="category['products']" t-as="line" t-key="line_index">
                         <div class="responsive-price">
-                            <t t-esc="line['product_name'].substr(0,20)" />
+                            <t t-esc="line['product_name'].substr(0,18)" />
                             <span class="pos-receipt-right-align">
                                 <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])" />
-                                <t t-if="line.uom !== 'Units'">
+                                <t t-if="line.uom !== 'Unidades'">
                                     <t t-esc="line.uom" />
                                 </t>
-                                x
+                                <t t-else=""> Und </t> x
                                 <t t-esc="formatCurrency(line.price_unit, false)" />
                             </span>
                         </div>
@@ -86,7 +86,7 @@
                 <b>Total:</b>
                 <span t-esc="formatCurrency(currency.total_paid, false)" class="pos-receipt-right-align"/>
             </div>
-            <div class="pos-receipt-order-data">
+            <div class="pos-receipt-order-name">
                 <div>Fecha: <t t-esc="date" /></div>
             </div>
         </div>
