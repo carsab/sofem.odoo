@@ -51,3 +51,4 @@ package.json
 /venv/
 /env_fuentes/
 /odoo/data/
+env_python3.11/

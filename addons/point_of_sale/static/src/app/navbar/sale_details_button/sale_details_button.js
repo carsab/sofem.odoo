@@ -5,6 +5,7 @@ import { renderToElement } from "@web/core/utils/render";
 import { ErrorPopup } from "@point_of_sale/app/errors/popups/error_popup";
 import { Component } from "@odoo/owl";
 import { usePos } from "@point_of_sale/app/store/pos_hook";
+import { ReceiptHeader } from "@point_of_sale/app/screens/receipt_screen/receipt/receipt_header/receipt_header";
 
 export class SaleDetailsButton extends Component {
     static template = "point_of_sale.SaleDetailsButton";

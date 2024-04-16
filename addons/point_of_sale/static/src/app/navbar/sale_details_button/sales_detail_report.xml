@@ -10,6 +10,7 @@
             <t t-if="!pos.company_logo_base64" class="pos-receipt-center-align">
                 <h3><b><p t-esc="pos.company.name" /></b></h3>
             </t>
+            <ReceiptHeader data="props.data.headerData" />
             <t t-if="pos.config.name" class="pos-receipt-order-name">
                 <b><p t-esc="pos.config.name" /></b>
             </t>
@@ -71,9 +72,10 @@
             <div class="text-start">
                 <b>Taxes:</b>
             </div>
-            <div t-foreach="taxes" t-as="tax" t-key="tax_index">
+            <div t-foreach="taxes_info" t-as="tax" t-key="tax_index">
                 <t t-esc="tax.name" />
                 <span t-esc="formatCurrency(tax.tax_amount, false)" class="pos-receipt-right-align"/>
+                <span t-esc="formatCurrency(tax.base_amount, false)" class="pos-receipt-right-align"/>
             </div>
             <div>------------------------</div>
             <div class="text-start">
