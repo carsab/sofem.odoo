@@ -1,97 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-
     <t t-name="point_of_sale.SaleDetailsReport">
         <div class="pos-receipt">
             <t t-if="pos.company_logo_base64">
                 <img class="pos-receipt-logo" t-att-src="pos.company_logo_base64" alt="Logo"/>
                 <br/>
             </t>
-            <t t-if="!pos.company_logo_base64" class="pos-receipt-center-align">
-                <h3><b><p t-esc="pos.company.name" /></b></h3>
-            </t>
-            <ReceiptHeader data="props.data.headerData" />
-            <t t-if="pos.config.name" class="pos-receipt-order-name">
-                <b><p t-esc="pos.config.name" /></b>
-            </t>
-            <div class="text-start"><b>RESUMEN DE VENTAS</b></div>
+            <!--  Info Encabezado    -->
+            <div class="pos-receipt-center-align">
+                <h3>
+                    <b>Reporte Cierre de Caja</b>
+                </h3>
+                <h3>
+                    <b>
+                        <p t-esc="pos.company.name" />
+                    </b>
+                </h3>
+                <t t-if="headerData.company.vat">
+                    <div>
+                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>
+:
+                        <t t-esc="headerData.company.vat" />
+                    </div>
+                </t>
+                <span style="white-space:pre-line">
+                    <t t-esc="headerData.header" />
+                </span>
+
+                <t t-if="headerData.company.phone">
+                    <div>Tel:<t t-esc="headerData.company.phone" />
+                    </div>
+                </t>
+                <!--
+                <div t-if="headerData.company.email" t-esc="headerData.company.email" />
+                <div t-if="headerData.company.website" t-esc="headerData.company.website" />
+                -->
+            </div>
+            <div class="pos-receipt-order-name">
+                <b>Fecha del cierre: <t t-esc="date" />
+                </b>
+            </div>
+            <!-- FIN Info Encabezado      -->
+            <div class="text-start">
+                <b>RESUMEN DE VENTAS</b>
+            </div>
             <div class="text-start">
                 <b>SOLD:</b>
             </div>
-            <div >
-                <t t-foreach="products" t-as="category" t-key="category['name']">
-                    <t t-foreach="category['products']" t-as="line" t-key="line_index">
-                        <div class="responsive-price">
-                            <t t-esc="line['product_name'].substr(0,18)" />
-                            <span class="pos-receipt-right-align">
-                                <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])" />
-                                <t t-if="line.uom !== 'Unidades'">
-                                    <t t-esc="line.uom" />
-                                </t>
-                                <t t-else=""> Und </t> x
-                                <t t-esc="formatCurrency(line.price_unit, false)" />
-                            </span>
-                        </div>
-                        <t t-if="line.discount !== 0">
-                            <div class="pos-receipt-left-padding">Discount: <t t-esc="line.discount" />%</div>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <tr class="pos-receipt-center-align">
+                        <td width="65%">Producto</td>
+                        <td width="5%">Unds</td>
+                        <td width="30%">valor</td>
+                    </tr>
+                    <t t-foreach="products" t-as="category" t-key="category['name']">
+                        <t t-foreach="category['products']" t-as="line" t-key="line_index">
+                            <tr>
+                                <td width="65%" class="text-start">
+                                    <span t-esc="line['product_name'].substr(0,20)"/>
+                                </td>
+                                <td width="5%" class="text-end">
+                                    <span t-esc="line.quantity"/>
+                                </td>
+                                <td width="30%" class="text-end">
+                                    <span t-esc="formatCurrency(line.base_amount,0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                                </td>
+                            </tr>
                         </t>
                     </t>
-                </t>
+                </table>
             </div>
             <div>------------------------</div>
-            <div class="orderlines">
-                <t t-foreach="refund_products" t-as="category" t-key="category['name']">
-                    <t t-foreach="category['products']" t-as="line" t-key="line_index">
-                        <div class="responsive-price">
-                            <t t-esc="line['product_name'].substr(0,20)" />
-                            <span class="pos-receipt-right-align">
-                                <t t-esc="Math.round(line.quantity * Math.pow(10, pos.dp['Product Unit of Measure'])) / Math.pow(10, pos.dp['Product Unit of Measure'])" />
-                                <span> </span>
-                                <t t-if="line.uom !== 'Units'">
-                                    <t t-esc="line.uom" />
-                                </t>
-                                <b>x</b>
-                                <t t-esc="formatCurrency(line.price_unit, false)" /> <span>::</span>
-                                <t t-esc="Math.pow(10, pos.dp['Product Unit of Measure'])"/>
-                            </span>
-                        </div>
-                        <t t-if="line.discount !== 0">
-                            <div class="pos-receipt-left-padding">Discount: <t t-esc="line.discount" />%</div>
-                        </t>
-                    </t>
-                </t>
-            </div>
             <div class="text-start">
                 <b>Payments:</b>
             </div>
-            <div t-foreach="payments" t-as="payment" t-key="payment_index">
-                <t t-esc="payment['name']" />
-                <span t-esc="formatCurrency(payment['total'], false)" class="pos-receipt-right-align"/>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <t t-foreach="payments" t-as="payment" t-key="payment_index">
+                        <tr>
+                            <td class="text-start">
+                                <t t-esc="payment['name']" />
+                            </td>
+                            <td class="text-end">
+                                <t t-esc="formatCurrency(payment['total'],0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
             </div>
             <div>------------------------</div>
             <div class="text-start">
                 <b>Taxes:</b>
             </div>
-            <div t-foreach="taxes_info" t-as="tax" t-key="tax_index">
-                <t t-esc="tax.name" />
-                <span t-esc="formatCurrency(tax.tax_amount, false)" class="pos-receipt-right-align"/>
-                <span t-esc="formatCurrency(tax.base_amount, false)" class="pos-receipt-right-align"/>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <tr class="pos-receipt-center-align">
+                        <td width="30%">Nombre</td>
+                        <td width="35%">Base</td>
+                        <td width="35%">valor</td>
+                    </tr>
+                    <t t-foreach="taxes" t-as="tax" t-key="tax_index">
+                        <tr>
+                            <td width="30%" class="text-start">
+                                <span t-esc="tax.name" />
+                            </td>
+                            <td width="35%" class="text-end">
+                                <span t-esc="formatCurrency(Math.round(tax.base_amount),0,options={'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                            <td width="35%" class="text-end">
+                                <span t-esc="formatCurrency(tax.tax_amount,0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
             </div>
             <div>------------------------</div>
             <div class="text-start">
-                 <b>Transacciones:</b> <span class="pos-receipt-right-align"> <t t-esc="nbr_orders" /></span>
-            </div>
-            <div class="text-start">
-                 <b>Último documento:</b> <span class="pos-receipt-right-align"> <t t-esc="last_ref" /></span>
-            </div>
-            <div class="text-start">
                 <b>Total:</b>
-                <span t-esc="formatCurrency(currency.total_paid, false)" class="pos-receipt-right-align"/>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="formatCurrency(currency.total_paid,0,options={'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                </span>
+
             </div>
-            <div class="pos-receipt-order-name">
-                <div>Fecha: <t t-esc="date" /></div>
+            <div class="text-start">
+                <b>Transacciones:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="nbr_orders" />
+                </span>
             </div>
+            <div class="text-start">
+                <b>Último documento:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="last_ref" />
+                </span>
+            </div>
+
         </div>
     </t>
-
 </templates>
