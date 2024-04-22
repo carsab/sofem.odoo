@@ -5,10 +5,14 @@ import { renderToElement } from "@web/core/utils/render";
 import { ErrorPopup } from "@point_of_sale/app/errors/popups/error_popup";
 import { Component } from "@odoo/owl";
 import { usePos } from "@point_of_sale/app/store/pos_hook";
+import { formatCurrency } from "@web/core/currency";
 
 export class SaleDetailsButton extends Component {
     static template = "point_of_sale.SaleDetailsButton";
-
+    static props = {
+        data: Object,
+        formatCurrency: Function,
+    };
     setup() {
         super.setup(...arguments);
         this.pos = usePos();
@@ -27,6 +31,11 @@ export class SaleDetailsButton extends Component {
             "get_sale_details",
             [false, false, false, [this.pos.pos_session.id]]
         );
+
+        saleDetails.headerData = this.pos.getReceiptHeaderData()
+        saleDetails.formatCurrency = formatCurrency
+
+        console.log("DATA:::::>", saleDetails)
         const report = renderToElement(
             "point_of_sale.SaleDetailsReport",
             Object.assign({}, saleDetails, {
@@ -36,16 +45,9 @@ export class SaleDetailsButton extends Component {
             })
         );
         let rta = this.printer.printHtml(report, { webPrintFallback: true })
-        console.log("Impresión detalle de ventas...",rta)
-        //const { successful, message } = await this.hardwareProxy.printer.printReceipt(report);
-        //const { successful, message } = await this.hardwareProxy.printer.sendPrintingJob(report);
-       // if (!successful) {
-        //    await this.popup.add(ErrorPopup, {
-        //        title: message.title,
-        //        body: message.body,
-        //    });
-        //}
+        console.log("Impresión detalle de ventas en tirilla", rta)
     }
+
     async printReport(report) {
         const isPrinted = await this.printer.print(
             report,

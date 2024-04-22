@@ -112,6 +112,7 @@ class ReportSaleDetails(models.AbstractModel):
         sessions = []
         if config_ids:
             configs = self.env['pos.config'].search([('id', 'in', config_ids)])
+            pritn(self.env['pos.config'])
             if session_ids:
                 sessions = self.env['pos.session'].search([('id', 'in', session_ids)])
             else:
