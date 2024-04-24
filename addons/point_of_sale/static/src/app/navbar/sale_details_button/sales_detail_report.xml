@@ -129,13 +129,20 @@
                     <t t-esc="nbr_orders" />
                 </span>
             </div>
+            <!--
             <div class="text-start">
                 <b>Último documento:</b>
                 <span class="pos-receipt-right-align">
                     <t t-esc="last_ref" />
                 </span>
             </div>
-
+            -->
+            <div class="text-start">
+                <b># de sesión:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="session_name" />
+                </span>
+            </div>
         </div>
     </t>
 </templates>
