@@ -73,6 +73,7 @@ class ReportSaleDetails(models.AbstractModel):
         refund_done = {}
         refund_taxes = {}
         last_ref = "0"
+        num_closed= []
         for order in orders:
             if order.name > last_ref:
                 last_ref = order.name
@@ -104,7 +105,7 @@ class ReportSaleDetails(models.AbstractModel):
                     AND payment.id IN %s
                 GROUP BY method.name, method.is_cash_count, payment.session_id, method.id, journal_id
             """, (self.env.lang, tuple(payment_ids),))
-            payments = self.env.cr.dictfetchall()
+            payments = self.env.cr.dictfetchall()            
         else:
             payments = []
 
@@ -122,7 +123,14 @@ class ReportSaleDetails(models.AbstractModel):
             sessions = self.env['pos.session'].search([('id', 'in', session_ids)])
             for session in sessions:
                 configs.append(session.config_id)
-
+            self.env.cr.execute("""
+                                 select count(*) + 1 as num_closed
+                                    from pos_session ps 
+                                    where ps.config_id = %s
+                                    and ps.state ='closed'
+            """, (configs[0].mapped('id')[0],))
+            num_closed = self.env.cr.dictfetchall()   
+             
         for payment in payments:
             payment['count'] = False
 
@@ -316,6 +324,7 @@ class ReportSaleDetails(models.AbstractModel):
             'invoiceList': invoiceList,
             'invoiceTotal': invoiceTotal,
             'last_ref': last_ref,
+            'num_closed':(num_closed[0])['num_closed'],
         }
 
     def _get_products_and_taxes_dict(self, line, products, taxes, currency):

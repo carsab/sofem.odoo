@@ -136,11 +136,17 @@
                     <t t-esc="last_ref" />
                 </span>
             </div>
-            -->
             <div class="text-start">
                 <b># de sesión:</b>
                 <span class="pos-receipt-right-align">
                     <t t-esc="session_name" />
+                </span>
+            </div>            
+            -->
+            <div class="text-start">
+                <b>Cierre #:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="num_closed" />
                 </span>
             </div>
         </div>
