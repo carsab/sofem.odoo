@@ -324,7 +324,7 @@ class ReportSaleDetails(models.AbstractModel):
             'invoiceList': invoiceList,
             'invoiceTotal': invoiceTotal,
             'last_ref': last_ref,
-            'num_closed':(num_closed[0])['num_closed'],
+            'num_closed':(num_closed[0])['num_closed'] if num_closed  else 0,
         }
 
     def _get_products_and_taxes_dict(self, line, products, taxes, currency):
