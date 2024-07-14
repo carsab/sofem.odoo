@@ -19,4 +19,11 @@ patch(PaymentScreen.prototype, {
         }
         return super._postPushOrderResolve(...arguments);
     },
+    shouldDownloadInvoice() {
+        if (this.pos.is_colombian_country()) {
+            return false;
+        } else {
+            return super.shouldDownloadInvoice(); // or this._super(...arguments) depending on the odoo version.
+        }
+    }
 });
