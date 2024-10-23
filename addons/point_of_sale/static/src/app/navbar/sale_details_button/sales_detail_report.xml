@@ -9,7 +9,12 @@
             <!--  Info Encabezado    -->
             <div class="pos-receipt-center-align">
                 <h3>
-                    <b>Reporte Cierre de Caja</b>
+                    <t t-if="state ==='opened'">
+                        <b>Reporte diario de Cierre parcial de Ventas X</b>
+                    </t>
+                    <t t-else="state ==='closed'">
+                        <b>Reporte diario de Cierre de Ventas Z</b>
+                    </t>
                 </h3>
                 <h3>
                     <b>
@@ -18,8 +23,7 @@
                 </h3>
                 <t t-if="headerData.company.vat">
                     <div>
-                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>
-:
+                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>:
                         <t t-esc="headerData.company.vat" />
                     </div>
                 </t>

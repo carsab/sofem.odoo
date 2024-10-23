@@ -13,6 +13,7 @@ import { usePos } from "@point_of_sale/app/store/pos_hook";
 import { parseFloat } from "@web/views/fields/parsers";
 import { Input } from "@point_of_sale/app/generic_components/inputs/input/input";
 import { useAsyncLockedMethod } from "@point_of_sale/app/utils/hooks";
+import { renderToElement } from "@web/core/utils/render";
 
 export class ClosePosPopup extends AbstractAwaitablePopup {
     static components = { SaleDetailsButton, Input };
@@ -41,6 +42,7 @@ export class ClosePosPopup extends AbstractAwaitablePopup {
         this.orm = useService("orm");
         this.report = useService("report");
         this.hardwareProxy = useService("hardware_proxy");
+        this.printer = useService("printer");
         this.customerDisplay = useService("customer_display");
         this.state = useState(this.getInitialState());
         this.confirm = useAsyncLockedMethod(this.confirm);
@@ -66,6 +68,7 @@ export class ClosePosPopup extends AbstractAwaitablePopup {
     async confirm() {
         if (!this.pos.config.cash_control || this.env.utils.floatIsZero(this.getMaxDifference())) {
             await this.closeSession();
+            await this.salesReport();
             return;
         }
         if (this.hasUserAuthority()) {
@@ -77,6 +80,7 @@ export class ClosePosPopup extends AbstractAwaitablePopup {
             });
             if (confirmed) {
                 await this.closeSession();
+                await this.salesReport();
             }
             return;
         }
@@ -220,13 +224,37 @@ export class ClosePosPopup extends AbstractAwaitablePopup {
                     title: _t("Closing session error"),
                     body: _t(
                         "An error has occurred when trying to close the session.\n" +
-                            "You will be redirected to the back-end to manually close the session."
+                        "You will be redirected to the back-end to manually close the session."
                     ),
                 });
                 window.location = "/web#action=point_of_sale.action_client_pos_menu";
             }
         }
     }
+
+    async salesReport() {
+        const saleDetails = await this.orm.call(
+            "report.point_of_sale.report_saledetails",
+            "get_sale_details",
+            [false, false, false, [this.pos.pos_session.id]]
+        );
+
+        console.log("SESION ID::::>", this.pos.pos_session.id)
+
+        saleDetails.headerData = this.pos.getReceiptHeaderData()
+
+        console.log("DATA CIERRE ==>", saleDetails)
+        const report = renderToElement(
+            "point_of_sale.SaleDetailsReport",
+            Object.assign({}, saleDetails, {
+                date: new Date().toLocaleString(),
+                pos: this.pos,
+                formatCurrency: this.env.utils.formatCurrency,
+            })
+        );
+        let rta = this.printer.printHtml(report, { webPrintFallback: true })        
+    }
+
     async handleClosingError(response) {
         await this.popup.add(ErrorPopup, {
             title: response.title || "Error",
