@@ -18,7 +18,7 @@ patch(PaymentScreen.prototype, {
           if (!to_electronic_invoice) {
               this.env.services.popup.add(ErrorPopup, {
                   title: 'Debe Seleccionar Factura y Factura electrónica',
-                  body: 'Por favor seleccione en el panel Factura y Factura electrónica',
+                  body: 'Por favor seleccione en el panel derecho Factura y Factura electrónica',
               });
           } else {
               return super.validateOrder(...arguments);
