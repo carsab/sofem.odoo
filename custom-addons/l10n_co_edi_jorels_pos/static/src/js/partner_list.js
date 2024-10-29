@@ -29,10 +29,12 @@ patch(PartnerListScreen.prototype, {
         if (this.pos.is_colombian_country()) {
             this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner,
                 {
-                    vat: '222222222222',
-                    company_type: 'person',
+                    vat: '',
+                    //company_type: 'person',
+                    company_type:'company',
                     city: this.pos.company.city,
-                    l10n_latam_identification_type_id: [this.pos.l10n_latam_identification_types.find(o => o.l10n_co_document_code=='national_citizen_id')['id']],
+                    //l10n_latam_identification_type_id: [this.pos.l10n_latam_identification_types.find(o => o.l10n_co_document_code=='national_citizen_id')['id']],
+                    l10n_latam_identification_type_id: [4],
                     type_regime_id: [2],
                     type_liability_id: [29],
                     municipality_id: this.pos.company.municipality_id
