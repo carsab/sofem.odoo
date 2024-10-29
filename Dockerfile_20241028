@@ -1,10 +1,10 @@
 FROM ubuntu:jammy
-LABEL MAINTAINER="Sofem Ltda <contacto@sofem.co>"
+MAINTAINER Sofem Ltda <contacto@sofem.co>
 ARG UID=999
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Generate locale C.UTF-8 for postgres and general locale data
-ENV LANG=en_US.UTF-8
+ENV LANG en_US.UTF-8
 
 # Retrieve the target architecture to install the correct wkhtmltopdf package
 ARG TARGETARCH
@@ -25,8 +25,6 @@ RUN apt-get update && \
         git \
         wget \
         xz-utils && \
-    apt install -y --no-install-recommends build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev  python3-pip libldap2-dev libpq-dev libsasl2-dev && \
-    apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev checkinstall && \
     if [ -z "${TARGETARCH}" ]; then \
         TARGETARCH="$(dpkg --print-architecture)"; \
     fi; \
@@ -42,11 +40,12 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install python
-ENV PYTHON_VERSION 3.11.10
+ENV PYTHON_VERSION 3.11.8
 RUN apt-get update \
     && wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz \
         && tar -xf Python-$PYTHON_VERSION.tar.xz \
         && mv Python-$PYTHON_VERSION /opt/ \
+        && apt install -y --no-install-recommends build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libffi-dev curl libbz2-dev  python3-pip libldap2-dev libpq-dev libsasl2-dev \
         && cd /opt/Python-$PYTHON_VERSION/ \
         && ./configure --enable-optimizations --enable-shared \
         && make \
@@ -57,14 +56,8 @@ RUN apt-get update \
         && pip3 --version \
         &&  rm -rf Python-$PYTHON_VERSION.tar.xz
 
-# RUN apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev checkinstall
-# RUN update-alternatives --install /usr/bin/python python3 /usr/bin/python3 20
-# RUN update-alternatives --install /usr/bin/python python3 /opt/Python-$PYTHON_VERSION/python 10
-# RUN update-alternatives --set python3 /opt/Python-$PYTHON_VERSION/python
-
-RUN unlink /usr/bin/python3 && \
-    ln -s /opt/Python-$PYTHON_VERSION/python /usr/bin/python3  && \
-    python3 --version
+RUN apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev libldap2-dev checkinstall
+RUN update-alternatives --install /usr/bin/python python /opt/Python-$PYTHON_VERSION 10
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -77,6 +70,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main' > /etc/a
     && rm -rf "$GNUPGHOME" \
     && apt-get update  \
     && apt-get install --no-install-recommends -y postgresql-client \
+    && apt-get install -y wget\
     && rm -f /etc/apt/sources.list.d/pgdg.list \
     && rm -rf /var/lib/apt/lists/*
 
