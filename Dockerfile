@@ -42,7 +42,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install python
-ENV PYTHON_VERSION 3.11.10
+ENV PYTHON_VERSION=3.11.10
 RUN apt-get update \
     && wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz \
         && tar -xf Python-$PYTHON_VERSION.tar.xz \
@@ -113,7 +113,7 @@ COPY --chmod=777 ./sofem.conf /etc/odoo/
 EXPOSE 8069 8071 8072
 
 # Set the default config file
-ENV ODOO_RC /etc/odoo/sofem.conf
+ENV ODOO_RC=/etc/odoo/sofem.conf
 
 COPY --chmod=777 wait-for-psql.py /usr/local/bin/wait-for-psql.py
 
