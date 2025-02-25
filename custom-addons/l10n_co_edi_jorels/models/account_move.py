@@ -50,7 +50,8 @@ class AccountMove(models.Model):
 
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Edi Document type",
                                           copy=False, ondelete='RESTRICT',
-                                          compute='_compute_ei_type_document', store=True)
+                                          compute='_compute_ei_type_document', store=True,
+                                          default=lambda self: self._compute_ei_type_document())
     ei_type_document = fields.Selection(selection=[
         ('none', 'None'),
         ('invoice', 'Invoice'),
@@ -58,7 +59,8 @@ class AccountMove(models.Model):
         ('debit_note', 'Debit note'),
         ('doc_support', 'Document support'),
         ('note_support', 'Note support'),
-    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True)
+    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True,
+        default=lambda self: self._compute_ei_type_document())
 
     ei_customer = fields.Text(string="customer json", copy=False)
     ei_legal_monetary_totals = fields.Text(string="legal_monetary_totals json", copy=False)
@@ -71,17 +73,17 @@ class AccountMove(models.Model):
                                     store=True, compute="_compute_ei_is_not_test")
 
     # API Response:
-    ei_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True)
+    ei_is_valid = fields.Boolean(string="Valid", copy=False)
     ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     ei_class = fields.Char("Class", copy=False, readonly=True)
     ei_number = fields.Char(string="Edi number", compute="compute_number_formatted", store=True, copy=False,
                             readonly=True)
-    ei_uuid = fields.Char(string="UUID", copy=False, readonly=True)
-    ei_issue_date = fields.Date(string="Issue date", copy=False, readonly=True)
+    ei_uuid = fields.Char(string="UUID", copy=False)
+    ei_issue_date = fields.Date(string="Issue date", copy=False)
     ei_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     ei_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
-    ei_zip_key = fields.Char(string="Zip key", copy=False, readonly=True)
+    ei_zip_key = fields.Char(string="Zip key", copy=False)
     ei_status_code = fields.Char(string="Status code", copy=False, readonly=True)
     ei_status_description = fields.Char(string="Status description", copy=False, readonly=True)
     ei_status_message = fields.Char(string="Status message", copy=False, readonly=True)
@@ -96,11 +98,11 @@ class AccountMove(models.Model):
     ei_xml_base64_bytes = fields.Binary('XML', attachment=True, copy=False, readonly=True)
     ei_application_response_base64_bytes = fields.Binary("Application response", attachment=True, copy=False,
                                                          readonly=True)
-    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False, readonly=True)
-    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False, readonly=True)
+    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False)
+    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False)
     ei_zip_base64_bytes = fields.Binary('Zip document', attachment=True, copy=False, readonly=True)
     ei_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
-                                          string="Type environment", copy=False, readonly=True,
+                                          string="Type environment", copy=False,
                                           default=lambda self: self._default_ei_type_environment())
     ei_payload = fields.Text("Payload", copy=False, readonly=True)
 
@@ -112,7 +114,11 @@ class AccountMove(models.Model):
     ei_dian_response_base64_bytes = fields.Binary('DIAN response', attachment=True, copy=False, readonly=True)
 
     # For mail attached
-    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True)
+    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False)
+
+    # Additional documents for electronic invoicing
+    ei_additional_documents = fields.Many2many('ir.attachment', string='Additional Documents',
+                                               help='Additional documents to be attached to the electronic invoicing email')
 
     # QR image
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
@@ -148,14 +154,13 @@ class AccountMove(models.Model):
                                                compute="compute_ei_correction_concept_id", store=True,
                                                ondelete='RESTRICT')
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
-                                                      string="Credit correction concept", copy=False, readonly=True,
+                                                      string="Credit correction concept", copy=False,
                                                       domain=[('type_document_id', 'in', (5, 13))],
                                                       ondelete='RESTRICT')
     ei_correction_concept_debit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
-                                                     string="Debit correction concept", copy=False, readonly=True,
+                                                     string="Debit correction concept", copy=False,
                                                      domain=[('type_document_id', '=', '6')], ondelete='RESTRICT')
-    ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False,
-                                                        readonly=True)
+    ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False)
 
     value_letters = fields.Char("Value in letters", compute="_compute_amount", store=True)
 
@@ -168,20 +173,20 @@ class AccountMove(models.Model):
         ('transport', 'Transport'),
         ('exchange', 'Exchange'),
         ('iva_free_day', 'Día Sin IVA (No activo)')
-    ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True, readonly=True,
+    ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True,
         required=True)
 
     # Period
-    date_start = fields.Date(string="Start date", default=None, copy=True, readonly=True)
-    date_end = fields.Date(string="End date", default=None, copy=True, readonly=True)
+    date_start = fields.Date(string="Start date", default=None, copy=True)
+    date_end = fields.Date(string="End date", default=None, copy=True)
 
     # Order Reference
-    order_ref_number = fields.Char(string="Order reference", default=None, copy=False, readonly=True)
-    order_ref_date = fields.Date(string="Order date", default=None, copy=False, readonly=True)
+    order_ref_number = fields.Char(string="Order reference", default=None, copy=False)
+    order_ref_date = fields.Date(string="Order date", default=None, copy=False)
 
     # Is out of country
     is_out_country = fields.Boolean(string='Is it for out of the country?',
-                                    default=lambda self: self.get_default_is_out_country(), readonly=True)
+                                    default=lambda self: self.get_default_is_out_country())
 
     # Payment form
     payment_form_id = fields.Many2one(string="Payment form", comodel_name='l10n_co_edi_jorels.payment_forms',
@@ -189,16 +194,19 @@ class AccountMove(models.Model):
                                       readonly=True, ondelete='RESTRICT')
     payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
                                         default=lambda self: self._default_payment_method_id(), copy=True,
-                                        readonly=True, domain=[('scope', '=', False)], ondelete='RESTRICT')
+                                        domain=[('scope', '=', False)], ondelete='RESTRICT')
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution", ondelete='RESTRICT', readonly=True)
+                                    store=True, compute="_compute_resolution", ondelete='RESTRICT')
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='move_id')
 
     is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
                                       help="It indicates that the edi document has been sent.")
+
+    # === Amount fields in company currency ===
+    is_multicurrency = fields.Boolean(string='Is multicurrency?', compute='_compute_is_multicurrency')
 
     def _auto_init(self):
         # Edi type document
@@ -600,9 +608,9 @@ class AccountMove(models.Model):
                 if invoice_line_id.discount:
                     discount = True
                     allowance_charges.update({'indicator': False})
-                    amount = abs(invoice_line_id.balance) * invoice_line_id.discount / (
-                            100.0 - invoice_line_id.discount)
-                    base_amount = abs(invoice_line_id.balance) + amount
+                    amount = round_curr(abs(invoice_line_id.balance) * invoice_line_id.discount / (
+                            100.0 - invoice_line_id.discount))
+                    base_amount = round_curr(abs(invoice_line_id.balance) + amount)
                     allowance_charge_reason = "Descuento"
                 else:
                     discount = False
@@ -784,20 +792,18 @@ class AccountMove(models.Model):
 
         for rec in self:
             amount_tax_withholding = 0
-            amount_tax_withholding_company = 0
             amount_tax_no_withholding = 0
-            amount_tax_no_withholding_company = 0
             amount_excluded = 0
-            amount_excluded_company = 0
             amount_commercial_sample = 0
-            amount_commercial_sample_company = 0
 
-            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).rate
+            currency = rec.currency_id
+            company = rec.company_id or self.env.company
+            rate_date = rec.date or rec.invoice_date or fields.Date.context_today(self)
+            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rate_date)).rate
             inverse_rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).inverse_rate
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
-                    taxable_amount_company = abs(invoice_line_id.balance)
                     discount = bool(invoice_line_id.discount)
 
                     # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
@@ -810,10 +816,8 @@ class AccountMove(models.Model):
                         lst_price_invoice = lst_price_company * rate
 
                         taxable_amount = lst_price_invoice * invoice_line_id.quantity
-                        taxable_amount_company = lst_price_company * invoice_line_id.quantity
 
                         amount_commercial_sample = amount_commercial_sample + taxable_amount
-                        amount_commercial_sample_company = amount_commercial_sample_company + taxable_amount_company
 
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
                         tax_name = invoice_line_tax_id.description or ''
@@ -824,50 +828,43 @@ class AccountMove(models.Model):
                             # The 'amount' field automatically uses the value defined in the tax configuration
                             # without currency conversion.
                             tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
-                            tax_amount_company = tax_amount * inverse_rate
                         else:
                             # For percent and code amount type
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            tax_amount_company = taxable_amount_company * invoice_line_tax_id.amount / 100.0
 
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
-                                amount_excluded_company = amount_excluded_company + taxable_amount_company
                             elif edi_tax_name[:4] == 'Rete':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
-                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
                             else:
                                 amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
-                                amount_tax_no_withholding_company = (amount_tax_no_withholding_company +
-                                                                     tax_amount_company)
                         else:
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
-                                amount_excluded_company = amount_excluded_company + taxable_amount_company
                             elif tax_name[:3] == 'Rte':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
-                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
                             else:
                                 amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
-                                amount_tax_no_withholding_company = (amount_tax_no_withholding_company +
-                                                                     tax_amount_company)
 
             rec.ei_amount_tax_withholding = amount_tax_withholding
-            rec.ei_amount_tax_withholding_company = amount_tax_withholding_company
+            rec.ei_amount_tax_withholding_company = currency._convert(rec.ei_amount_tax_withholding,
+                                                                      company.currency_id, company, rate_date)
             rec.ei_amount_tax_no_withholding = amount_tax_no_withholding
-            rec.ei_amount_tax_no_withholding_company = amount_tax_no_withholding_company
+            rec.ei_amount_tax_no_withholding_company = currency._convert(rec.ei_amount_tax_no_withholding,
+                                                                         company.currency_id, company, rate_date)
             rec.ei_amount_total_no_withholding = rec.amount_untaxed + rec.ei_amount_tax_no_withholding
             rec.ei_amount_total_no_withholding_company = (abs(rec.amount_untaxed_signed) +
                                                           rec.ei_amount_tax_no_withholding_company)
             rec.ei_amount_excluded = amount_excluded
-            rec.ei_amount_excluded_company = amount_excluded_company
-
+            rec.ei_amount_excluded_company = currency._convert(rec.ei_amount_excluded, company.currency_id, company,
+                                                               rate_date)
             rec.ei_amount_commercial_sample = amount_commercial_sample
-            rec.ei_amount_commercial_sample_company = amount_commercial_sample_company
+            rec.ei_amount_commercial_sample_company = currency._convert(rec.ei_amount_commercial_sample,
+                                                                        company.currency_id, company, rate_date)
 
             if self.is_universal_discount():
                 # if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
@@ -1123,7 +1120,7 @@ class AccountMove(models.Model):
         else:
             return operation[self.ei_operation]
 
-    def get_json_request(self):
+    def get_json_request(self, check_date=True):
         for rec in self:
             if rec.should_send_document_to_dian():
                 # Important for compatibility with old fields,
@@ -1164,7 +1161,7 @@ class AccountMove(models.Model):
 
                 # Issue date
                 if rec.invoice_date:
-                    if rec.invoice_date != fields.Date.context_today(rec):
+                    if check_date and rec.invoice_date != fields.Date.context_today(rec):
                         raise UserError(_("The issue date must be today's date"))
                     json_request['date'] = fields.Date.to_string(rec.invoice_date)
 
@@ -1443,8 +1440,9 @@ class AccountMove(models.Model):
         if to_edi:
             # Invoices in DIAN cannot be validated with zero total
             to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total))
-            if to_paid_invoices:
-                raise UserError(_('Please check your invoice again. Are you really billing something?'))
+            if to_paid_invoices and not self.company_id.ei_allow_zero_total:
+                raise UserError(
+                    _('Please check your invoice again. Are you really billing something? To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
 
             # Validate invoices
             to_electronic_invoices = to_edi.filtered(lambda inv: inv.state == 'posted'
@@ -1551,7 +1549,7 @@ class AccountMove(models.Model):
             try:
                 # This line ensures that the electronic fields of the invoice are updated in Odoo,
                 # before request
-                requests_data = rec.get_json_request()
+                requests_data = rec.get_json_request(check_date=False)
                 _logger.debug('Customer data: %s', requests_data)
 
                 if rec.should_send_document_to_dian():
@@ -1829,44 +1827,108 @@ class AccountMove(models.Model):
         for move in self.filtered(lambda m: m.is_to_send_edi_email()):
             move_result = result.setdefault(move.id, {})
 
-            if move.ei_zip_name:
-                attached_document_name = 'ad' + move.ei_zip_name[1:-4]
-            else:
-                attached_document_name = move.ei_uuid
+            if not move.company_id.ei_enable or not move.is_to_send_edi_email():
+                continue
 
-            pdf_name = attached_document_name + '.pdf'
-            pdf_path = Path(tempfile.gettempdir()) / pdf_name
-
-            xml_name = attached_document_name + '.xml'
-            xml_path = Path(tempfile.gettempdir()) / xml_name
-
-            zip_name = attached_document_name + '.zip'
-            zip_path = Path(tempfile.gettempdir()) / zip_name
-
-            zip_archive = zipfile.ZipFile(zip_path, 'w')
-
-            pdf_handle = open(pdf_path, 'wb')
-            # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-            pdf_handle.write(base64.decodebytes(move.ei_pdf_base64_bytes))
-            pdf_handle.close()
-            zip_archive.write(pdf_path, arcname=pdf_name)
-
-            xml_handle = open(xml_path, 'wb')
-            xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
-            xml_handle.close()
-            zip_archive.write(xml_path, arcname=xml_name)
-
-            zip_archive.close()
-
-            with open(zip_path, 'rb') as f:
-                attached_zip = f.read()
-                ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                attachments += [(zip_name, ei_attached_zip_base64_bytes)]
-                move.write({
-                    'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
-                })
+            move._compute_attached_zip_file()
+            attached_document_name = move._compute_attached_document_name()
+            zip_name = f"{attached_document_name}.zip"
+            attachments += [(zip_name, move.ei_attached_zip_base64_bytes)]
 
             edi_attachments = {'attachments': attachments}
             move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
             move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
         return result
+
+    def _compute_attached_document_name(self):
+        self.ensure_one()
+        if self.ei_zip_name:
+            attached_document_name = 'ad' + self.ei_zip_name[1:-4]
+        else:
+            attached_document_name = self.ei_uuid
+
+        return attached_document_name
+
+    def _compute_attached_zip_file(self):
+        for move in self:
+            if not move.ei_attached_document_base64_bytes:
+                continue
+
+            attached_document_name = move._compute_attached_document_name()
+
+            # Create temporary directory for all files
+            temp_dir = Path(tempfile.gettempdir())
+
+            # Define file paths
+            pdf_name = attached_document_name + '.pdf'
+            pdf_path = temp_dir / pdf_name
+
+            xml_name = attached_document_name + '.xml'
+            xml_path = temp_dir / xml_name
+
+            zip_name = attached_document_name + '.zip'
+            zip_path = temp_dir / zip_name
+
+            # Create main zip file
+            with zipfile.ZipFile(zip_path, 'w') as zip_archive:
+                # Generate default Odoo PDF report
+                pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(
+                    'account.account_invoices',
+                    move.ids
+                )
+
+                # Add PDF to zip
+                with open(pdf_path, 'wb') as pdf_handle:
+                    pdf_handle.write(pdf_content)
+                zip_archive.write(pdf_path, arcname=pdf_name)
+
+                # Add XML to zip
+                with open(xml_path, 'wb') as xml_handle:
+                    xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
+                zip_archive.write(xml_path, arcname=xml_name)
+
+                # If there are additional documents, create a secondary zip
+                if move.ei_additional_documents:
+                    additional_zip_name = f"{attached_document_name}_additional_documents.zip"
+                    additional_zip_path = temp_dir / additional_zip_name
+
+                    with zipfile.ZipFile(additional_zip_path, 'w') as additional_zip:
+                        for attachment in move.ei_additional_documents:
+                            attachment_path = temp_dir / attachment.name
+                            with open(attachment_path, 'wb') as attachment_handle:
+                                attachment_handle.write(base64.b64decode(attachment.datas))
+                            additional_zip.write(attachment_path, arcname=attachment.name)
+                            # Clean up temporary attachment file
+                            attachment_path.unlink()
+
+                    # Add secondary zip to main zip
+                    zip_archive.write(additional_zip_path, arcname=additional_zip_name)
+                    # Clean up secondary zip file
+                    additional_zip_path.unlink()
+
+            # Read and encode the final zip file
+            with open(zip_path, 'rb') as f:
+                attached_zip = f.read()
+                ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
+                move.write({
+                    'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
+                })
+
+            # Clean up temporary files
+            pdf_path.unlink()
+            xml_path.unlink()
+            zip_path.unlink()
+
+    def action_send_and_print(self):
+        for rec in self:
+            if not rec.company_id.ei_enable or not rec.is_to_send_edi_email():
+                continue
+
+            rec._compute_attached_zip_file()
+
+        return super().action_send_and_print()
+
+    @api.depends('currency_id', 'company_currency_id')
+    def _compute_is_multicurrency(self):
+        for invoice in self:
+            invoice.is_multicurrency = invoice.currency_id != invoice.company_currency_id
