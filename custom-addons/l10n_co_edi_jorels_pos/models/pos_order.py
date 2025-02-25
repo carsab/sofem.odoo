@@ -85,7 +85,7 @@ class PosOrder(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
-        result = super(PosOrder, self)._order_fields(ui_order)        
+        result = super(PosOrder, self)._order_fields(ui_order)
 
         result['to_electronic_invoice'] = ui_order[
             'to_electronic_invoice'] if "to_electronic_invoice" in ui_order else False
@@ -93,7 +93,5 @@ class PosOrder(models.Model):
         result['ei_is_dian_document'] = False
         if 'to_invoice' in ui_order and ui_order['to_invoice']:
             result['ei_is_dian_document'] = result['to_electronic_invoice']
-        
-        print("MODEL:::::::::::::::::>>>>",result)
 
         return result

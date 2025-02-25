@@ -42,7 +42,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Install python
-ENV PYTHON_VERSION=3.11.10
+ENV PYTHON_VERSION=3.11.11
 RUN apt-get update \
     && wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.xz \
         && tar -xf Python-$PYTHON_VERSION.tar.xz \
@@ -56,11 +56,6 @@ RUN apt-get update \
         && python3 --version \
         && pip3 --version \
         &&  rm -rf Python-$PYTHON_VERSION.tar.xz
-
-# RUN apt-get install -y --no-install-recommends libmagic-mgc libmagic1 gettext libpq5 python3-dev libsasl2-dev libssl-dev checkinstall
-# RUN update-alternatives --install /usr/bin/python python3 /usr/bin/python3 20
-# RUN update-alternatives --install /usr/bin/python python3 /opt/Python-$PYTHON_VERSION/python 10
-# RUN update-alternatives --set python3 /opt/Python-$PYTHON_VERSION/python
 
 RUN unlink /usr/bin/python3 && \
     ln -s /opt/Python-$PYTHON_VERSION/python /usr/bin/python3  && \
