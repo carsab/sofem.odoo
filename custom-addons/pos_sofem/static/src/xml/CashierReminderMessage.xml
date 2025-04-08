@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Plantilla para el componente independiente -->
+    <t t-name="pos_cashier_reminder.ReminderMessageTemplate" owl="1">
+        <div t-if="state.isVisible" class="cashier-reminder-message" style="background-color: #ffffcc; border-left: 6px solid #ffcc00; padding: 10px 15px; 
+                    margin: 8px 0; border-radius: 4px; display: flex; justify-content: space-between; 
+                    align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%;">
+            <div style="display: flex; align-items: center;">
+                <i class="fa fa-exclamation-circle me-2" style="font-size: 28px; color: #ff9900;"></i>
+                <span style="font-weight: 900; color: #333;" t-esc="state.message"/>
+            </div>
+            <button class="btn" t-on-click="hideMessage" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">×</button>
+        </div>
+    </t>
+
+    <!-- Modificar la pantalla de productos -->
+    <t t-name="pos_cashier_reminder.ProductScreenInherit" t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('product-screen')]" position="inside">
+            <div t-if="reminderState.isVisible" class="cashier-reminder-overlay" style="position: absolute; top: 0; left: 0; right: 0; z-index: 1000; padding: 10px; background-color: rgba(255,255,255,0.9);">
+                <div class="cashier-reminder-container" style="background-color: #ffffcc; border-left: 6px solid #ffcc00; padding: 10px 15px; 
+                            border-radius: 4px; display: flex; justify-content: space-between; 
+                            align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa fa-exclamation-circle me-2" style="font-size: 28px; color: #ff9900;"></i>
+                        <span style="font-weight: 900; color: #333;" t-esc="reminderState.message"/>
+                    </div>
+                    <button class="btn" t-on-click="hideReminder" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">×</button>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>

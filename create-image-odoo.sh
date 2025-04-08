@@ -1,1 +1,1 @@
-docker build -f Dockerfile -t "odoo:V17f" .
+docker build -f Dockerfile -t "odoo:V17t" .
