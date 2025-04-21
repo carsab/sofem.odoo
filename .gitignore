@@ -44,4 +44,9 @@ package.json
 /venv/
 /env_fuentes/
 /odoo/data/
-venv_311/
+venv_310/
+
+ .vscode/
+ .gitignore
+ run-odoo.sh
+ sofem.conf

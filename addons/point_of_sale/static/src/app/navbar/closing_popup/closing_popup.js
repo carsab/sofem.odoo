@@ -233,13 +233,13 @@ export class ClosePosPopup extends AbstractAwaitablePopup {
     }
 
     async salesReport() {
+        console.log("SESION ID::::>", this.pos.pos_session.id)
+
         const saleDetails = await this.orm.call(
             "report.point_of_sale.report_saledetails",
             "get_sale_details",
             [false, false, false, [this.pos.pos_session.id]]
         );
-
-        console.log("SESION ID::::>", this.pos.pos_session.id)
 
         saleDetails.headerData = this.pos.getReceiptHeaderData()
 

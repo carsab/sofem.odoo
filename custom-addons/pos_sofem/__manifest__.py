@@ -7,7 +7,7 @@
     'website': "https://www.yourcompany.com",
     'category': 'point_of_sale',
     'version': '0.1',
-    'depends': ['base','point_of_sale','l10n_co_pos','l10n_co_edi_jorels_pos',],    
+    'depends': ['base','point_of_sale','l10n_co_pos','l10n_co_edi_jorels','l10n_co_edi_jorels_pos',],    
     'assets': {
             'point_of_sale._assets_pos': [
                 'pos_sofem/static/src/js/PaymentScreen.js',

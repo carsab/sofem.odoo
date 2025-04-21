@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="custom_report_saledetails" inherit_id="point_of_sale.report_saledetails">
+        <!-- <xpath expr="//div[hasclass('page')]//div[@class='row mb8'][1]" position="after"> -->
+        <xpath expr="//div[@id='sales']" position="before">
+            <!-- <div t-if="resolution_info and resolution_info.has_resolution" class="row mt-3 mb-3">-->
+            <div >
+                <div >
+                    <div >
+                        <strong>Autorización de Numeración de facturación: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('resolution_number','')"/>
+                        <strong>  Fecha de Resolución: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('resolution_date','')"/>
+                    </div>
+                </div>
+                <div>
+                    <div >
+                        <strong>  Vigente hasta: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('resolution_date_to','')"/>
+                        <strong>Prefijo: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('prefix','')" />
+                    </div>
+                </div>
+                <div >
+                    <div >
+                        <strong>Desde el número: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('number_from')"/>
+                        <strong>  Hasta el número: </strong>
+                        <span t-esc="resolution_info['resolution_data'].get('number_to')"/>
+                    </div>
+                </div>
+            </div>
+
+            <!--</div> -->
+        </xpath>
+    </template>
+</odoo>

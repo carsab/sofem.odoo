@@ -31,11 +31,10 @@ export class SaleDetailsButton extends Component {
             "get_sale_details",
             [false, false, false, [this.pos.pos_session.id]]
         );
-
+        console.log("IMPRESION TIRILLA :::::>", this.pos.pos_session.id)
         saleDetails.headerData = this.pos.getReceiptHeaderData()
-        //saleDetails.formatCurrency = formatCurrency
 
-        console.log("DATA:::::>", saleDetails)
+        console.log("DATA TIRILLA:::::>", saleDetails)
         const report = renderToElement(
             "point_of_sale.SaleDetailsReport",
             Object.assign({}, saleDetails, {
@@ -44,6 +43,7 @@ export class SaleDetailsButton extends Component {
                 formatCurrency: this.env.utils.formatCurrency,
             })
         );
+        console.log("RENDER TIRILLA:::::>", report)
         let rta = this.printer.printHtml(report, { webPrintFallback: true })
         console.log("Impresión detalle de ventas en tirilla", rta)
     }

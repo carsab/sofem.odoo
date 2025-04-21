@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="point_of_sale.SaleDetailsReport">
-        <div class="pos-receipt">
+        <div class="pos-receipt" style="margin: 5px;">
             <t t-if="pos.company_logo_base64">
                 <img class="pos-receipt-logo" t-att-src="pos.company_logo_base64" alt="Logo"/>
                 <br/>
@@ -23,7 +23,8 @@
                 </h3>
                 <t t-if="headerData.company.vat">
                     <div>
-                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>:
+                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>
+:
                         <t t-esc="headerData.company.vat" />
                     </div>
                 </t>
@@ -39,6 +40,32 @@
                 <div t-if="headerData.company.email" t-esc="headerData.company.email" />
                 <div t-if="headerData.company.website" t-esc="headerData.company.website" />
                 -->
+            </div>
+            <div class="pos-receipt-order-data" width="792px" style="text-align:left; font-size:10px">
+                <div >
+                    <div >
+                        <strong> Autorización de Numeración de facturación: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_number"/>                   
+                        <strong>  Fecha de Resolución: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_date"/>
+                    </div>
+                </div>
+                <div>
+                    <div >              
+                        <strong> Vigente hasta: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_date_to"/>
+                        <strong>  Prefijo: </strong>
+                        <span t-esc="resolution_info.resolution_data.prefix" />     
+                    </div>
+                </div>
+                <div >
+                    <div >
+                        <strong> Desde el número: </strong>
+                        <span t-esc="resolution_info.resolution_data.number_from"/>                   
+                        <strong>  Hasta el número: </strong>
+                        <span t-esc="resolution_info.resolution_data.number_to"/>
+                    </div>
+                </div>                
             </div>
             <div class="pos-receipt-order-name">
                 <b>Fecha del cierre: <t t-esc="date" />
