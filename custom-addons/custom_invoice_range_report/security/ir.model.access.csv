@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_invoice_first_last_range_wizard,invoice.first.last.range.wizard access,model_invoice_first_last_range_wizard,account.group_account_invoice,1,1,1,1
+access_invoice_first_last_range_report_line,invoice.first.last.range.report.line access,model_invoice_first_last_range_report_line,account.group_account_invoice,1,1,1,1

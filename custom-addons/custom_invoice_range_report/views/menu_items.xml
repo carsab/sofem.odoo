@@ -1,0 +1,3 @@
+<odoo>
+    <menuitem id="menu_invoice_first_last_range_report" name="Primera/Última Factura (Rango)" action="action_invoice_first_last_range_report" parent="account.menu_finance_reports" sequence="105"/>
+</odoo>
