@@ -1,0 +1,21 @@
+<odoo>
+    <record id="action_report_invoice_first_last_range_pdf" model="ir.actions.report">
+        <field name="name">Primera/Última Factura (PDF)</field>
+        <field name="model">invoice.first.last.range.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_invoice_range_report.report_invoice_first_last_template_pdf</field>
+        <field name="report_file">custom_invoice_range_report.report_invoice_first_last_template_pdf</field>
+        <field name="print_report_name">(object.date_start and object.date_end and 'Reporte_Facturas_%s_a_%s' % (object.date_start.strftime('%Y%m%d'), object.date_end.strftime('%Y%m%d')) or 'Reporte_Facturas')</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+    <record id="action_report_invoice_first_last_range_xlsx" model="ir.actions.report">
+        <field name="name">Primera/Última Factura (XLSX)</field>
+        <field name="model">invoice.first.last.range.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">custom_invoice_range_report.report_invoice_range_xlsx</field>
+        <field name="report_file">reporte_facturas_rango</field>
+        <field name="print_report_name">(object.date_start and object.date_end and 'Reporte_Facturas_%s_a_%s' % (object.date_start.strftime('%Y%m%d'), object.date_end.strftime('%Y%m%d')) or 'Reporte_Facturas')</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+</odoo>

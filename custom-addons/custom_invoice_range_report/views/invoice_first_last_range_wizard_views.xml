@@ -1,0 +1,39 @@
+<odoo>
+    <record id="invoice_first_last_range_wizard_form_view" model="ir.ui.view">
+        <field name="name">invoice.first.last.range.wizard.form</field>
+        <field name="model">invoice.first.last.range.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Seleccionar Rango de Fechas">
+                <p>
+                    Seleccione el rango de fechas para generar el reporte de primera y última factura por punto de venta y vendedor.
+                </p>
+                <group>
+                    <group>
+                        <field name="date_start"/>
+                    </group>
+                    <group>
+                        <field name="date_end"/>
+                    </group>
+                </group>
+                <group invisible="not csv_file" string="Descarga CSV">
+                    <field name="csv_file" filename="csv_filename"/>
+                    <field name="csv_filename" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_view_report" string="Ver en Pantalla" type="object" class="btn-primary" data-hotkey="v"/>
+                    <button name="action_print_pdf" string="Descargar PDF" type="object" class="btn-secondary" icon="fa-file-pdf-o" data-hotkey="p"/>
+                    <button name="action_print_xlsx" string="Descargar XLSX" type="object" class="btn-secondary" icon="fa-file-excel-o" data-hotkey="x"/>
+                    <button name="action_print_csv" string="Generar CSV" type="object" class="btn-secondary" icon="fa-file-code-o" data-hotkey="c"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_invoice_first_last_range_report" model="ir.actions.act_window">
+        <field name="name">Reporte Facturas por Rango</field>
+        <field name="res_model">invoice.first.last.range.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

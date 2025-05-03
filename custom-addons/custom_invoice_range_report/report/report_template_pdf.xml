@@ -1,0 +1,54 @@
+<odoo>
+    <template id="report_invoice_first_last_template_pdf">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Reporte Primera y Última Factura</h2>
+
+                    <div class="row mt32 mb32" id="report_dates">
+                        <div class="col-6">
+                            <strong>Fecha Inicio:</strong>
+                            <span t-esc="date_start"/>
+                        </div>
+                        <div class="col-6">
+                            <strong>Fecha Fin:</strong>
+                            <span t-esc="date_end"/>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-bordered mt32" name="invoice_report_table">
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th class="text-left">Punto de Venta (Diario)</th>
+                                <th class="text-left">Vendedor</th>
+                                <th class="text-left">Nro. Primera Factura</th>
+                                <th class="text-left">Nro. Última Factura</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-if="report_data">
+                                <tr t-foreach="report_data" t-as="line">
+                                    <td>
+                                        <span t-esc="line.get('journal_name')"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="line.get('user_name')"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="line.get('first_invoice_name')"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="line.get('last_invoice_name')"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="not report_data">
+                                <td colspan="4" class="text-center">No se encontraron facturas para el período y criterios seleccionados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
