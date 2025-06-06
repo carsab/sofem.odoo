@@ -9,6 +9,7 @@
     import { _t } from "@web/core/l10n/translation";
     import { renderToElement } from "@web/core/utils/render";
     import { post } from "@web/core/network/http_service";
+    import { localization } from "@web/core/l10n/localization";
 import {
     formatDate,
     formatDateTime,
@@ -28,6 +29,16 @@ import wUtils from '@website/js/utils';
          */
         start: function () {
             if (this.editableMode) {
+                // TODO: Improve this. Since the form behavior was handled using
+                // two separate public widgets, and the "data-for" values were
+                // removed (on destroy before saving), we still need to restore
+                // them in edit mode in the case of a simple widget refresh.
+                this.dataForValues = wUtils.getParsedDataFor(this.$target[0].id, this.$target[0].ownerDocument);
+                for (const fieldEl of this._getDataForFields()) {
+                    if (!fieldEl.getAttribute("value")) {
+                        fieldEl.setAttribute("value", this.dataForValues[fieldEl.name]);
+                    }
+                }
                 // We do not initialize the datetime picker in edit mode but want the dates to be formated
                 this.el.querySelectorAll('.s_website_form_input.datetimepicker-input').forEach(el => {
                     const value = el.getAttribute('value');
@@ -42,6 +53,32 @@ import wUtils from '@website/js/utils';
             }
             return this._super(...arguments);
         },
+        /**
+         * @override
+         */
+        destroy() {
+            if (this.editableMode) {
+                // The "data-for" values are always correctly added to the form
+                // on the form widget start. But if we make any change to it in
+                // "edit" mode, we need to be sure it will not be saved with
+                // the new values.
+                for (const fieldEl of this._getDataForFields()) {
+                    fieldEl.removeAttribute("value");
+                }
+            }
+            this._super(...arguments);
+        },
+        /**
+         * @private
+         */
+        _getDataForFields() {
+            if (!this.dataForValues) {
+                return [];
+            }
+            return Object.keys(this.dataForValues)
+                .map(name => this.$target[0].querySelector(`[name="${CSS.escape(name)}"]`))
+                .filter(dataForValuesFieldEl => dataForValuesFieldEl && dataForValuesFieldEl.name !== "email_to");
+        }
     });
 
     publicWidget.registry.s_website_form = publicWidget.Widget.extend({
@@ -145,7 +182,7 @@ import wUtils from '@website/js/utils';
                 // the values to submit() for these fields but this could break
                 // customizations that use the current behavior as a feature.
                 for (const name of fieldNames) {
-                    const fieldEl = this.el.querySelector(`[name="${name}"]`);
+                    const fieldEl = this.el.querySelector(`[name="${CSS.escape(name)}"]`);
 
                     // In general, we want the data-for and prefill values to
                     // take priority over set default values. The 'email_to'
@@ -246,8 +283,18 @@ import wUtils from '@website/js/utils';
             // All 'hidden if' fields start with d-none
             this.el.querySelectorAll('.s_website_form_field_hidden_if:not(.d-none)').forEach(el => el.classList.add('d-none'));
 
+            // Prevent "data-for" values removal on destroy, they are still used
+            // in edit mode to keep the form linked to its predefined server
+            // values (e.g., the default `job_id` value on the application form
+            // for a given job).
+            const dataForValues = wUtils.getParsedDataFor(this.$target[0].id, document) || {};
+            const initialValuesToReset = new Map(
+                [...this.initialValues.entries()].filter(
+                    ([input]) => !dataForValues[input.name] || input.name === "email_to"
+                )
+            );
             // Reset the initial default values.
-            for (const [fieldEl, initialValue] of this.initialValues.entries()) {
+            for (const [fieldEl, initialValue] of initialValuesToReset.entries()) {
                 if (initialValue) {
                     fieldEl.setAttribute('value', initialValue);
                 } else {
@@ -674,8 +721,16 @@ import wUtils from '@website/js/utils';
                 case '!fileSet':
                     return value.name === '';
             }
+
+            const format = value.includes(':')
+                ? localization.dateTimeFormat
+                : localization.dateFormat;
             // Date & Date Time comparison requires formatting the value
-            value = (value.includes(':') ? parseDateTime(value) : parseDate(value)).toUnixInteger();
+            const dateTime = DateTime.fromFormat(value, format);
+            // If invalid, any value other than "NaN" would cause certain
+            // conditions to be broken.
+            value = dateTime.isValid ? dateTime.toUnixInteger() : NaN;
+
             comparable = parseInt(comparable);
             between = parseInt(between) || '';
             switch (comparator) {
@@ -753,10 +808,13 @@ import wUtils from '@website/js/utils';
         _updateFieldVisibility(fieldEl, haveToBeVisible) {
             const fieldContainerEl = fieldEl.closest('.s_website_form_field');
             fieldContainerEl.classList.toggle('d-none', !haveToBeVisible);
-            for (const inputEl of fieldContainerEl.querySelectorAll('.s_website_form_input')) {
-                // Hidden inputs should also be disabled so that their data are
-                // not sent on form submit.
-                inputEl.disabled = !haveToBeVisible;
+            // Do not disable inputs that are required for the model.
+            if (!fieldContainerEl.matches(".s_website_form_model_required")) {
+                for (const inputEl of fieldContainerEl.querySelectorAll(".s_website_form_input")) {
+                    // Hidden inputs should also be disabled so that their data are
+                    // not sent on form submit.
+                    inputEl.disabled = !haveToBeVisible;
+                }
             }
         },
         /**

@@ -4,7 +4,7 @@
 from ast import literal_eval
 
 from pytz import timezone, UTC, utc
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -42,7 +42,7 @@ class HrEmployeeBase(models.AbstractModel):
     resource_id = fields.Many2one('resource.resource')
     resource_calendar_id = fields.Many2one('resource.calendar', check_company=True)
     parent_id = fields.Many2one('hr.employee', 'Manager', compute="_compute_parent_id", store=True, readonly=False,
-        check_company=True)
+        domain="['|', ('company_id', '=', False), ('company_id', 'in', allowed_company_ids)]")
     coach_id = fields.Many2one(
         'hr.employee', 'Coach', compute='_compute_coach', store=True, readonly=False,
         check_company=True,
@@ -74,7 +74,12 @@ class HrEmployeeBase(models.AbstractModel):
         new_hire_field = self._get_new_hire_field()
         new_hire_date = fields.Datetime.now() - timedelta(days=90)
         for employee in self:
-            employee.newly_hired = employee[new_hire_field] > new_hire_date
+            if not employee[new_hire_field]:
+                employee.newly_hired = False
+            elif not isinstance(employee[new_hire_field], datetime):
+                employee.newly_hired = employee[new_hire_field] > new_hire_date.date()
+            else:
+                employee.newly_hired = employee[new_hire_field] > new_hire_date
 
     def _search_newly_hired(self, operator, value):
         new_hire_field = self._get_new_hire_field()

@@ -20,7 +20,7 @@
             run: `text ${application.email}`,
         }, {
             content: "Complete phone number",
-            trigger: "input[name=partner_mobile]",
+            trigger: "input[name=partner_phone]",
             run: `text ${application.phone}`,
         }, {
             content: "Complete LinkedIn profile",
@@ -123,11 +123,38 @@
         content: 'Verify that the job_id field has kept its default value',
         trigger: "body",
         run: () => {
-            if (!document.querySelector('.o_iframe:not(.o_ignore_in_tour)').contentDocument.querySelector('input[name="job_id"][value="FAKE_JOB_ID_DEFAULT_VAL"]')) {
+            const doc = document.querySelector(".o_iframe:not(.o_ignore_in_tour)").contentDocument;
+            const id = doc.querySelector('[data-oe-model="hr.job"]').dataset.oeId;
+            if (!doc.querySelector(`input[name="job_id"][value="${id}"]`)) {
                 console.error('The job_id field has lost its default value');
             }
         }
     },
+]);
+
+    // This tour addresses an issue that occurred in a website form containing
+    // the 'hide-change-model' attribute. Specifically, when a model-required
+    // field is selected, the alert message should not display an undefined
+    // action name.
+    wTourUtils.registerWebsitePreviewTour('model_required_field_should_have_action_name', {
+        test: true,
+        url: '/jobs',
+    }, () => [{
+        content: "Select Job",
+        trigger: "iframe h3:contains('Guru')",
+    }, {
+        content: "Apply",
+        trigger: "iframe a:contains('Apply')",
+    },
+    ...wTourUtils.clickOnEditAndWaitEditMode(),
+    {
+        content: "click on the your name field",
+        trigger: "iframe #hr_recruitment_form div.s_website_form_model_required",
+    }, {
+        content: "Select model-required field",
+        trigger: "we-customizeblock-options we-alert > span:not(:contains(undefined))",
+        isCheck: true,
+    }
 ]);
 
 export default {};

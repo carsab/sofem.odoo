@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-import re
 from stdnum.it import codicefiscale, iva
 
 from odoo import api, fields, models, _
@@ -42,9 +41,12 @@ class ResPartner(models.Model):
         """ Generates all partner values needed by l10n_it_edi XML export.
 
             VAT number:
-            If there is a VAT number and the partner is not in EU, then the exported value is 'OO99999999999'
+            If there is a VAT number and the partner is not in EU, then we use the VAT number as is,
+                as an alphanumeric value identifying the counterparty, up to a maximum of
+                28 alphanumeric characters, on which the SdI does not perform validity checks.
             If there is a VAT number and the partner is in EU, then remove the country prefix
-            If there is no VAT and the partner is not in Italy, then the exported value is '0000000'
+            If there is no VAT and the partner is not in EU, then the exported value is 'OO99999999999'
+            If there is no VAT and the partner is in EU, then the exported value is '0000000'
             If there is no VAT and the partner is in Italy, the VAT is not set and Codice Fiscale will be relevant in the XML.
             If there is no VAT and no Codice Fiscale, the invoice is not even exported, so this case is not handled.
 
@@ -69,44 +71,45 @@ class ResPartner(models.Model):
 
         europe = self.env.ref('base.europe', raise_if_not_found=False)
         in_eu = not europe or not self.country_id or self.country_id in europe.country_ids
+        is_sm = self.country_id and self.country_id.code == "SM"
 
         # VAT number and country code
         normalized_vat = self.vat
-        normalized_country = False
-        if self.vat:
+        normalized_country = self.country_code
+        if has_vat := self.vat not in [False, '/', 'NA']:
             normalized_vat = self.vat.replace(' ', '')
             if in_eu:
                 # If there is no country-code prefix, it's domestic to Italy
                 if normalized_vat[:2].isdecimal():
-                    normalized_country = 'IT'
+                    if not normalized_country:
+                        normalized_country = 'IT'
                 # If the partner is from the EU, the country-code prefix of the VAT must be taken away
                 else:
-                    normalized_country = normalized_vat[:2].upper()
+                    if not normalized_country:
+                        normalized_country = normalized_vat[:2].upper()
                     normalized_vat = normalized_vat[2:]
+            # If customer is from San Marino
+            elif is_sm:
+                normalized_vat = normalized_vat if normalized_vat[:2].isdecimal() else normalized_vat[2:]
 
-            # The Tax Agency arbitrarily decided that non-EU VAT are not interesting,
-            # so this default code is used instead
-            # Detect the country code from the partner country instead
+        # If it has a codice fiscale (and no country), it's an Italian partner
+        if not normalized_country and self.l10n_it_codice_fiscale:
+            normalized_country = 'IT'
+        elif not has_vat and self.country_id and self.country_id.code != 'IT':
+            if in_eu:
+                normalized_vat = '0000000'
             else:
                 normalized_vat = 'OO99999999999'
-
-        if not normalized_country:
-            if self.country_id:
-                normalized_country = self.country_id.code
-            # If it has a codice fiscale (and no country), it's an Italian partner
-            elif self.l10n_it_codice_fiscale:
-                normalized_country = 'IT'
-
-        elif not self.vat and self.country_id and self.country_id.code != 'IT':
-            normalized_vat = '0000000'
-            normalized_country = self.country_id.code
 
         if normalized_country == 'IT':
             pa_index = (self.l10n_it_pa_index or '0000000').upper()
             zipcode = self.zip
             state_code = self.state_id and self.state_id.code
         else:
-            pa_index = 'XXXXXXX'
+            # San Marino is externally integrated with the SdI.
+            # The country as a whole has a single fixed Destination Code.
+            # https://www.agenziaentrate.gov.it/portale/documents/20143/3788702/Modifiche+ProvvedimentonSanMarino+0248717-2021.pdf/429b5571-17b9-0cce-7f62-f79cf53086d7
+            pa_index = '2R4GTO8' if is_sm else 'XXXXXXX'
             zipcode = '00000'
             state_code = False
 
@@ -131,15 +134,22 @@ class ResPartner(models.Model):
         if l10n_it_codice_fiscale is None:
             self.ensure_one()
             l10n_it_codice_fiscale = self.l10n_it_codice_fiscale
-        if l10n_it_codice_fiscale and re.match(r'^IT[0-9]{11}$', l10n_it_codice_fiscale):
-            return l10n_it_codice_fiscale[2:13]
-        return l10n_it_codice_fiscale
+        if l10n_it_codice_fiscale:
+            if codicefiscale._code_re.match(l10n_it_codice_fiscale):
+                # Personal codice
+                return codicefiscale.compact(l10n_it_codice_fiscale)
+            # Company codice
+            return iva.compact(l10n_it_codice_fiscale)
 
     @api.onchange('vat', 'country_id')
     def _l10n_it_onchange_vat(self):
-        if not self.l10n_it_codice_fiscale and self.vat and (self.country_id.code == "IT" or self.vat.startswith("IT")):
+        if self.vat and (
+            self.country_code == "IT"
+            if self.country_code
+            else self.vat.startswith("IT")
+        ):
             self.l10n_it_codice_fiscale = self._l10n_it_edi_normalized_codice_fiscale(self.vat)
-        elif self.country_id.code not in [False, "IT"]:
+        else:
             self.l10n_it_codice_fiscale = False
 
     @api.constrains('l10n_it_codice_fiscale')

@@ -58,7 +58,8 @@ export function useViewButtons(model, ref, options = {}) {
                 if (!_continue) {
                     return;
                 }
-                const closeDialog = (clickParams.close || clickParams.special) && env.closeDialog;
+                const closeDialog =
+                    (clickParams.close || clickParams.special) && env.dialogData?.close;
                 const params = getResParams();
                 const resId = params.resId;
                 const resIds = params.resIds || model.resIds;
@@ -79,8 +80,12 @@ export function useViewButtons(model, ref, options = {}) {
                     resIds,
                     context: params.context || {}, //LPE FIXME new Context(payload.env.context).eval();
                     buttonContext,
-                    onClose: async () => {
-                        if (!closeDialog && status(comp) !== "destroyed") {
+                    onClose: async (onCloseInfo) => {
+                        if (
+                            !closeDialog &&
+                            status(comp) !== "destroyed" &&
+                            !onCloseInfo?.noReload
+                        ) {
                             const reload = options.reload || (() => model.load());
                             await reload();
                         }

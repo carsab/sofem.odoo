@@ -12,22 +12,23 @@
 # Konsta Aavaranta, 2023
 # Karoliina Nisula <karoliina.nisula@tawasta.fi>, 2023
 # Sanna Edelman <direct@generare.com>, 2023
+# Veikko Väätäjä <veikko.vaataja@gmail.com>, 2023
 # Miku Laitinen <miku.laitinen@gmail.com>, 2023
 # Tuomo Aura <tuomo.aura@web-veistamo.fi>, 2023
 # Jarmo Kortetjärvi <jarmo.kortetjarvi@gmail.com>, 2023
 # Miika Nissi <miika.nissi@tawasta.fi>, 2023
 # Kari Lindgren <kari.lindgren@emsystems.fi>, 2023
-# Veikko Väätäjä <veikko.vaataja@gmail.com>, 2023
 # Martin Trigaux, 2023
-# Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2024
+# Jessica Jakara, 2024
+# Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2025-05-09 20:37+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2024\n"
+"Last-Translator: Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2025\n"
 "Language-Team: Finnish (https://app.transifex.com/odoo/teams/41243/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -512,7 +513,7 @@ msgstr "Eräpäivänä maksettavan vakuuden kertynyt korko."
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/global_filters/plugins/global_filters_ui_plugin.js:0
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
+#: code:addons/spreadsheet/static/src/global_filters/plugins/global_filters_ui_plugin.js:0
 #, python-format
 msgid "Active Filters"
 msgstr "Aktiiviset suodattimet"
@@ -1977,6 +1978,13 @@ msgstr "Muuntaa määritetyn merkkijonon isoksi."
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
+msgid "Converts a string to a numeric value."
+msgstr "Muuntaa merkkijonon numeeriseksi arvoksi."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
 msgid "Converts a time string into its serial number representation."
 msgstr "Muuntaa aika-merkkijonon sarjanumeroesitykseksi."
 
@@ -2061,7 +2069,7 @@ msgstr "Radiansseina ilmoitetun kulman kootangentti."
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
-#: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #, python-format
 msgid "Count"
 msgstr "Määrä"
@@ -2787,6 +2795,7 @@ msgstr "Muokkaa"
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "Edit link"
@@ -2929,6 +2938,7 @@ msgstr "Helmikuu"
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
 #, python-format
 msgid "Field %s does not exist"
@@ -2975,7 +2985,6 @@ msgstr "Täyttöväri"
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Filter"
@@ -3335,6 +3344,15 @@ msgstr ""
 msgid "Function [[FUNCTION_NAME]] expects number values for %s, but got a %s."
 msgstr ""
 "Funktio [[FUNCTION_NAME]] odottaa lukuarvoja arvolle %s, mutta sai arvon %s."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid ""
+"Function [[FUNCTION_NAME]] expects the parameter '%s' to be a single value "
+"or a single cell reference, not a range."
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -5032,6 +5050,7 @@ msgstr "Yksilöllisiä arvoja ei löytynyt"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_time_adapters.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_time_adapters.js:0
 #, python-format
 msgid "None"
 msgstr "Ei mitään"
@@ -5843,6 +5862,17 @@ msgstr "Pyöristää numeron vakiosääntöjen mukaisesti."
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
+msgid ""
+"Rounds a number down to the nearest integer that is less than or equal to "
+"it."
+msgstr ""
+"Pyöristää luvun lähimpään kokonaislukuun, joka on pienempi tai yhtä suuri "
+"kuin luku."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
 msgid "Rounds a number up to the nearest odd integer."
 msgstr "Pyöristää luvun lähimpään parittomaan kokonaislukuun."
 
@@ -6314,7 +6344,7 @@ msgstr "Pinottu viivakaavio"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "Standard"
-msgstr "Normaali"
+msgstr "Standardi"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -6896,6 +6926,27 @@ msgstr "Muunnettava joukko."
 #, python-format
 msgid "The base (%s) must be between 2 and 36 inclusive."
 msgstr "Perusluvun (%s) on oltava välillä 2 ja 36 (mukaan lukien)."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base (%s) must be strictly positive."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base must be different from 1."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base of the logarithm."
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -8121,6 +8172,13 @@ msgstr "Luvun logaritmi, perusta e (Eulerin luku)."
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
+msgid "The logarithm of a number, for a given base."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
 msgid "The low end of the random range."
 msgstr "Satunnaislukualueen alapää."
 
@@ -8676,6 +8734,13 @@ msgstr "Luku, joka korotetaan eksponentin potenssiin."
 #, python-format
 msgid "The number to return."
 msgstr "Palautettava numero."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The number to round down to the nearest integer."
+msgstr "Luku, joka pyöristetään alaspäin lähimpään kokonaislukuun."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -9940,6 +10005,7 @@ msgstr "Arvon (%s) on oltava positiivinen tai nolla."
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "The value (%s) must be strictly positive."
 msgstr "Arvon (%s) on oltava ehdottomasti positiivinen."
@@ -10033,6 +10099,13 @@ msgstr "Arvo, jolle lasketaan käänteinen tangentti."
 #, python-format
 msgid "The value for which to calculate the logarithm, base e."
 msgstr "Arvo, jolle lasketaan logaritmi, perusta e."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The value for which to calculate the logarithm."
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -10800,7 +10873,7 @@ msgstr "Ylin"
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/pivot/plugins/pivot_ui_plugin.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #, python-format
 msgid "Total"
 msgstr "Yhteensä"
@@ -11008,7 +11081,6 @@ msgstr "Käytä riviä"
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
@@ -11892,6 +11964,13 @@ msgid "start_date (%s) should be on or before end_date (%s)."
 msgstr ""
 "alkupäivämäärän (%s) on oltava sama tai aikaisempi kuin loppupäivämäärän "
 "(%s)."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "the string to be converted"
+msgstr "muunnettava merkkijono"
 
 #. module: spreadsheet
 #. odoo-javascript

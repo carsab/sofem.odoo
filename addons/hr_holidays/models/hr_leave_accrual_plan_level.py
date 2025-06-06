@@ -4,6 +4,7 @@
 from dateutil.relativedelta import relativedelta
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
@@ -133,6 +134,12 @@ class AccrualPlanLevel(models.Model):
         ('start_count_check', "CHECK( start_count >= 0 )", "You can not start an accrual in the past."),
         ('added_value_greater_than_zero', 'CHECK(added_value > 0)', 'You must give a rate greater than 0 in accrual plan levels.')
     ]
+
+    @api.constrains('maximum_leave')
+    def _check_maximum_leave(self):
+        for level in self:
+            if level.cap_accrued_time and level.maximum_leave < 1:
+                raise UserError(_("You cannot have a cap on accrued time without setting a maximum amount."))
 
     @api.depends('start_count', 'start_type')
     def _compute_sequence(self):
@@ -303,3 +310,11 @@ class AccrualPlanLevel(models.Model):
                 return last_call + relativedelta(years=-1, month=month, day=self.yearly_day)
         else:
             return False
+
+    def _get_level_transition_date(self, allocation_start):
+        if self.start_type == 'day':
+            return allocation_start + relativedelta(days=self.start_count)
+        if self.start_type == 'month':
+            return allocation_start + relativedelta(months=self.start_count)
+        if self.start_type == 'year':
+            return allocation_start + relativedelta(years=self.start_count)

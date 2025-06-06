@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
+from odoo.tools import float_compare
 
 
 class StockMove(models.Model):
@@ -15,7 +16,8 @@ class StockMove(models.Model):
         rslt = super()._generate_valuation_lines_data(partner_id, qty, debit_value, credit_value, debit_account_id, credit_account_id, svl_id, description)
 
         subcontract_production = self.production_id.filtered(lambda p: p.subcontractor_id)
-        if not subcontract_production:
+        rounding = self.product_id.uom_id.rounding
+        if not subcontract_production or float_compare(qty, 0, precision_rounding=rounding) < 0:
             return rslt
         # split the credit line to two, one for component cost, one for subcontracting service cost
         currency = self.company_id.currency_id
@@ -23,7 +25,7 @@ class StockMove(models.Model):
             # In case of standard price, the component cost is the cost of the product
             # the subcontracting service cost may not represent the real cost of the subcontracting service
             # the difference should be posted in price difference account in the end
-            component_cost = currency.round(sum(m.price_unit * m.product_uom_qty for m in subcontract_production.move_raw_ids))
+            component_cost = abs(currency.round(sum(subcontract_production.move_raw_ids.stock_valuation_layer_ids.mapped('value'))))
             subcontract_service_cost = credit_value - component_cost
         else:
             subcontract_service_cost = currency.round(subcontract_production.extra_cost * qty)
@@ -56,13 +58,3 @@ class StockMove(models.Model):
         elif svl_id and self.stock_valuation_layer_ids.ids and svl_id not in self.stock_valuation_layer_ids.ids:
             rslt['credit_line_vals']['account_id'] = self.product_id.product_tmpl_id.get_product_accounts()['stock_input'].id
         return rslt
-
-    def _get_dest_account(self, account_data):
-        if self.raw_material_production_id.subcontractor_id:
-            return account_data['production'].id
-        return super()._get_dest_account(account_data)
-
-    def _get_src_account(self, account_data):
-        if self.production_id.subcontractor_id:
-            return account_data['production'].id
-        return super()._get_src_account(account_data)

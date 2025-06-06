@@ -57,7 +57,11 @@ class SaleOrder(models.Model):
         super(SaleOrder, self - website_orders)._compute_user_id()
         for order in website_orders:
             if not order.user_id:
-                order.user_id = order.website_id.salesperson_id or order.partner_id.parent_id.user_id.id or order.partner_id.user_id.id
+                order.user_id = (
+                    order.website_id.salesperson_id
+                    or order.partner_id.user_id.id
+                    or order.partner_id.parent_id.user_id.id
+                )
 
     @api.model
     def _get_note_url(self):
@@ -367,6 +371,9 @@ class SaleOrder(models.Model):
                 "Your cart is not ready to be paid, please verify previous steps."
             ))
 
+        if not self.only_services and not self.carrier_id:
+            raise ValidationError(_("No shipping method is selected."))
+
     def _cart_accessories(self):
         """ Suggest accessories based on 'Accessory Products' of products in cart """
         product_ids = set(self.website_order_line.product_id.ids)
@@ -472,13 +479,6 @@ class SaleOrder(models.Model):
                 access_opt['url'] = '%s/shop/cart?access_token=%s' % (self.get_base_url(), self.access_token)
         return groups
 
-    def action_confirm(self):
-        res = super().action_confirm()
-        for order in self:
-            if not order.transaction_ids and not order.amount_total and self._context.get('send_email'):
-                order._send_order_confirmation_mail()
-        return res
-
     def _action_confirm(self):
         for order in self:
             order_location = order.access_point_address
@@ -499,11 +499,12 @@ class SaleOrder(models.Model):
             phone = order.partner_shipping_id.phone
 
             # we can check if the current partner has a partner of type "delivery" that has the same address
-            existing_partner = order.env['res.partner'].search(['&', '&', '&', '&',
+            existing_partner = order.env['res.partner'].search(['&', '&', '&', '&', '&',
                                                                 ('street', '=', street),
                                                                 ('city', '=', city),
                                                                 ('state_id', '=', state),
                                                                 ('country_id', '=', country),
+                                                                ('parent_id', '=', parent_id),
                                                                 ('type', '=', 'delivery')], limit=1)
 
             if existing_partner:

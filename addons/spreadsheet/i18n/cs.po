@@ -4,21 +4,24 @@
 # 
 # Translators:
 # Ivana Bartonkova, 2023
-# Wil Odoo, 2023
-# Jiří Podhorecký, 2023
+# Jiří Podhorecký <jirka.p@volny.cz>, 2023
 # karolína schusterová <karolina.schusterova@vdp.sk>, 2023
 # Tomáš Píšek, 2023
 # Katerina Horylova, 2024
 # Jakub Smolka, 2024
+# Vojtech Smolka, 2024
 # Aleš Fiala <f.ales1@seznam.cz>, 2024
+# Tereza Mokrá, 2024
+# Wil Odoo, 2024
+# Marta Wacławek, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:32+0000\n"
+"POT-Creation-Date: 2025-05-09 20:37+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Aleš Fiala <f.ales1@seznam.cz>, 2024\n"
+"Last-Translator: Marta Wacławek, 2025\n"
 "Language-Team: Czech (https://app.transifex.com/odoo/teams/41243/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -460,10 +463,10 @@ msgstr ""
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/global_filters/plugins/global_filters_ui_plugin.js:0
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
+#: code:addons/spreadsheet/static/src/global_filters/plugins/global_filters_ui_plugin.js:0
 #, python-format
 msgid "Active Filters"
-msgstr ""
+msgstr "Aktivní filtry"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -1395,14 +1398,14 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Cannot hide all the columns of a sheet."
-msgstr ""
+msgstr "Nelze skrýt všechny sloupce listu."
 
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Cannot hide all the rows of a sheet."
-msgstr ""
+msgstr "Nelze skrýt všechny řádky listu."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -1864,6 +1867,13 @@ msgstr "Převede zadaný řetězec na velká písmena."
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
+msgid "Converts a string to a numeric value."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
 msgid "Converts a time string into its serial number representation."
 msgstr "Převede časový řetězec na jeho reprezentaci sériového čísla."
 
@@ -1948,7 +1958,7 @@ msgstr "Kotangens úhlu v radiánech."
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
-#: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #, python-format
 msgid "Count"
 msgstr "Počet"
@@ -2003,7 +2013,7 @@ msgstr "Počítá hodnoty z rozsahu podobného tabulce."
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Create filter"
-msgstr ""
+msgstr "Vytvořit filtr"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2175,7 +2185,7 @@ msgstr "Datová řada"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Data Validation"
-msgstr ""
+msgstr "Validace dat"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2197,14 +2207,14 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/errors.js:0
 #, python-format
 msgid "Data is loading"
-msgstr ""
+msgstr "Data se načítají"
 
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Data not available"
-msgstr ""
+msgstr "Data nejsou dostupná"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2261,7 +2271,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/global_filters/components/filter_date_from_to_value/filter_date_from_to_value.js:0
 #, python-format
 msgid "Date from..."
-msgstr ""
+msgstr "Datum od..."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2508,7 +2518,7 @@ msgstr "Smazat sloupec %s"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Delete columns"
-msgstr ""
+msgstr "Odstranit sloupce"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2529,7 +2539,7 @@ msgstr "Smazat řádek %s"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Delete rows"
-msgstr ""
+msgstr "Odstranit řádky"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2564,14 +2574,14 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Depreciation via declining balance method."
-msgstr ""
+msgstr "Odpis metodou klesajícího zůstatku."
 
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Depreciation via double-declining balance method."
-msgstr ""
+msgstr "Odpis metodou dvojnásobné zůstatkové hodnoty."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2669,6 +2679,7 @@ msgstr "Upravit"
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "Edit link"
@@ -2809,6 +2820,7 @@ msgstr "Únor"
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
 #, python-format
 msgid "Field %s does not exist"
@@ -2855,7 +2867,6 @@ msgstr "Vyplň barvu"
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Filter"
@@ -3203,6 +3214,15 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Function [[FUNCTION_NAME]] expects number values for %s, but got a %s."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid ""
+"Function [[FUNCTION_NAME]] expects the parameter '%s' to be a single value "
+"or a single cell reference, not a range."
 msgstr ""
 
 #. module: spreadsheet
@@ -3593,7 +3613,7 @@ msgstr "Přidat desetinná místa"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Index out of range."
-msgstr ""
+msgstr "Index je mimo rozsah."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3794,7 +3814,7 @@ msgstr "Neplatný"
 #: code:addons/spreadsheet/models/spreadsheet_mixin.py:0
 #, python-format
 msgid "Invalid JSON Data"
-msgstr ""
+msgstr "Neplatná data JSON"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -4866,6 +4886,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
 #: code:addons/spreadsheet/static/src/pivot/pivot_time_adapters.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_time_adapters.js:0
 #, python-format
 msgid "None"
 msgstr "Žádné"
@@ -5363,7 +5384,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Remove filter"
-msgstr ""
+msgstr "Odstranit filtr"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -5557,7 +5578,7 @@ msgstr "Vrátí opak zadané logické hodnoty."
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Returns the content of a cell, specified by row and column offset."
-msgstr ""
+msgstr "Vrátí obsah buňky určený odsazením řádků a sloupců."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -5653,6 +5674,15 @@ msgstr "Vpravo"
 #, python-format
 msgid "Rounds a number according to standard rules."
 msgstr "Zaokrouhlí číslo podle standardních pravidel."
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid ""
+"Rounds a number down to the nearest integer that is less than or equal to "
+"it."
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -5892,7 +5922,7 @@ msgstr "List"
 #: code:addons/spreadsheet/models/spreadsheet_mixin.py:0
 #, python-format
 msgid "Sheet1"
-msgstr ""
+msgstr "List1"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -5943,7 +5973,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/public_readonly_app/public_readonly.xml:0
 #, python-format
 msgid "Show Filters"
-msgstr ""
+msgstr "Ukaž filtry"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -6684,6 +6714,27 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "The base (%s) must be between 2 and 36 inclusive."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base (%s) must be strictly positive."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base must be different from 1."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The base of the logarithm."
 msgstr ""
 
 #. module: spreadsheet
@@ -7835,6 +7886,13 @@ msgstr "Logaritmus čísla, základní e (eulerovo číslo)."
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
+msgid "The logarithm of a number, for a given base."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
 msgid "The low end of the random range."
 msgstr ""
 
@@ -8359,6 +8417,13 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "The number to return."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The number to round down to the nearest integer."
 msgstr ""
 
 #. module: spreadsheet
@@ -9576,6 +9641,7 @@ msgstr "Hodnota (%s) musí být kladná nebo nulová."
 #. module: spreadsheet
 #. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "The value (%s) must be strictly positive."
 msgstr "Hodnota (%s) musí být pouze kladná."
@@ -9658,6 +9724,13 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "The value for which to calculate the logarithm, base e."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "The value for which to calculate the logarithm."
 msgstr ""
 
 #. module: spreadsheet
@@ -10404,7 +10477,7 @@ msgstr "Nahoru"
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/pivot/plugins/pivot_ui_plugin.js:0
+#: code:addons/spreadsheet/static/src/pivot/pivot_data_source.js:0
 #, python-format
 msgid "Total"
 msgstr "Celkem"
@@ -10612,7 +10685,6 @@ msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
-#: code:addons/spreadsheet/static/src/helpers/model.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
@@ -10815,6 +10887,8 @@ msgstr ""
 #, python-format
 msgid "Variable declining balance. WARNING : does not handle decimal periods."
 msgstr ""
+"Proměnlivá metoda klesajícího zůstatku. UPOZORNĚNÍ: nepracuje s desetinnými "
+"obdobími."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11113,6 +11187,8 @@ msgid ""
 "Whether to switch to straight-line depreciation when the depreciation is "
 "greater than the declining balance calculation."
 msgstr ""
+"Zda přejít na lineární metodu odpisování, pokud by vypočtený odpis převýšil "
+"částku podle metody klesajícího zůstatku."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11377,7 +11453,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "in the past month"
-msgstr ""
+msgstr "v minulém měsíci"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11428,7 +11504,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "one month ago"
-msgstr ""
+msgstr "Před měsícem"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11470,6 +11546,13 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "start_date (%s) should be on or before end_date (%s)."
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
+#, python-format
+msgid "the string to be converted"
 msgstr ""
 
 #. module: spreadsheet

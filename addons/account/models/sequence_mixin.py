@@ -155,7 +155,7 @@ class SequenceMixin(models.AbstractModel):
                     return ret_val
         raise ValidationError(_(
             'The sequence regex should at least contain the seq grouping keys. For instance:\n'
-            '^(?P<prefix1>.*?)(?P<seq>\d*)(?P<suffix>\D*?)$'
+            r'^(?P<prefix1>.*?)(?P<seq>\d*)(?P<suffix>\D*?)$'
         ))
 
     def _get_last_sequence_domain(self, relaxed=False):
@@ -318,10 +318,9 @@ class SequenceMixin(models.AbstractModel):
                 # 23P01 ExclusionViolation
                 # 23505 UniqueViolation
                 if e.pgcode not in ('23P01', '23505'):
-                    raise e
+                    raise
         self._compute_split_sequence()
         self.flush_recordset(['sequence_prefix', 'sequence_number'])
-
 
     def _is_last_from_seq_chain(self):
         """Tells whether or not this element is the last one of the sequence chain.

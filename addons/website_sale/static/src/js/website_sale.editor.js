@@ -6,6 +6,8 @@ import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_d
 import { _t } from "@web/core/l10n/translation";
 import "@website/js/editor/snippets.options";
 import { renderToElement } from "@web/core/utils/render";
+import { useChildSubEnv } from "@odoo/owl";
+import weUtils from '@web_editor/js/common/utils';
 
 options.registry.WebsiteSaleGridLayout = options.Class.extend({
     init() {
@@ -51,14 +53,14 @@ options.registry.WebsiteSaleGridLayout = options.Class.extend({
      */
     setPpr: function (previewMode, widgetValue, params) {
         this.ppr = parseInt(widgetValue);
-        this.rpc('/shop/config/website', { 'shop_ppr': this.ppr });
+        return this.rpc('/shop/config/website', { 'shop_ppr': this.ppr });
     },
     /**
      * @see this.selectClass for params
      */
     setDefaultSort: function (previewMode, widgetValue, params) {
         this.default_sort = widgetValue;
-        this.rpc('/shop/config/website', { 'shop_default_sort': this.default_sort });
+        return this.rpc('/shop/config/website', { 'shop_default_sort': this.default_sort });
     },
 
     //--------------------------------------------------------------------------
@@ -177,7 +179,7 @@ options.registry.WebsiteSaleProductsItem = options.Class.extend({
     async createRibbon(previewMode, widgetValue, params) {
         await this._setRibbon(false);
         this.$ribbon.text(_t('Badge Text'));
-        this.$ribbon.addClass('bg-primary o_ribbon_left');
+        this.$ribbon.addClass('o_ribbon_left');
         this.ribbonEditMode = true;
         await this._saveRibbon(true);
     },
@@ -229,6 +231,7 @@ options.registry.WebsiteSaleProductsItem = options.Class.extend({
      * @see this.selectClass for params
      */
     changeSequence: function (previewMode, widgetValue, params) {
+        // TODO this should be awaited
         this.rpc('/shop/config/product', {
             product_id: this.productTemplateID,
             sequence: widgetValue,
@@ -375,7 +378,7 @@ options.registry.WebsiteSaleProductsItem = options.Class.extend({
         $ribbons.removeClass(htmlClasses);
 
         $ribbons.addClass(ribbon.html_class || '');
-        $ribbons.attr('style', `background-color: ${ribbon.bg_color || ''} !important`);
+        $ribbons.css('background-color', ribbon.bg_color || '');
         $ribbons.css('color', ribbon.text_color || '');
 
         if (!this.ribbons[ribbonId]) {
@@ -433,6 +436,7 @@ options.registry.WebsiteSaleProductsItem = options.Class.extend({
         var $td = $(ev.currentTarget);
         var x = $td.index() + 1;
         var y = $td.parent().index() + 1
+        // TODO this should be awaited somehow
         this.rpc('/shop/config/product', {
             product_id: this.productTemplateID,
             x: x,
@@ -446,6 +450,10 @@ options.registry.WebsiteSaleProductsItem = options.Class.extend({
 
 // Small override of the MediaDialog to retrieve the attachment ids instead of img elements
 class AttachmentMediaDialog extends MediaDialog {
+    setup() {
+        super.setup();
+        useChildSubEnv({ addFieldImage: true });
+    }
     /**
      * @override
      */
@@ -488,7 +496,9 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
     },
 
     _updateWebsiteConfig(params) {
-        this.rpc('/shop/config/website', params).then(() => this.trigger_up('request_save', {reload: true, optionSelector: this.data.selector}));
+        // TODO: Remove the request_save in master, it's already done by the
+        // data-page-options set to true in the template.
+        return this.rpc('/shop/config/website', params).then(() => this.trigger_up('request_save', {reload: true, optionSelector: this.data.selector}));
     },
 
     _getZoomOptionData() {
@@ -504,11 +514,11 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
         const zoomOption = this._getZoomOptionData();
         const updateWidth = this._updateWebsiteConfig.bind(this, { product_page_image_width: widgetValue });
         if (!zoomOption || widgetValue !== "100_pc") {
-            updateWidth();
+            await updateWidth();
         } else {
             const defaultZoomOption = "website_sale.product_picture_magnify_click";
             await this._customizeWebsiteData(defaultZoomOption, { possibleValues: zoomOption._methodsParams.optionsPossibleValues["customizeWebsiteViews"] }, true);
-            updateWidth();
+            await updateWidth();
         }
     },
 
@@ -519,7 +529,7 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
         const zoomOption = this._getZoomOptionData();
         const updateLayout = this._updateWebsiteConfig.bind(this, { product_page_image_layout: widgetValue });
         if (!zoomOption) {
-            updateLayout();
+            await updateLayout();
         } else {
             const imageWidthOption = this.productDetailMain.dataset.image_width;
             let defaultZoomOption = widgetValue === "grid" ? "website_sale.product_picture_magnify_click" : "website_sale.product_picture_magnify_hover";
@@ -527,7 +537,7 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
                 defaultZoomOption = "website_sale.product_picture_magnify_click";
             }
             await this._customizeWebsiteData(defaultZoomOption, { possibleValues: zoomOption._methodsParams.optionsPossibleValues["customizeWebsiteViews"] }, true);
-            updateLayout();
+            await updateLayout();
         }
     },
 
@@ -605,13 +615,20 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
         // This method is widely adapted from onFileUploaded in ImageField.
         // Upon change, make sure to verify whether the same change needs
         // to be applied on both sides.
+        if (await weUtils.isImageCorsProtected(imageEl)) {
+            // The image is CORS protected; do not transform it into webp
+            return;
+        }
         // Generate alternate sizes and format for reports.
         const imgEl = document.createElement("img");
         imgEl.src = imageEl.src;
         await new Promise(resolve => imgEl.addEventListener("load", resolve));
         const originalSize = Math.max(imgEl.width, imgEl.height);
         const smallerSizes = [1024, 512, 256, 128].filter(size => size < originalSize);
-        const webpName = attachment.name.replace(/\.(jpe?g|png)$/i, ".webp");
+        const extension = attachment.name.match(/\.(jpe?|pn)g$/i)?.[0] ?? ".jpeg";
+        const webpName = attachment.name.replace(extension, ".webp");
+        const format = extension.substr(1).toLowerCase().replace(/^jpg$/, 'jpeg');
+        const mimetype = `image/${format}`;
         let referenceId = undefined;
         for (const size of [originalSize, ...smallerSizes]) {
             const ratio = size / originalSize;
@@ -619,7 +636,7 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
             canvas.width = imgEl.width * ratio;
             canvas.height = imgEl.height * ratio;
             const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.fillStyle = 'transparent';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, 0, 0, canvas.width, canvas.height);
             const [resizedId] = await this.orm.call("ir.attachment", "create_unique", [[{
@@ -638,12 +655,12 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
             }
             referenceId = referenceId || resizedId; // Keep track of original.
             await this.orm.call("ir.attachment", "create_unique", [[{
-                name: webpName.replace(/\.webp$/, ".jpg"),
-                description: "format: jpeg",
-                datas: canvas.toDataURL("image/jpeg", 0.75).split(",")[1],
+                name: attachment.name,
+                description: `format: ${format}`,
+                datas: canvas.toDataURL(mimetype, 0.75).split(",")[1],
                 res_id: resizedId,
                 res_model: "ir.attachment",
-                mimetype: "image/jpeg",
+                mimetype: mimetype,
             }]]);
         }
     },
@@ -652,6 +669,7 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
      * Removes all extra-images from the product.
      */
     clearImages: function () {
+        // TODO this should be awaited
         this.rpc(`/shop/product/clear-images`, {
             model: this.mode,
             product_product_id: this.productProductID,
@@ -672,17 +690,21 @@ options.registry.WebsiteSaleProductPage = options.Class.extend({
             2: 'medium',
             3: 'big',
         }[widgetValue];
-        this.rpc('/shop/config/website', {
+        this.productPageGrid.dataset.image_spacing = spacing;
+        // TODO: Remove the request_save in master, it's already done by the
+        // data-page-options set to true in the template.
+        return this.rpc('/shop/config/website', {
             'product_page_image_spacing': spacing,
         }).then(() => this.trigger_up('request_save', {reload: true, optionSelector: this.data.selector}));
-        this.productPageGrid.dataset.image_spacing = spacing;
     },
 
     setColumns(previewMode, widgetValue, params) {
-        this.rpc('/shop/config/website', {
+        this.productPageGrid.dataset.grid_columns = widgetValue;
+        // TODO: Remove the request_save in master, it's already done by the
+        // data-page-options set to true in the template.
+        return this.rpc('/shop/config/website', {
             'product_page_grid_columns': widgetValue,
         }).then(() => this.trigger_up('request_save', {reload: true, optionSelector: this.data.selector}));
-        this.productPageGrid.dataset.grid_columns = widgetValue;
     },
 
     /**
@@ -751,6 +773,7 @@ options.registry.WebsiteSaleProductAttribute = options.Class.extend({
      * @see this.selectClass for params
      */
     setDisplayType: function (previewMode, widgetValue, params) {
+        // TODO this should be awaited
         this.rpc('/shop/config/attribute', {
             attribute_id: this.attributeID,
             display_type: widgetValue,
@@ -813,6 +836,7 @@ options.registry.ReplaceMedia.include({
      *
      */
     async setPosition(previewMode, widgetValue, params) {
+        // TODO this should be awaited
         this.rpc('/shop/product/resequence-image', {
             image_res_model: this.recordModel,
             image_res_id: this.recordId,

@@ -40,7 +40,7 @@ class ProductCatalogMixin(models.AbstractModel):
         :returns: A list of tuples that represents a domain.
         :rtype: list
         """
-        return [('company_id', 'in', [self.company_id.id, False])]
+        return ['|', ('company_id', '=', False), ('company_id', 'parent_of', self.company_id.id)]
 
     def _get_product_catalog_record_lines(self, product_ids):
         """ Returns the record's lines grouped by product.
@@ -66,11 +66,15 @@ class ProductCatalogMixin(models.AbstractModel):
             {
                 'productId': int
                 'quantity': float (optional)
+                'productType': string
                 'price': float
                 'readOnly': bool (optional)
             }
         """
-        return {}
+        res = {}
+        for product in products:
+            res[product.id] = {'productType': product.type}
+        return res
 
     def _get_product_catalog_order_line_info(self, product_ids, **kwargs):
         """ Returns products information to be shown in the catalog.
@@ -82,6 +86,7 @@ class ProductCatalogMixin(models.AbstractModel):
             {
                 'productId': int
                 'quantity': float (optional)
+                'productType': string
                 'price': float
                 'readOnly': bool (optional)
             }
@@ -90,7 +95,10 @@ class ProductCatalogMixin(models.AbstractModel):
         default_data = self._default_order_line_values()
 
         for product, record_lines in self._get_product_catalog_record_lines(product_ids).items():
-            order_line_info[product.id] = record_lines._get_product_catalog_lines_data(**kwargs)
+            order_line_info[product.id] = {
+               **record_lines._get_product_catalog_lines_data(**kwargs),
+               'productType': product.type,
+            }
             product_ids.remove(product.id)
 
         products = self.env['product.product'].browse(product_ids)

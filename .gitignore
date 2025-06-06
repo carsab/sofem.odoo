@@ -1,5 +1,11 @@
-__pycache__
-.idea/
+# sphinx build directories
+_build/
+
+# dotfiles
+.*
+!.gitignore
+!.github
+!.mailmap
 # compiled python files
 *.py[co]
 __pycache__/
@@ -14,6 +20,8 @@ status
 odoo/filestore
 # maintenance migration scripts
 odoo/addons/base/maintenance
+# window installation config file
+/odoo.conf
 
 # generated for windows installer?
 install/win32/*.bat
@@ -41,12 +49,3 @@ package.json
 /man/
 /share/
 /src/
-/venv/
-/env_fuentes/
-/odoo/data/
-venv_310/
-
- .vscode/
- .gitignore
- run-odoo.sh
- sofem.conf

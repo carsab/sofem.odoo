@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="point_of_sale.SaleDetailsReport">
+        <div class="pos-receipt" style="margin: 5px;">
+            <t t-if="pos.company_logo_base64">
+                <img class="pos-receipt-logo" t-att-src="pos.company_logo_base64" alt="Logo"/>
+                <br/>
+            </t>
+            <!--  Info Encabezado    -->
+            <div class="pos-receipt-center-align">
+                <h3>
+                    <t t-if="state ==='opened'">
+                        <b>Reporte diario de Cierre parcial de Ventas X</b>
+                    </t>
+                    <t t-else="state ==='closed'">
+                        <b>Reporte diario de Cierre de Ventas Z</b>
+                    </t>
+                </h3>
+                <h3>
+                    <b>
+                        <p t-esc="pos.company.name" />
+                    </b>
+                </h3>
+                <t t-if="headerData.company.vat">
+                    <div>
+                        <t t-esc="headerData.company.country?.vat_label || 'Tax ID'"/>
+:
+                        <t t-esc="headerData.company.vat" />
+                    </div>
+                </t>
+                <span style="white-space:pre-line">
+                    <t t-esc="headerData.header" />
+                </span>
+
+                <t t-if="headerData.company.phone">
+                    <div>Tel:<t t-esc="headerData.company.phone" />
+                    </div>
+                </t>
+                <!--
+                <div t-if="headerData.company.email" t-esc="headerData.company.email" />
+                <div t-if="headerData.company.website" t-esc="headerData.company.website" />
+                -->
+            </div>
+            <div class="pos-receipt-order-data" width="792px" style="text-align:left; font-size:10px">
+                <div >
+                    <div >
+                        <strong> Autorización de Numeración de facturación: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_number"/>                   
+                        <strong>  Fecha de Resolución: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_date"/>
+                    </div>
+                </div>
+                <div>
+                    <div >              
+                        <strong> Vigente hasta: </strong>
+                        <span t-esc="resolution_info.resolution_data.resolution_date_to"/>
+                        <strong>  Prefijo: </strong>
+                        <span t-esc="resolution_info.resolution_data.prefix" />     
+                    </div>
+                </div>
+                <div >
+                    <div >
+                        <strong> Desde el número: </strong>
+                        <span t-esc="resolution_info.resolution_data.number_from"/>                   
+                        <strong>  Hasta el número: </strong>
+                        <span t-esc="resolution_info.resolution_data.number_to"/>
+                    </div>
+                </div>                
+            </div>
+            <div class="pos-receipt-order-name">
+                <b>Fecha del cierre: <t t-esc="date" />
+                </b>
+            </div>
+            <!-- FIN Info Encabezado      -->
+            <div class="text-start">
+                <b>RESUMEN DE VENTAS</b>
+            </div>
+            <div class="text-start">
+                <b>SOLD:</b>
+            </div>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <tr class="pos-receipt-center-align">
+                        <td width="65%">Producto</td>
+                        <td width="5%">Unds</td>
+                        <td width="30%">valor</td>
+                    </tr>
+                    <t t-foreach="products" t-as="category" t-key="category['name']">
+                        <t t-foreach="category['products']" t-as="line" t-key="line_index">
+                            <tr>
+                                <td width="65%" class="text-start">
+                                    <span t-esc="line['product_name'].substr(0,20)"/>
+                                </td>
+                                <td width="5%" class="text-end">
+                                    <span t-esc="line.quantity"/>
+                                </td>
+                                <td width="30%" class="text-end">
+                                    <span t-esc="formatCurrency(line.base_amount,0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </table>
+            </div>
+            <div>------------------------</div>
+            <div class="text-start">
+                <b>Payments:</b>
+            </div>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <t t-foreach="payments" t-as="payment" t-key="payment_index">
+                        <tr>
+                            <td class="text-start">
+                                <t t-esc="payment['name']" />
+                            </td>
+                            <td class="text-end">
+                                <t t-esc="formatCurrency(payment['total'],0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
+            </div>
+            <div>------------------------</div>
+            <div class="text-start">
+                <b>Taxes:</b>
+            </div>
+            <div width="450px">
+                <table style="table {padding:0px;}" width="100%">
+                    <tr class="pos-receipt-center-align">
+                        <td width="30%">Nombre</td>
+                        <td width="35%">Base</td>
+                        <td width="35%">valor</td>
+                    </tr>
+                    <t t-foreach="taxes" t-as="tax" t-key="tax_index">
+                        <tr>
+                            <td width="30%" class="text-start">
+                                <span t-esc="tax.name" />
+                            </td>
+                            <td width="35%" class="text-end">
+                                <span t-esc="formatCurrency(Math.round(tax.base_amount),0,options={'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                            <td width="35%" class="text-end">
+                                <span t-esc="formatCurrency(tax.tax_amount,0,options={ 'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
+            </div>
+            <div>------------------------</div>
+            <div class="text-start">
+                <b>Total:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="formatCurrency(currency.total_paid,0,options={'noSymbol': true ,'humanReadable':true,'digits': [10, 0]})"/>
+                </span>
+
+            </div>
+            <div class="text-start">
+                <b>Transacciones:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="nbr_orders" />
+                </span>
+            </div>
+            <!--
+            <div class="text-start">
+                <b>Último documento:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="last_ref" />
+                </span>
+            </div>
+            <div class="text-start">
+                <b># de sesión:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="session_name" />
+                </span>
+            </div>            
+            -->
+            <div class="text-start">
+                <b>Cierre #:</b>
+                <span class="pos-receipt-right-align">
+                    <t t-esc="num_closed" />
+                </span>
+            </div>
+        </div>
+    </t>
+</templates>

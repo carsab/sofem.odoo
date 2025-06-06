@@ -3,17 +3,18 @@
 # 	* stock
 # 
 # Translators:
-# Wil Odoo, 2024
 # Cécile Collart <cco@odoo.com>, 2024
 # Jolien De Paepe, 2024
+# Wil Odoo, 2024
+# Manon Rondou, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:31+0000\n"
+"POT-Creation-Date: 2024-08-13 10:26+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Jolien De Paepe, 2024\n"
+"Last-Translator: Manon Rondou, 2025\n"
 "Language-Team: French (https://app.transifex.com/odoo/teams/41243/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -386,11 +387,6 @@ msgstr "4 x 7 avec le prix"
 #: model_terms:ir.ui.view,arch_db:stock.report_package_barcode
 msgid "54326786758"
 msgstr "54326786758"
-
-#. module: stock
-#: model_terms:ir.ui.view,arch_db:stock.report_inventory
-msgid "98"
-msgstr "98"
 
 #. module: stock
 #. odoo-python
@@ -1204,6 +1200,11 @@ msgid "Archived"
 msgstr "Archivé"
 
 #. module: stock
+#: model_terms:ir.ui.view,arch_db:stock.view_picking_form
+msgid "Are you sure you want to cancel this transfer?"
+msgstr "Êtes-vous sûr de vouloir annuler ce transfert ?"
+
+#. module: stock
 #: model:ir.model.fields.selection,name:stock.selection__stock_picking__move_type__direct
 msgid "As soon as possible"
 msgstr "Aussi vite que possible"
@@ -1458,8 +1459,8 @@ msgid ""
 "Below text serves as a suggestion and doesn’t engage Odoo S.A. "
 "responsibility."
 msgstr ""
-"Le texte ci-dessous est donné à titre informatif et n'engage pas la "
-"responsabilité d'Odoo S.A.."
+"Le texte ci-dessous sert de suggestion et n'engage pas la responsabilité "
+"d'Odoo S.A.."
 
 #. module: stock
 #: model:ir.model.fields.selection,name:stock.selection__res_partner__picking_warn__block
@@ -1635,6 +1636,17 @@ msgstr "Un mouvement chaîné existe"
 #: model:ir.model,name:stock.model_stock_change_product_qty
 msgid "Change Product Quantity"
 msgstr "Changer la quantité de produits"
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_move_line.py:0
+#, python-format
+msgid ""
+"Changing the Lot/Serial number for move lines with different products is not"
+" allowed."
+msgstr ""
+"La modification du numéro de lot/série n'est pas autorisée pour des "
+"mouvements de stock concernant des produits différents."
 
 #. module: stock
 #. odoo-python
@@ -3118,23 +3130,23 @@ msgstr "Date effective"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.res_config_settings_view_form
 msgid "Email Confirmation"
-msgstr "Email de confirmation"
+msgstr "E-mail de confirmation"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_res_company__stock_move_email_validation
 #: model:ir.model.fields,field_description:stock.field_res_config_settings__stock_move_email_validation
 msgid "Email Confirmation picking"
-msgstr "Email de confirmation du transfert"
+msgstr "E-mail de confirmation du transfert"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_res_company__stock_mail_confirmation_template_id
 msgid "Email Template confirmation picking"
-msgstr "Modèle d'email de confirmation du transfert"
+msgstr "Modèle d'e-mail de confirmation du transfert"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_res_company__stock_mail_confirmation_template_id
 msgid "Email sent to the customer once the order is done."
-msgstr "Email envoyé au client lorsque la commande est traitée."
+msgstr "E-mail envoyé au client lorsque la commande est traitée."
 
 #. module: stock
 #: model_terms:digest.tip,tip_description:stock.digest_tip_stock_0
@@ -3547,6 +3559,13 @@ msgstr "Générer"
 #, python-format
 msgid "Generate Serials numbers"
 msgstr "Générer des numéros de série"
+
+#. module: stock
+#. odoo-javascript
+#: code:addons/stock/static/src/widgets/lots_dialog.xml:0
+#, python-format
+msgid "Generate Serials/Lots"
+msgstr "Générer des numéros de série/lot"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.res_config_settings_view_form
@@ -4029,18 +4048,18 @@ msgid "Immediate Transfer"
 msgstr "Transfert immédiat"
 
 #. module: stock
-#. odoo-python
-#: code:addons/stock/models/stock_quant.py:0
-#, python-format
-msgid "Import"
-msgstr "Import"
-
-#. module: stock
 #. odoo-javascript
 #: code:addons/stock/static/src/widgets/generate_serial.js:0
 #, python-format
 msgid "Import Lots"
 msgstr "Importer des lots"
+
+#. module: stock
+#. odoo-javascript
+#: code:addons/stock/static/src/widgets/lots_dialog.xml:0
+#, python-format
+msgid "Import Serials/Lots"
+msgstr "Importer des numéros de série/lot"
 
 #. module: stock
 #. odoo-python
@@ -4859,6 +4878,13 @@ msgid "Locations"
 msgstr "Emplacements"
 
 #. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_picking.py:0
+#, python-format
+msgid "Locations to update"
+msgstr "Emplacements à mettre à jour"
+
+#. module: stock
 #: model:ir.actions.server,name:stock.action_toggle_is_locked
 msgid "Lock/Unlock"
 msgstr "Verrouiller/Déverrouiller"
@@ -4883,7 +4909,7 @@ msgstr "Format de l'étiquette de lot à imprimer automatiquement"
 #. module: stock
 #: model:ir.model,name:stock.model_report_stock_label_lot_template_view
 msgid "Lot Label Report"
-msgstr ""
+msgstr "Rapport d'étiquettes de lots"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product__lot_properties_definition
@@ -5495,6 +5521,13 @@ msgid "No operations found. Let's create a transfer!"
 msgstr "Aucune opération trouvée. Créons un transfert !"
 
 #. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_move.py:0
+#, python-format
+msgid "No product found to generate Serials/Lots for."
+msgstr "Aucun produit n'a été trouvé pour générer des séries/lots."
+
+#. module: stock
 #: model_terms:ir.actions.act_window,help:stock.product_template_action_product
 msgid "No product found. Let's create one!"
 msgstr "Aucun produit trouvé. Créons-en un !"
@@ -6081,6 +6114,11 @@ msgid "Package A"
 msgstr "Colis A"
 
 #. module: stock
+#: model_terms:ir.ui.view,arch_db:stock.report_picking
+msgid "Package B"
+msgstr "Colis B"
+
+#. module: stock
 #: model:ir.actions.report,name:stock.action_report_quant_package_barcode_small
 msgid "Package Barcode (PDF)"
 msgstr "Code-barre du colis (PDF)"
@@ -6426,12 +6464,11 @@ msgstr "La présence dépend du type d'opération."
 #: code:addons/stock/models/stock_quant.py:0
 #, python-format
 msgid ""
-"Press the CREATE button to define quantity for each product in your stock or"
-" import them from a spreadsheet throughout Favorites"
+"Press the \"New\" button to define the quantity for a product in your stock "
+"or import quantities from a spreadsheet via the Actions menu"
 msgstr ""
-"Appuyez sur le bouton CRÉER pour définir la quantité de chaque produit de "
-"votre stock ou importez-les à partir d'une feuille de calcul dans les "
-"Favoris"
+"Appuyez sur le bouton \"Nouveau\" pour définir la quantité d'un produit en "
+"stock ou importer des quantités à partir d'un fichier via le menu Actions."
 
 #. module: stock
 #. odoo-javascript
@@ -8031,13 +8068,13 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:stock.res_config_settings_view_form
 msgid "Send an automatic confirmation email when Delivery Orders are done"
 msgstr ""
-"Envoyer un email de confirmation automatique à la validation des bons de "
+"Envoyer un e-mail de confirmation automatique à la validation des bons de "
 "livraison"
 
 #. module: stock
 #: model:ir.actions.act_window,name:stock.action_lead_mass_mail
 msgid "Send email"
-msgstr "Envoyer un email"
+msgstr "Envoyer un e-mail"
 
 #. module: stock
 #: model:ir.model.fields.selection,name:stock.selection__stock_warehouse__delivery_steps__pick_ship
@@ -8243,11 +8280,6 @@ msgid "Settings"
 msgstr "Paramètres"
 
 #. module: stock
-#: model_terms:ir.ui.view,arch_db:stock.report_picking
-msgid "Shelf 1"
-msgstr "Étagère 1"
-
-#. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_inventory
 msgid "Shelf A"
 msgstr "Étagère A"
@@ -8293,7 +8325,7 @@ msgstr ""
 #. module: stock
 #: model:mail.template,name:stock.mail_template_data_delivery_confirmation
 msgid "Shipping: Send by Email"
-msgstr "Expédition : Envoyer par email"
+msgstr "Expédition : Envoyer par e-mail"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_res_config_settings__module_delivery_shiprocket
@@ -8903,6 +8935,24 @@ msgstr ""
 #. odoo-python
 #: code:addons/stock/models/stock_quant.py:0
 #, python-format
+msgid "The Lot/Serial number (%s) is linked to another product."
+msgstr "Le lot/numéro de série (%s) est lié à un autre produit."
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_picking.py:0
+#, python-format
+msgid ""
+"The Picking Operations report has been deleted so you cannot print at this "
+"time unless the report is restored."
+msgstr ""
+"Le rapport des opérations de transfert a été supprimé. Vous ne pouvez donc "
+"pas l'imprimer pour le moment, sauf si le rapport est restauré."
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_quant.py:0
+#, python-format
 msgid ""
 "The Serial Number (%s) is already used in these location(s): %s.\n"
 "\n"
@@ -8932,10 +8982,10 @@ msgid ""
 "order to be valid, any derogation must be expressly agreed to in advance in "
 "writing."
 msgstr ""
-"Le client renonce expressément à ses propres conditions générales standards,"
-" même si celles-ci ont été établies postérieurement aux présentes conditions"
-" générales de vente standards. Pour être valable, toute dérogation doit être"
-" expressément convenue au préalable par écrit."
+"Le client renonce expressément à ses propres conditions générales de vente, "
+"même si celles-ci ont été établies postérieurement aux présentes conditions "
+"générales de vente. Pour être valable, toute dérogation doit être "
+"expressément convenue au préalable par écrit."
 
 #. module: stock
 #. odoo-python
@@ -9582,7 +9632,7 @@ msgstr "À traiter"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.stock_reorder_report_search
 msgid "To Reorder"
-msgstr "À réàpprovisionner"
+msgstr "À réapprovisionner"
 
 #. module: stock
 #. odoo-javascript
@@ -9918,7 +9968,7 @@ msgstr "Nom de l'unité de mesure"
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.report_inventory
 msgid "Units"
-msgstr "Unités"
+msgstr "Unité(s)"
 
 #. module: stock
 #: model_terms:ir.ui.view,arch_db:stock.res_config_settings_view_form
@@ -10066,6 +10116,7 @@ msgid "Used to order the 'All Operations' kanban view"
 msgstr "Utilisé pour trier la vue kanban 'Toutes les opérations'"
 
 #. module: stock
+#: model:ir.model,name:stock.model_res_users
 #: model:ir.model.fields,field_description:stock.field_stock_request_count__user_id
 #: model:res.groups,name:stock.group_stock_user
 #: model_terms:ir.ui.view,arch_db:stock.view_stock_quant_tree_inventory_editable
@@ -10678,6 +10729,16 @@ msgstr ""
 
 #. module: stock
 #. odoo-python
+#: code:addons/stock/models/stock_orderpoint.py:0
+#, python-format
+msgid ""
+"You can not create a snoozed orderpoint that is not manually triggered."
+msgstr ""
+"Vous ne pouvez pas créer de point de commande reporté qui ne se déclenche "
+"pas manuellement."
+
+#. module: stock
+#. odoo-python
 #: code:addons/stock/models/stock_move.py:0
 #, python-format
 msgid "You can not delete moves linked to another operation"
@@ -10739,6 +10800,18 @@ msgid "You can only process 1.0 %s of products with unique serial number."
 msgstr ""
 "Vous pouvez uniquement traiter 1.0 %s des produits avec un numéro de série "
 "unique."
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_orderpoint.py:0
+#, python-format
+msgid ""
+"You can only snooze manual orderpoints. You should rather archive 'auto-"
+"trigger' orderpoints if you do not want them to be triggered."
+msgstr ""
+"Vous pouvez uniquement reporter les points de commande manuels. Archivez les"
+" points de commande déclenchés automatiquement si vous ne souhaitez pas "
+"qu'ils soient déclenchés."
 
 #. module: stock
 #. odoo-python
@@ -10854,6 +10927,26 @@ msgstr "Vous ne pouvez pas supprimer une mise au rebut terminée."
 
 #. module: stock
 #. odoo-python
+#: code:addons/stock/models/stock_move_line.py:0
+#, python-format
+msgid ""
+"You cannot directly pack quantities from different transfers into the same "
+"package through this view. Try adding them to a batch picking and pack it "
+"there."
+msgstr ""
+"Cette vue ne permet pas de regrouper directement des quantités provenant de "
+"différents transferts dans le même colis. Essayez de les ajouter à un "
+"transfert par lot et de les regrouper à ce niveau."
+
+#. module: stock
+#. odoo-python
+#: code:addons/stock/models/stock_quant.py:0
+#, python-format
+msgid "You cannot duplicate stock quants."
+msgstr "Vous ne pouvez pas dupliquer de quants."
+
+#. module: stock
+#. odoo-python
 #: code:addons/stock/models/stock_quant.py:0
 #, python-format
 msgid "You cannot modify inventory loss quantity"
@@ -10878,6 +10971,8 @@ msgid ""
 "You cannot pack products into the same package when they are from different "
 "transfers with different operation types."
 msgstr ""
+"Il n'est pas possible de regrouper des produits dans un même colis s'ils "
+"proviennent de différents transferts avec des types d'opération différents."
 
 #. module: stock
 #. odoo-python
@@ -11074,13 +11169,6 @@ msgstr "Vous devez sélectionner une route pour réapprovisionner vos produits"
 
 #. module: stock
 #. odoo-python
-#: code:addons/stock/models/stock_move.py:0
-#, python-format
-msgid "You need to set a Serial Number before generating more."
-msgstr "Vous devez indiquer un numéro de série avant d'en générer d'autres."
-
-#. module: stock
-#. odoo-python
 #: code:addons/stock/models/stock_move_line.py:0
 #, python-format
 msgid ""
@@ -11100,9 +11188,7 @@ msgstr "Vous devez fournir un lot/numéro de série pour le produit %s."
 #. module: stock
 #: model_terms:res.company,invoice_terms_html:stock.res_company_1
 msgid "You should update this document to reflect your T&amp;C."
-msgstr ""
-"Vous devriez mettre à jour ce document pour refléter vos conditions "
-"générales. "
+msgstr "Vous devriez mettre à jour ce document pour refléter vos CGV "
 
 #. module: stock
 #. odoo-python
@@ -11388,7 +11474,7 @@ msgstr "Pour atteindre le maximum de"
 #: model_terms:ir.ui.view,arch_db:stock.report_package_barcode
 #: model_terms:ir.ui.view,arch_db:stock.report_picking
 msgid "units"
-msgstr "unités"
+msgstr "unité(s)"
 
 #. module: stock
 #: model:mail.template,subject:stock.mail_template_data_delivery_confirmation

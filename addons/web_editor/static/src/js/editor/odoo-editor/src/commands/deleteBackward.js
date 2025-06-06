@@ -29,6 +29,8 @@ import {
     closestElement,
     closestBlock,
     getOffsetAndCharSize,
+    ZERO_WIDTH_CHARS,
+    isButton,
 } from '../utils/utils.js';
 
 Text.prototype.oDeleteBackward = function (offset, alreadyMoved = false) {
@@ -51,7 +53,7 @@ const isDeletable = (node) => {
 }
 
 HTMLElement.prototype.oDeleteBackward = function (offset, alreadyMoved = false, offsetLimit) {
-    const contentIsZWS = this.textContent === '\u200B';
+    const contentIsZWS = ZERO_WIDTH_CHARS.includes(this.textContent);
     let moveDest;
     if (offset) {
         const leftNode = this.childNodes[offset - 1];
@@ -125,7 +127,7 @@ HTMLElement.prototype.oDeleteBackward = function (offset, alreadyMoved = false, 
             const parentOffset = childNodeIndex(this);
 
             if (!nodeSize(this) || contentIsZWS) {
-                const visible = isVisible(this);
+                const visible = isVisible(this) || isButton(this);
                 const restore = prepareUpdate(...boundariesOut(this));
                 this.remove();
                 restore();
@@ -184,13 +186,16 @@ HTMLElement.prototype.oDeleteBackward = function (offset, alreadyMoved = false, 
          */
         if (
             !this.previousElementSibling &&
-            ['BLOCKQUOTE', 'H1', 'H2', 'H3', 'PRE'].includes(this.nodeName) &&
+            paragraphRelatedElements.includes(this.nodeName) &&
+            this.nodeName !== 'P' &&
             !closestLi
         ) {
-            const p = document.createElement('p');
-            p.replaceChildren(...this.childNodes);
-            this.replaceWith(p);
-            setSelection(p, offset);
+            if (!this.textContent) {
+                const p = document.createElement('p');
+                p.replaceChildren(...this.childNodes);
+                this.replaceWith(p);
+                setSelection(p, offset);
+            }
             return;
         } else {
             moveDest = leftPos(this);

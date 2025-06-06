@@ -10,6 +10,7 @@ class TestRobustness(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super(TestRobustness, cls).setUpClass()
+        cls.supplier_location = cls.env.ref('stock.stock_location_suppliers')
         cls.stock_location = cls.env.ref('stock.stock_location_stock')
         cls.customer_location = cls.env.ref('stock.stock_location_customers')
         cls.uom_unit = cls.env.ref('uom.product_uom_unit')
@@ -97,6 +98,21 @@ class TestRobustness(TransactionCase):
         move1._action_confirm()
         move1._action_assign()
         self.assertEqual(move1.state, 'assigned')
+
+        move2 = self.env['stock.move'].create({
+            'name': 'test_location_archive',
+            'location_id': test_stock_location.id,
+            'location_dest_id': self.customer_location.id,
+            'product_id': self.product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 1,
+        })
+        move2._action_confirm()
+        move2._action_assign()
+        move2.picked = True
+        move2._action_done()
+        self.assertEqual(move2.state, 'done')
+
         quant = self.env['stock.quant']._gather(
             self.product1,
             test_stock_location,
@@ -113,6 +129,7 @@ class TestRobustness(TransactionCase):
 
         # unreserve
         move1._do_unreserve()
+        test_stock_location.scrap_location = False
 
     def test_package_unpack(self):
         """ Unpack a package that contains quants with a reservation
@@ -260,3 +277,50 @@ class TestRobustness(TransactionCase):
         moveA._set_lot_ids()
 
         self.assertEqual(moveA.quantity, 5)
+
+    def test_new_move_done_picking(self):
+        """ Ensure that adding a Draft move to a Done picking doesn't change the picking state
+        """
+        categ_id = self.env.ref('product.product_category_all').id
+        product1 = self.env['product.product'].create({'name': 'P1', 'type': 'product', 'categ_id': categ_id})
+        product2 = self.env['product.product'].create({'name': 'P2', 'type': 'product', 'categ_id': categ_id})
+
+        receipt = self.env['stock.picking'].create({
+            'location_id': self.supplier_location.id,
+            'location_dest_id': self.stock_location.id,
+            'picking_type_id': self.env.ref('stock.picking_type_in').id,
+        })
+        move1 = self.env['stock.move'].create({
+            'name': 'P1',
+            'location_id': receipt.location_id.id,
+            'location_dest_id': receipt.location_dest_id.id,
+            'picking_id': receipt.id,
+            'product_id': product1.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 1.0,
+        })
+        receipt.action_confirm()
+        receipt.action_assign()
+        move1.picked = True
+        # move1.move_line_ids.quantity = 1
+
+        receipt.button_validate()
+
+        self.assertEqual(receipt.state, 'done')
+        self.assertEqual(move1.state, 'done')
+
+        move2 = self.env['stock.move'].create({
+            'name': 'P2',
+            'location_id': receipt.location_id.id,
+            'location_dest_id': receipt.location_dest_id.id,
+            'picking_id': receipt.id,
+            'state': 'draft',
+            'product_id': product2.id,
+            'product_uom': self.uom_unit.id,
+            'product_uom_qty': 1.0,
+            'quantity': 1.0,
+        })
+
+        self.assertEqual(receipt.state, 'done')
+        self.assertEqual(move1.state, 'done')
+        self.assertEqual(move2.state, 'done')

@@ -20,7 +20,7 @@ class TestTaxPython(TestTaxCommon):
     def test_tax_python_basic(self):
         res = self.python_tax.compute_all(130.0)
         self._check_compute_all_results(
-            136.96, # 'total_included'
+            136.96,  # 'total_included'
             130.0,  # 'total_excluded'
             [
                 # base , amount    | seq | amount | incl | incl_base
@@ -49,14 +49,49 @@ class TestTaxPython(TestTaxCommon):
         python_tax_2 = self.python_tax.copy()
         res = (self.python_tax + python_tax_2).compute_all(130.0)
         self._check_compute_all_results(
-            130,    # 'total_included'
-            116.07, # 'total_excluded'
+            130,  # 'total_included'
+            116.08,  # 'total_excluded'
             [
                 # base , amount     | seq | amount | incl | incl_base
                 # ---------------------------------------------------
-                (116.07, 6.96),   # |  1  |    6%  |   t  |
-                (116.07, 6.97),   # |  1  |    6%  |   t  |
+                (116.08, 6.96),   # |  1  |    6%  |   t  |
+                (116.08, 6.96),   # |  1  |    6%  |   t  |
                 # ---------------------------------------------------
+            ],
+            res
+        )
+
+    def test_price_included_multi_taxes_with_python_tax(self):
+        """ Test multiple price-included taxes with a Python code tax applied last
+        to ensure the total matches the price, and cached tax didn't bypassing the rounding correction.
+        """
+        tax_12_percent = self.env['account.tax'].create({
+            'name': "Tax 12%",
+            'amount_type': 'percent',
+            'amount': 12.0,
+            'price_include': True,
+            'include_base_amount': False,
+            'sequence': 1,  # Ensure this tax is applied first
+        })
+
+        tax_python = self.env['account.tax'].create({
+            'name': "Python Tax",
+            'amount_type': 'code',
+            'python_compute': "result = 22.503",
+            'price_include': True,
+            'include_base_amount': False,
+            'sequence': 2,  # Ensure this tax is applied after the 12% tax
+        })
+
+        taxes = tax_12_percent + tax_python
+        res = taxes.compute_all(516.00)
+
+        self._check_compute_all_results(
+            516.0,  # total_included
+            440.63,  # total_excluded
+            [
+                (440.63, 52.87),
+                (440.63, 22.5),
             ],
             res
         )

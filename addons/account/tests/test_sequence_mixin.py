@@ -438,6 +438,39 @@ class TestSequenceMixin(TestSequenceMixinCommon):
         next_move.action_post()
         self.assertEqual(next_move.name, '00000001-G 0002/2017')
 
+    def test_journal_override_sequence_regex_year(self):
+        """Override the sequence regex with a year syntax not matching the draft invoice name"""
+        move = self.create_move(date='2020-01-01')
+        move.journal_id.sequence_override_regex = (
+            '^'
+            r'(?P<prefix1>.*?)'
+            r'(?P<year>(?:(?<=\D)|(?<=^))\d{4})?'
+            r'(?P<prefix2>(?<=\d{4}).*?)?'
+            r'(?P<seq>\d{0,9})'
+            r'(?P<suffix>\D*?)'
+            '$'
+        )
+
+        # check if the default year_range regex is not used
+        next_move = self.create_move(date='2020-01-01', name='MISC/2020/21/00001')
+        next_move.action_post()
+        self.assertEqual(next_move.name, 'MISC/2020/21/00001')
+
+        # check the next sequence
+        next_move = self.create_move(date='2020-01-01')
+        next_move.action_post()
+        self.assertEqual(next_move.name, 'MISC/2020/21/00002')
+
+        # check for another year
+        next_move = self.create_move(date='2021-01-01')
+        next_move.action_post()
+        self.assertEqual(next_move.name, 'MISC/2021/21/00001')
+
+        # check if year is correctly extracted
+        with self.assertRaises(ValidationError):
+            self.create_move(date='2022-01-01', name='MISC/2021/22/00001', post=True) # year does not match
+        self.create_move(date='2022-01-01', name='MISC/2022/22/00001', post=True)  # fix the year in the name
+
     def test_journal_sequence_ordering(self):
         """Entries are correctly sorted when posting multiple at once."""
         self.test_move.name = 'XMISC/2016/00001'
@@ -639,6 +672,35 @@ class TestSequenceMixin(TestSequenceMixinCommon):
         for move in payments.move_id:
             self.assertRecordValues(move.line_ids, [{'move_name': move.name}] * len(move.line_ids))
 
+    def test_resequence_payment_and_non_payment_without_payment_sequence(self):
+        """Resequence wizard could be open for different move type if the payment sequence is set to False on the journal."""
+        journal = self.company_data['default_journal_bank'].copy({'payment_sequence': False})
+        bsl = self.env['account.bank.statement.line'].create({'name': 'test', 'amount': 100, 'journal_id': journal.id})
+        payment = self.env['account.payment'].create({
+            'payment_type': 'inbound',
+            'partner_id': self.partner_a.id,
+            'amount': 100,
+            'journal_id': journal.id,
+        })
+
+        payment.action_post()
+        wizard = Form(self.env['account.resequence.wizard'].with_context(
+            active_ids=(payment.move_id + bsl.move_id).ids,
+            active_model='account.move'),
+        )
+
+        wizard.save().resequence()
+        self.assertTrue(wizard)
+
+    def test_change_same_journal_not_change_sequence(self):
+        """Changing the journal to the same journal should not change the sequence."""
+        # On first move it's always have same value
+        self.create_move(date='2025-10-17', post=True)
+        move2 = self.create_move(date='2025-10-17', post=True)
+        # we need to create another move to higer the sequence
+        self.create_move(date='2025-10-17', post=True)
+        move2.journal_id = move2.journal_id
+        self.assertEqual(move2.name, 'MISC/2025/10/0002')
 
 @tagged('post_install', '-at_install')
 class TestSequenceMixinDeletion(TestSequenceMixinCommon):

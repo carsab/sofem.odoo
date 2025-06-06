@@ -18,7 +18,7 @@ class AccountEdiDocument(models.Model):
     _description = 'Electronic Document for an account.move'
 
     # == Stored fields ==
-    move_id = fields.Many2one('account.move', required=True, ondelete='cascade', index='btree_not_null')
+    move_id = fields.Many2one('account.move', required=True, ondelete='cascade', index=True)
     edi_format_id = fields.Many2one('account.edi.format', required=True)
     attachment_id = fields.Many2one(
         comodel_name='ir.attachment',
@@ -137,7 +137,7 @@ class AccountEdiDocument(models.Model):
 
             # Attachments that are not explicitly linked to a business model could be removed because they are not
             # supposed to have any traceability from the user.
-            attachments_to_unlink.unlink()
+            attachments_to_unlink.sudo().unlink()
 
         def _postprocess_cancel_edi_results(documents, edi_result):
             move_ids_to_cancel = set()  # Avoid duplicates
@@ -252,7 +252,11 @@ class AccountEdiDocument(models.Model):
 
         :param job_count: Limit explicitely the number of web service calls. If not provided, process all.
         '''
-        edi_documents = self.search([('state', 'in', ('to_send', 'to_cancel')), ('move_id.state', '=', 'posted')])
+        edi_documents = self.search([
+            ('state', 'in', ('to_send', 'to_cancel')),
+            ('move_id.state', '=', 'posted'),
+            ('blocking_level', '!=', 'error'),
+        ])
         nb_remaining_jobs = edi_documents._process_documents_web_services(job_count=job_count)
 
         # Mark the CRON to be triggered again asap since there is some remaining jobs to process.

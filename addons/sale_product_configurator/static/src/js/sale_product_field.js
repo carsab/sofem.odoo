@@ -3,6 +3,7 @@
 import { SaleOrderLineProductField } from '@sale/js/sale_product_field';
 import { serializeDateTime } from "@web/core/l10n/dates";
 import { x2ManyCommands } from "@web/core/orm_service";
+import { WarningDialog } from "@web/core/errors/error_dialogs";
 import { useService } from "@web/core/utils/hooks";
 import { patch } from "@web/core/utils/patch";
 import { ProductConfiguratorDialog } from "./product_configurator_dialog/product_configurator_dialog";
@@ -27,7 +28,7 @@ async function applyProduct(record, product) {
     }
 
     const noVariantPTAVIds = product.attribute_lines.filter(
-        ptal => ptal.create_variant === "no_variant" && ptal.attribute_values.length > 1
+        ptal => ptal.create_variant === "no_variant"
     ).flatMap(ptal => ptal.selected_attribute_value_ids);
 
     await record.update({
@@ -44,6 +45,7 @@ patch(SaleOrderLineProductField.prototype, {
         super.setup(...arguments);
 
         this.dialog = useService("dialog");
+        this.notification = useService("notification");
         this.orm = useService("orm");
     },
 
@@ -69,6 +71,21 @@ patch(SaleOrderLineProductField.prototype, {
                 }
             }
         } else {
+            if (result && result.sale_warning) {
+                const {type, title, message} = result.sale_warning
+                if (type === 'block') {
+                    // display warning block, and remove blocking product
+                    this.dialog.add(WarningDialog, { title, message });
+                    this.props.record.update({'product_template_id': false})
+                    return
+                } else if (type == 'warning') {
+                    // show the warning but proceed with the configurator opening
+                    this.notification.add(message, {
+                        title,
+                        type: "warning",
+                    });
+                }
+            }
             if (!result.mode || result.mode === 'configurator') {
                 this._openProductConfigurator();
             } else {
@@ -89,7 +106,7 @@ patch(SaleOrderLineProductField.prototype, {
         return super.isConfigurableTemplate || this.props.record.data.is_configurable_product;
     },
 
-    async _openProductConfigurator(edit=false) {
+    async getProductConfiguratorDialogProps(edit=false) {
         const saleOrderRecord = this.props.record.model.root;
         let ptavIds = this.props.record.data.product_template_attribute_value_ids.records.map(
             record => record.resId
@@ -121,7 +138,7 @@ patch(SaleOrderLineProductField.prototype, {
                 )
         }
 
-        this.dialog.add(ProductConfiguratorDialog, {
+        return {
             productTemplateId: this.props.record.data.product_template_id[0],
             ptavIds: ptavIds,
             customAttributeValues: customAttributeValues.map(
@@ -155,6 +172,11 @@ patch(SaleOrderLineProductField.prototype, {
             discard: () => {
                 saleOrderRecord.data.order_line.delete(this.props.record);
             },
-        });
+        }
+    },
+
+    async _openProductConfigurator(edit=false) {
+        const productConfiguratorDialogProps = await this.getProductConfiguratorDialogProps(edit);
+        return this.dialog.add(ProductConfiguratorDialog, productConfiguratorDialogProps);
     },
 });

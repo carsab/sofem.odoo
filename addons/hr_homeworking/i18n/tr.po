@@ -12,14 +12,15 @@
 # Levent Karakaş <levent@mektup.at>, 2023
 # Tugay Hatıl <tugayh@projetgrup.com>, 2023
 # İmat Yahya Çataklı <yahyacatakli@gmail.com>, 2023
+# Deniz Guvener, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-05 12:31+0000\n"
+"POT-Creation-Date: 2025-05-09 20:37+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: İmat Yahya Çataklı <yahyacatakli@gmail.com>, 2023\n"
+"Last-Translator: Deniz Guvener, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/odoo/teams/41243/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -312,7 +313,7 @@ msgstr "Salı"
 #: model_terms:ir.ui.view,arch_db:hr_homeworking.view_employee_form
 #, python-format
 msgid "Unspecified"
-msgstr ""
+msgstr "Belirtilmemiş"
 
 #. module: hr_homeworking
 #: model:ir.model,name:hr_homeworking.model_res_users

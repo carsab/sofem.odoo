@@ -10,7 +10,7 @@ from PIL import Image
 import odoo
 from odoo.exceptions import AccessError
 from odoo.addons.base.tests.common import TransactionCaseWithUserDemo
-from odoo.tools import image_to_base64
+from odoo.tools import image_to_base64, mute_logger
 
 HASH_SPLIT = 2      # FIXME: testing implementations detail is not a good idea
 
@@ -96,6 +96,8 @@ class TestIrAttachment(TransactionCaseWithUserDemo):
         self.assertEqual(a2.mimetype, 'image/png', "the new mimetype should be the one given on write")
         a3 = Attachment.create({'name': 'a3', 'datas': self.blob1_b64, 'mimetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})
         self.assertEqual(a3.mimetype, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', "should preserve office mime type")
+        a4 = Attachment.create({'name': 'a4', 'datas': self.blob1_b64, 'mimetype': 'Application/VND.OpenXMLformats-officedocument.wordprocessingml.document'})
+        self.assertEqual(a4.mimetype, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', "should preserve office mime type (lowercase)")
 
     def test_08_neuter_xml_mimetype(self):
         """
@@ -260,6 +262,13 @@ class TestIrAttachment(TransactionCaseWithUserDemo):
         self.Attachment._gc_file_store_unsafe()
         self.assertFalse(os.path.isfile(store_path), 'file removed')
 
+    def test_14_invalid_mimetype_with_correct_file_extension_no_post_processing(self):
+        # test with fake svg with png mimetype
+        unique_blob = b'<svg xmlns="http://www.w3.org/2000/svg"></svg>'
+        a1 = self.Attachment.create({'name': 'a1', 'raw': unique_blob, 'mimetype': 'image/png'})
+        self.assertEqual(a1.raw, unique_blob)
+        self.assertEqual(a1.mimetype, 'image/png')
+
 
 class TestPermissions(TransactionCaseWithUserDemo):
     def setUp(self):
@@ -321,6 +330,32 @@ class TestPermissions(TransactionCaseWithUserDemo):
         # Safety assert that base.user_admin is not the superuser, otherwise the test is useless
         self.assertNotEqual(odoo.SUPERUSER_ID, admin_user.id)
         attachment_admin.with_user(admin_user).datas
+
+    @mute_logger("odoo.addons.base.models.ir_rule", "odoo.models")
+    def test_field_read_permission(self):
+        """If the record field can't be read,
+        e.g. `groups="base.group_system"` on the field,
+        the attachment can't be read either.
+        """
+        # check that the information can be read out of the box
+        main_partner = self.env.ref('base.main_partner')
+        self.assertTrue(main_partner.image_128)
+        attachment = self.env['ir.attachment'].search([
+            ('res_model', '=', 'res.partner'),
+            ('res_id', '=', main_partner.id),
+            ('res_field', '=', 'image_128')
+        ])
+        self.assertTrue(attachment.datas)
+
+        # Patch the field `res.partner.image_128` to make it unreadable by the demo user
+        self.patch(self.env.registry['res.partner']._fields['image_128'], 'groups', 'base.group_system')
+
+        # Assert the field can't be read
+        with self.assertRaises(AccessError):
+            main_partner.image_128
+        # Assert the attachment related to the field can't be read
+        with self.assertRaises(AccessError):
+            attachment.datas
 
     def test_with_write_permissions(self):
         """With write permissions to the linked record, attachment can be

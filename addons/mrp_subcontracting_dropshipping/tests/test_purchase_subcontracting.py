@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+from odoo import Command
 from odoo.tests import Form
 from odoo.addons.mrp_subcontracting.tests.common import TestMrpSubcontractingCommon
 
@@ -403,3 +404,96 @@ class TestSubcontractingDropshippingFlows(TestMrpSubcontractingCommon):
             {'product_id': component.id, 'product_qty': 1.0},
             {'product_id': component.id, 'product_qty': 1.0},
         ])
+
+    def test_subcontracted_bom_routes(self):
+        """
+        Take two BoM having those components. One being subcontracted and the other not.
+         - Compo RR : Buy & Reordering rule to resupply subcontractor.
+         - Compo DROP : Buy & Dropship subcontractor on order.
+        Check that depending on the context, the right route is shown on the report.
+        """
+        route_buy = self.env.ref('purchase_stock.route_warehouse0_buy')
+        route_dropship = self.env['stock.route'].search([('name', '=', 'Dropship Subcontractor on Order')], limit=1)
+        warehouse = self.env['stock.warehouse'].search([], limit=1)
+
+        compo_drop, compo_rr = self.env['product.product'].create([{
+            'name': name,
+            'type': 'product',
+            'seller_ids': [Command.create({'partner_id': self.subcontractor_partner1.parent_id.id})],
+            'route_ids': [Command.set(routes)],
+        } for name, routes in [
+            ('Compo DROP', [route_buy.id, route_dropship.id]),
+            ('Compo RR', [route_buy.id]),
+        ]])
+
+        route_resupply = self.env['stock.route'].search([('name', '=like', '%Resupply Subcontractor'), ('warehouse_ids', '=', warehouse.id)])
+        route_resupply.product_selectable = True
+        self.env['stock.warehouse.orderpoint'].create({
+            'name': 'Resupply Subcontractor',
+            'location_id': self.subcontractor_partner1.property_stock_subcontractor.id,
+            'route_id': route_resupply.id,
+            'product_id': compo_rr.id,
+            'product_min_qty': 0,
+            'product_max_qty': 0,
+        })
+        compo_rr.route_ids = [Command.link(route_resupply.id)]
+
+        bom_subcontract, bom_local = self.env['mrp.bom'].create([{
+            'product_tmpl_id': self.comp1.product_tmpl_id.id,
+            'type': bom_type,
+            'subcontractor_ids': partner_id,
+            'bom_line_ids': [
+                Command.create({'product_id': compo_drop.id, 'product_qty': 1}),
+                Command.create({'product_id': compo_rr.id, 'product_qty': 1}),
+            ]
+        } for bom_type, partner_id in [
+            ('subcontract', [Command.link(self.subcontractor_partner1.id)]),
+            ('normal', False),
+        ]])
+        # Need to add the subcontractor as Vendor to have the bom read as subcontracted.
+        self.comp1.write({'seller_ids': [Command.create({'partner_id': self.subcontractor_partner1.id})]})
+
+        report = self.env['report.mrp.report_bom_structure'].with_context(warehouse=warehouse.id)._get_report_data(bom_subcontract.id)
+        component_lines = report.get('lines', []).get('components', [])
+        self.assertEqual(component_lines[0]['product_id'], compo_drop.id)
+        self.assertEqual(component_lines[0]['route_name'], 'Dropship Subcontractor on Order')
+        self.assertEqual(component_lines[1]['product_id'], compo_rr.id)
+        self.assertEqual(component_lines[1]['route_name'], 'Buy', 'Despite the RR linked to it, it should still display the Buy route')
+
+        report = self.env['report.mrp.report_bom_structure'].with_context(warehouse=warehouse.id)._get_report_data(bom_local.id)
+        component_lines = report.get('lines', []).get('components', [])
+        self.assertEqual(component_lines[0]['product_id'], compo_drop.id)
+        self.assertEqual(component_lines[0]['route_name'], 'Buy', 'Outside of the subcontracted context, it should try to resupply stock.')
+        self.assertEqual(component_lines[1]['product_id'], compo_rr.id)
+        self.assertEqual(component_lines[1]['route_name'], 'Buy')
+
+    def test_partner_id_no_overwrite(self):
+        subcontract_location = self.env.company.subcontracting_location_id
+        p1, p2 = self.env['res.partner'].create([
+            {'name': 'partner 1', 'property_stock_subcontractor': subcontract_location.id},
+            {'name': 'partner 2', 'property_stock_subcontractor': subcontract_location.id},
+        ])
+        route_resupply = self.env['stock.route'].create({
+            'name': 'Resupply Subcontractor',
+            'rule_ids': [(0, False, {
+                'name': 'Stock -> Subcontractor',
+                'location_src_id': self.env.ref('stock.stock_location_stock').id,
+                'location_dest_id': subcontract_location.id,
+                'company_id': self.env.company.id,
+                'action': 'pull',
+                'auto': 'manual',
+                'picking_type_id': self.env.ref('stock.picking_type_out').id,
+                'partner_address_id': p1.id,
+            })],
+        })
+        self.env['stock.warehouse.orderpoint'].create({
+            'name': 'Resupply Subcontractor',
+            'location_id': subcontract_location.id,
+            'route_id': route_resupply.id,
+            'product_id': self.comp1.id,
+            'product_min_qty': 2,
+            'product_max_qty': 2,
+        })
+        self.env['procurement.group'].run_scheduler()
+        delivery = self.env["stock.move"].search([("product_id", "=", self.comp1.id)]).picking_id
+        self.assertEqual(delivery.partner_id, p1)
