@@ -128,7 +128,14 @@ class ReportSaleDetails(models.AbstractModel):
             sessions = self.env['pos.session'].search([('id', 'in', session_ids)])
             for session in sessions:
                 configs.append(session.config_id)
-
+            self.env.cr.execute("""
+                                 select count(*) + 1 as num_closed
+                                    from pos_session ps 
+                                    where ps.config_id = %s
+                                    and ps.state ='closed'
+            """, (configs[0].mapped('id')[0],))
+            num_closed = self.env.cr.dictfetchall()   
+             
         for payment in payments:
             payment['count'] = False
 
