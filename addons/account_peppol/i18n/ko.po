@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-10 10:34+0000\n"
+"POT-Creation-Date: 2025-06-06 18:37+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
 "Last-Translator: Sarah Park, 2025\n"
 "Language-Team: Korean (https://app.transifex.com/odoo/teams/41243/ko/)\n"
@@ -27,6 +27,8 @@ msgid ""
 "<br/>\n"
 "                                In Belgium, electronic invoicing is <u>mandatory as of January 2026</u> - don't wait to register."
 msgstr ""
+"<br/>\n"
+"                                벨기에에서는 전자 청구서 발행이 <u>2026년 1월부터 의무화</u>되었습니다. 지금 바로 등록하세요."
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.account_peppol_view_move_form
@@ -80,12 +82,8 @@ msgstr ""
 #, python-format
 msgid ""
 "A participant with these details has already been registered on the network."
-" If you have previously registered to an alternative Peppol service, please "
-"deregister from that service, or request a migration key before trying "
-"again. "
+" If you have previously registered to a Peppol service, please deregister."
 msgstr ""
-"해당 세부 정보가 있는 참가자가 이미 네트워크에 등록되어 있습니다. 이전에 다른 Peppol 서비스에 등록한 경우, 해당 서비스의 등록을"
-" 취소하거나 마이그레이션 키를 요청하여 다시 시도하세요."
 
 #. module: account_peppol
 #. odoo-python
@@ -802,7 +800,7 @@ msgstr "이 기능은 더 이상 사용되지 않습니다. 마이그레이션 �
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
 msgid "This invoice has also been"
-msgstr ""
+msgstr "또한 이 청구서는"
 
 #. module: account_peppol
 #. odoo-python
@@ -957,7 +955,7 @@ msgstr "등록하신 내용이 하루 내에 활성화될 것입니다."
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
 msgid "could not be sent via Peppol"
-msgstr ""
+msgstr "Peppol을 통해 전송 불가"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
@@ -967,7 +965,7 @@ msgstr "PEPPOL을 통해 전송"
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
 msgid "to send invoices, but this one"
-msgstr ""
+msgstr "청구서 전송, 다만 이 건은"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol

@@ -391,7 +391,7 @@ export class PaymentScreen extends Component {
      * @returns {boolean} true if the invoice pdf should be downloaded
      */
     shouldDownloadInvoice() {
-        return false;
+        return true;
     }
     get nextScreen() {
         return !this.error ? "ReceiptScreen" : "ProductScreen";

@@ -2331,7 +2331,6 @@ class MailThread(models.AbstractModel):
             attachement_extra_list = []
             # generate values
             for attachment in attachments:
-                _logger.debug('PROCESSING ATTACHMENT %s', attachment)
                 if len(attachment) == 2:
                     name, content = attachment
                     cid = False

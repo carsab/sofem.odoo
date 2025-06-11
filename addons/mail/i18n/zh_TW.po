@@ -5143,7 +5143,7 @@ msgstr "最後一次標註興趣"
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_discuss_channel_member__seen_message_id
 msgid "Last Seen"
-msgstr "最近一次露面"
+msgstr "最後上線"
 
 #. module: mail
 #: model:ir.model.fields,field_description:mail.field_discuss_channel_rtc_session__write_date
@@ -7233,7 +7233,7 @@ msgstr "計劃於"
 #: model_terms:ir.ui.view,arch_db:mail.mail_activity_plan_view_form
 #: model_terms:ir.ui.view,arch_db:mail.mail_activity_plan_view_tree
 msgid "Planning"
-msgstr "計劃"
+msgstr "規劃"
 
 #. module: mail
 #. odoo-javascript

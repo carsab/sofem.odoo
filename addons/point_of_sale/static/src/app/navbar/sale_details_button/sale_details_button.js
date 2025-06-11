@@ -14,7 +14,6 @@ export class SaleDetailsButton extends Component {
         this.pos = usePos();
         this.popup = useService("popup");
         this.orm = useService("orm");
-        this.printer = useService("printer");
         this.hardwareProxy = useService("hardware_proxy");
     }
 
@@ -27,10 +26,6 @@ export class SaleDetailsButton extends Component {
             "get_sale_details",
             [false, false, false, [this.pos.pos_session.id]]
         );
-        console.log("IMPRESION TIRILLA :::::>", this.pos.pos_session.id)
-        saleDetails.headerData = this.pos.getReceiptHeaderData()
-
-        console.log("DATA TIRILLA:::::>", saleDetails)
         const report = renderToElement(
             "point_of_sale.SaleDetailsReport",
             Object.assign({}, saleDetails, {
@@ -38,20 +33,6 @@ export class SaleDetailsButton extends Component {
                 pos: this.pos,
                 formatCurrency: this.env.utils.formatCurrency,
             })
-        );
-        console.log("RENDER TIRILLA:::::>", report)
-        let rta = this.printer.printHtml(report, { webPrintFallback: true })
-        console.log("Impresión detalle de ventas en tirilla", rta)
-    }
-
-    async printReport(report) {
-        const isPrinted = await this.printer.print(
-            report,
-            {
-                data: report,
-                formatCurrency: this.env.utils.formatCurrency,
-            },
-            { webPrintFallback: true }
         );
         const { successful, message } = await this.hardwareProxy.printer.printReceipt(report);
         if (!successful) {

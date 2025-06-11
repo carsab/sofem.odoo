@@ -77,7 +77,7 @@ class ReportSaleDetails(models.AbstractModel):
         refund_taxes = {
             'base_amount': 0.0,
             'taxes': {},
-        } 
+        }
         last_ref = "0"
         num_closed= []
         for order in orders:

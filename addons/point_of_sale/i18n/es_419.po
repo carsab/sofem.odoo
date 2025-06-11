@@ -1074,7 +1074,7 @@ msgstr "Regresar"
 #: code:addons/point_of_sale/static/src/app/navbar/navbar.xml:0
 #, python-format
 msgid "Backend"
-msgstr "Salir (Sin cerrar sesión)"
+msgstr "Salir (sin cerrar sesión)"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__iface_customer_facing_display_background_image_1920
@@ -1092,7 +1092,7 @@ msgstr "ID de credencial"
 #: code:addons/point_of_sale/static/src/app/screens/partner_list/partner_list.xml:0
 #, python-format
 msgid "Balance"
-msgstr "Saldo"
+msgstr "Balance"
 
 #. module: point_of_sale
 #. odoo-python
@@ -1274,7 +1274,7 @@ msgstr "No puede modificar una propina"
 #, python-format
 msgid "Cannot return change without a cash payment method"
 msgstr ""
-"Es imposible regresar el cambio si el método de pago no es en efectivo"
+"No se puede devolver cambio si no se trata de un método de pago en efectivo"
 
 #. module: point_of_sale
 #. odoo-javascript

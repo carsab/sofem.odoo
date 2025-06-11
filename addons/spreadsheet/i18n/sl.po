@@ -5,7 +5,6 @@
 # Translators:
 # Vida Potočnik <vida.potocnik@mentis.si>, 2023
 # Dejan Sraka <dejan.sraka@picolabs.si>, 2023
-# Grega Vavtar <grega@hbs.si>, 2023
 # Tomaž Jug <tomaz@editor.si>, 2023
 # matjaz k <matjaz@mentis.si>, 2023
 # Tadej Lupšina <tadej@hbs.si>, 2023
@@ -13,6 +12,8 @@
 # Martin Trigaux, 2023
 # Jasmina Macur <jasmina@hbs.si>, 2023
 # Katja Deržič, 2024
+# Grega Vavtar <grega@hbs.si>, 2025
+# Saso Plibersek, 2025
 # Aleš Pipan, 2025
 # 
 msgid ""
@@ -78,7 +79,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "%s Rows above"
-msgstr "%s vrstice spodaj"
+msgstr "%s vrstice zgoraj"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2709,7 +2710,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Engineering"
-msgstr ""
+msgstr "Inženirstvo"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3674,7 +3675,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Insert %s rows above"
-msgstr "Vstavite%svrstice spodaj"
+msgstr "Vstavite%svrstice zgoraj"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3746,7 +3747,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Insert row above"
-msgstr "Vstavite vrstico spodaj"
+msgstr "Vstavite vrstico zgoraj"
 
 #. module: spreadsheet
 #. odoo-javascript

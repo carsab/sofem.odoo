@@ -1661,6 +1661,8 @@ msgid ""
 "\n"
 "Adds approvals data to documents\n"
 msgstr ""
+"\n"
+"Onay verilerini belgelere ekler\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_documents_fleet
@@ -1880,6 +1882,9 @@ msgid ""
 "Allows the outsourcing of services. This module allows one to sell services provided\n"
 "by external providers and will automatically generate purchase orders directed to the service seller.\n"
 msgstr ""
+"\n"
+"Hizmetlerin dış kaynak kullanımına izin verir. Bu modül, harici sağlayıcılar tarafından sağlanan hizmetlerin satılmasına\n"
+"olanak tanır ve hizmet sağlayıcıya yönlendirilen satın alma siparişlerini otomatik olarak oluşturur.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_jo_edi
@@ -2043,6 +2048,8 @@ msgid ""
 "\n"
 "App to upload and manage your documents.\n"
 msgstr ""
+"\n"
+"Belgelerinizi yükleyip yönetebileceğiniz bir uygulama.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_gcc_invoice
@@ -2241,6 +2248,8 @@ msgid ""
 "\n"
 "Avoid auto-enabling the documents feature on fsm projects.\n"
 msgstr ""
+"\n"
+"FSM projelerinde belgeler özelliğinin otomatik olarak etkinleşmesini önleyin.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_et
@@ -2509,6 +2518,8 @@ msgid ""
 "\n"
 "Bridge between HR and Livechat."
 msgstr ""
+"\n"
+"İK ile Canlı Sohbet arasında köprü."
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_maintenance
@@ -2516,6 +2527,8 @@ msgid ""
 "\n"
 "Bridge between HR and Maintenance."
 msgstr ""
+"\n"
+"İK ile Bakım arasında köprü."
 
 #. module: base
 #: model:ir.module.module,description:base.module_helpdesk_fsm_sale
@@ -2566,6 +2579,8 @@ msgid ""
 "\n"
 "Bridge module between purchase and intrastat.\n"
 msgstr ""
+"\n"
+"Satın alma ve intrastat arasında köprü modülü.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_sale_intrastat
@@ -3211,6 +3226,10 @@ msgid ""
 "========================\n"
 "This is help to show case the documents OCR for India.\n"
 msgstr ""
+"\n"
+"Hindistan için Demo Belgeleri\n"
+"========================\n"
+"Bu, Hindistan için OCR belgelerinin gösterilmesine yardımcı olur.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mass_mailing_themes
@@ -3624,6 +3643,8 @@ msgid ""
 "\n"
 "Employee Tax Deduction Card forms will be automatically integrated to the Document app.\n"
 msgstr ""
+"\n"
+"Çalışan Vergi Kesinti Kartı formları otomatik olarak Belgeler uygulamasına entegre edilecektir.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_documents_hr_contract
@@ -3640,6 +3661,8 @@ msgid ""
 "\n"
 "Employee ir56 forms will be automatically integrated to the Document app.\n"
 msgstr ""
+"\n"
+"Çalışan 'ir56 formları', Belgeler uygulamasına otomatik olarak entegre edilecektir.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_documents_hr_payroll
@@ -3656,6 +3679,8 @@ msgid ""
 "\n"
 "Employees' individual account forms are automatically integrated to the Document app.\n"
 msgstr ""
+"\n"
+"Çalışanların bireysel hesap formları Belgeler uygulamasına otomatik olarak entegre edilir.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_au_keypay
@@ -3718,6 +3743,8 @@ msgid ""
 "\n"
 "Expense documents will be automatically integrated to the Document app.\n"
 msgstr ""
+"\n"
+"Masraf Yönetimi uygulaması belgeleri, Belgeler uygulamasına otomatik olarak entegre edilecektir..\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_us_payment_nacha
@@ -4282,6 +4309,10 @@ msgid ""
 "\n"
 "So this module is to get the warehouse address if the bill is created from Purchase Order\n"
 msgstr ""
+"\n"
+"Fatura Satın Alma Siparişinden oluşturulduysa depo adresini alın\n"
+"\n"
+"Yani; bu modül, fatura Satın Alma Siparişinden oluşturulmuşsa depo adresini almak içindir\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_in_sale_stock
@@ -4361,6 +4392,9 @@ msgid ""
 "Hong Kong Payroll Rules.\n"
 "========================\n"
 msgstr ""
+"\n"
+"Hong Kong Bordro Kuralları.\n"
+"========================\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_br_pix
@@ -4922,6 +4956,22 @@ msgid ""
 "\n"
 "This module also uses analytic accounting and is compatible with the invoice on timesheet module so that you are able to automatically re-invoice your customers' expenses if your work by project.\n"
 msgstr ""
+"\n"
+"Çalışanların Harcamalarını Yönetin \n"
+"============================\n"
+"\n"
+"Bu uygulama çalışanlarınızın günlük harcamalarını yönetmenizi sağlar. Çalışanlarınızın ücret notlarına erişmenizi sağlar ve size bu notları tamamlama, doğrulama veya reddetme hakkı verir. Doğrulamadan sonra çalışan için bir fatura oluşturur.\n"
+"Çalışanlar kendi harcamalarını kodlayabilir ve doğrulama akışı, yöneticiler tarafından doğrulandıktan sonra otomatik olarak bu harcamaları muhasebeye aktarır.\n"
+"\n"
+"\n"
+"Tüm akış şu şekilde uygulanır:\n"
+"---------------------------------\n"
+"* Taslak gider\n"
+"* Çalışan tarafından yöneticisine iletilir\n"
+"* Yönetici tarafından onaylanır\n"
+"* Muhasebe tarafından doğrulanır ve muhasebe kayıtları oluşturulur\n"
+"\n"
+"Bu modül aynı zamanda analitik muhasebe kullanır ve çalışma çizelgesinde fatura modülü ile uyumludur, böylece proje bazlı çalışmanız durumunda müşterilerinizin harcamalarını otomatik olarak yeniden faturalandırabilirsiniz.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_sale_management
@@ -6788,6 +6838,8 @@ msgid ""
 "\n"
 "This bridge module adds some smart buttons between Purchase and Subcontracting\n"
 msgstr ""
+"\n"
+"Bu köprü modülü, Satın Alma ve Taşeronluk arasına bazı akıllı düğmeler ekler\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ee_rounding
@@ -7630,6 +7682,9 @@ msgid ""
 "This module adds to the approvals workflow the possibility to generate\n"
 "RFQ from an approval purchase request.\n"
 msgstr ""
+"\n"
+"Bu modül, onay iş akışına bir onay satın alma talebinden\n"
+"fiyatlandırma talebi oluşturma imkanı ekler.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_attendance
@@ -7714,6 +7769,9 @@ msgid ""
 "This module allows to fill Purchase Orders rapidly\n"
 "by choosing product variants quantity through a Grid Entry.\n"
 msgstr ""
+"\n"
+"Bu modül, bir Izgara Girişi aracılığıyla ürün varyantları miktarını seçerek\n"
+"Satın Alma Siparişlerini hızlı bir şekilde doldurmaya olanak tanır.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_sale_product_matrix
@@ -8622,6 +8680,12 @@ msgid ""
 "It is basically used when we want to keep track of production orders generated\n"
 "from purchase order.\n"
 msgstr ""
+"\n"
+"Bu modül, kullanıcıya bir seferde mrp yükleme ve modül satın alma olanağı sağlar.\n"
+"========================================================================================\n"
+"\n"
+"Temel olarak satın alma siparişinden oluşturulan üretim siparişlerini \n"
+"takip etmek istediğimizde kullanılır.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_sale_mrp
@@ -8987,6 +9051,9 @@ msgid ""
 "Using this application you can manage Sales Teams with CRM and/or Sales\n"
 "=======================================================================\n"
 msgstr ""
+"\n"
+"Bu uygulamayı kullanarak CRM ve/veya Satış ile Satış Ekiplerinizi yönetebilirsiniz\n"
+"=======================================================================\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_base_vat
@@ -9147,6 +9214,8 @@ msgid ""
 "\n"
 "When sharing documents/folder, the domain of the shared URL can be chosen by selecting a target website.\n"
 msgstr ""
+"\n"
+"Belge/klasör paylaşırken paylaşılan URL'nin etki alanı, bir hedef web sitesi seçilerek belirlenebilir.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_account_online_synchronization
@@ -9788,7 +9857,7 @@ msgstr ""
 #. module: base
 #: model_terms:res.company,appraisal_manager_feedback_template:base.main_company
 msgid "<em>Autonomy</em>"
-msgstr ""
+msgstr "<em>Otonomi</em>"
 
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company
@@ -9835,7 +9904,7 @@ msgstr ""
 #. module: base
 #: model_terms:res.company,appraisal_manager_feedback_template:base.main_company
 msgid "<em>Pro-activity</em>"
-msgstr ""
+msgstr "<em>Proaktiflik</em>"
 
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company
@@ -9854,7 +9923,7 @@ msgstr ""
 #. module: base
 #: model_terms:res.company,appraisal_manager_feedback_template:base.main_company
 msgid "<em>Teamwork</em>"
-msgstr ""
+msgstr "<em>Ekip Çalışması</em>"
 
 #. module: base
 #: model_terms:res.company,appraisal_manager_feedback_template:base.main_company
@@ -11504,6 +11573,8 @@ msgstr "Bir tablo girişi aracılığıyla Müşteri Siparişine varyant ekleyin
 #: model:ir.module.module,summary:base.module_purchase_product_matrix
 msgid "Add variants to your purchase orders through an Order Grid Entry."
 msgstr ""
+"Sipariş Izgara Girişi aracılığıyla satın alma siparişlerinize varyantlar "
+"ekleyin."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_event_enterprise
@@ -12901,7 +12972,7 @@ msgstr "Değerlendirmeler"
 #. module: base
 #: model:ir.module.module,summary:base.module_documents_approvals
 msgid "Approval from documents"
-msgstr ""
+msgstr "Belgelerden Onay"
 
 #. module: base
 #: model:ir.module.category,name:base.module_category_human_resources_approvals
@@ -13337,7 +13408,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_base_automation_hr_contract
 msgid "Automation Rules based on Employee Contracts"
-msgstr ""
+msgstr "Çalışan Sözleşmelerine Dayalı Otomasyon Kuralları"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_actions_server__available_model_ids
@@ -13920,7 +13991,7 @@ msgstr "Belçika - Bordro - Dimona"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_sd_worx
 msgid "Belgium - Payroll - Export to SD Worx"
-msgstr ""
+msgstr "Belçika - Bordro - SD Worx’e Aktar"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_be_hr_payroll_fleet
@@ -14131,7 +14202,7 @@ msgstr "Brezilya - Muhasebe Raporları"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_sales
 msgid "Brazil - Sale"
-msgstr ""
+msgstr "Brezilya - Satış"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_sale_subscription
@@ -14318,6 +14389,8 @@ msgid ""
 "Bridge module for Purchase requisition and Sales. Used to properly create "
 "purchase requisitions for subcontracted services"
 msgstr ""
+"Satın Alma talebi ve Satış için köprü modülü. Taşeron hizmetler için satın "
+"alma taleplerini düzgün bir şekilde oluşturmak amacıyla kullanılır"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_sale_comparison_wishlist
@@ -15031,7 +15104,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_website_documents
 msgid "Choose the website on which documents/folder are shared"
-msgstr ""
+msgstr "Belgelerin/klasörlerin paylaşıldığı web sitesini seçin"
 
 #. module: base
 #: model:res.country,name:base.cx
@@ -17549,7 +17622,7 @@ msgstr "Belgeler - Muhasebe"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_approvals
 msgid "Documents - Approvals"
-msgstr ""
+msgstr "Belgeler - Onay"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_l10n_be_hr_payroll
@@ -17564,7 +17637,7 @@ msgstr "Belgeler - Sözleşmeler"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_hr_expense
 msgid "Documents - Expense"
-msgstr ""
+msgstr "Belgeler - Masraf Yönetimi"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_fsm
@@ -17584,12 +17657,12 @@ msgstr "Belgeler - İK"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_l10n_hk_hr_payroll
 msgid "Documents - Hong Kong Payroll"
-msgstr ""
+msgstr "Belgeler - Hong Kong Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_l10n_ke_hr_payroll
 msgid "Documents - Kenyan Payroll"
-msgstr ""
+msgstr "Belgeler - Kenya Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_hr_payroll
@@ -17624,7 +17697,7 @@ msgstr "Belgeler - İmzalar"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_l10n_ch_hr_payroll
 msgid "Documents - Swiss Payroll"
-msgstr ""
+msgstr "Belgeler - İsviçre Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_hr_holidays
@@ -18282,7 +18355,7 @@ msgstr "Ekvator Ginesi"
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_maintenance
 msgid "Equipment, Assets, Internal Hardware, Allocation Tracking"
-msgstr ""
+msgstr "Ekipman, Demirbaş, Dahili Donanım, Tahsis Takibi"
 
 #. module: base
 #: model:res.country,name:base.er
@@ -18661,7 +18734,7 @@ msgstr ""
 #: model:ir.module.module,description:base.module_l10n_be_hr_payroll_sd_worx
 #: model:ir.module.module,summary:base.module_l10n_be_hr_payroll_sd_worx
 msgid "Export Work Entries to SD Worx"
-msgstr ""
+msgstr "Çalışma Girdilerini SD Worx’e Aktar"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_au_aba
@@ -20049,7 +20122,7 @@ msgstr "Kurumsal görünümü ve hissi elde edin"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_in_purchase_stock
 msgid "Get warehouse address if the bill is created from Purchase Order"
-msgstr ""
+msgstr "Fatura Satın Alma Siparişinden oluşturulduysa depo adresini alın"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_in_sale_stock
@@ -20780,7 +20853,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_hk_hr_payroll_account
 msgid "Hong Kong - Payroll with Accounting"
-msgstr ""
+msgstr "Hong Kong - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_mail_server__smtp_host
@@ -20800,7 +20873,7 @@ msgstr "Mesken"
 #. module: base
 #: model_terms:res.company,appraisal_manager_feedback_template:base.main_company
 msgid "How could the employee improve?"
-msgstr ""
+msgstr "Çalışan nasıl gelişebilir?"
 
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company
@@ -21574,7 +21647,7 @@ msgstr "Hindistan"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_documents
 msgid "India - Documents"
-msgstr ""
+msgstr "Hindistan - Belgeler"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_hr_payroll_account
@@ -23322,7 +23395,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_hr_payroll_account
 msgid "Lithuania - Payroll with Accounting"
-msgstr ""
+msgstr "Litvanya - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_lt_saft_import
@@ -24418,7 +24491,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mx_hr_payroll_account
 msgid "Mexico - Payroll with Accounting"
-msgstr ""
+msgstr "Meksika - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_mx_reports_closing
@@ -24845,6 +24918,9 @@ msgid ""
 "\n"
 "   Supported documents are SO, PO.\n"
 msgstr ""
+"Belgelerin birkaç şirket arasında senkronizasyonu için modül. Örneğin, bir Satın Alma Siparişi sistemdeki başka bir şirketle satıcı olarak doğrulandığında otomatik olarak bir Satış Siparişi oluşturulmasına ve tam tersine olanak tanır.\n"
+"\n"
+"   Desteklenen belgeler: Satış siparişleri ve satın alma siparişleri.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_account_inter_company_rules
@@ -24956,7 +25032,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ma_hr_payroll_account
 msgid "Morocco - Payroll with Accounting"
-msgstr ""
+msgstr "Fas - Muhasebe ile Bordro"
 
 #. module: base
 #: model:res.country,name:base.mz
@@ -25166,7 +25242,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_nl_hr_payroll_account
 msgid "Netherlands - Payroll with Accounting"
-msgstr ""
+msgstr "Hollanda - Payroll with Accounting"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_nl_reports_sbr
@@ -28577,7 +28653,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_pl_hr_payroll_account
 msgid "Poland - Payroll with Accounting"
-msgstr ""
+msgstr "Polonya - Muhasebe ile Bordro"
 
 #. module: base
 #: model:res.groups,name:base.group_portal
@@ -29358,7 +29434,7 @@ msgstr "Satınalma Siparişleri, Makbuzlar, Stok Satıcısı"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_requisition_sale
 msgid "Purchase Requisition Sale"
-msgstr ""
+msgstr "Satın Alma Talebi Satışı"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_requisition_stock
@@ -30218,7 +30294,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_hr_payroll_account
 msgid "Romania - Payroll with Accounting"
-msgstr ""
+msgstr "Romanya - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_saft_import
@@ -30651,7 +30727,7 @@ msgstr "Satış hizmet dış kaynak kullanımı dayalı."
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_br_sales
 msgid "Sale modifications for Brazil"
-msgstr ""
+msgstr "Brezilya için satış değişiklikleri"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_social_sale
@@ -31746,7 +31822,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sk_hr_payroll_account
 msgid "Slovakia - Payroll with Accounting"
-msgstr ""
+msgstr "Slovakya - Muhasebe ile Bordro"
 
 #. module: base
 #: model:res.country,name:base.si
@@ -32431,6 +32507,7 @@ msgstr "Çalışan maaş bordrolarını Belge uygulamasında sakla"
 #: model:ir.module.module,summary:base.module_documents_l10n_ke_hr_payroll
 msgid "Store employee tax deduction card forms in the Document app"
 msgstr ""
+"Çalışan vergi kesintisi kartı formlarını Belgeler uygulamasında saklayın"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_documents_hr_holidays
@@ -32440,17 +32517,17 @@ msgstr "Çalışanın kapalı olduğu belgeleri Belge uygulamasında depola"
 #. module: base
 #: model:ir.module.module,summary:base.module_documents_hr_expense
 msgid "Store expense documents in the Document app"
-msgstr ""
+msgstr "Gider belgelerini Belgeler uygulamasında saklayın"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_documents_l10n_ch_hr_payroll
 msgid "Store individual accounts in Documents application"
-msgstr ""
+msgstr "Bireysel hesapları Belgeler uygulamasında saklayın"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_documents_l10n_hk_hr_payroll
 msgid "Store ir56 forms in the Document app"
-msgstr ""
+msgstr "IR56 formlarını Belgeler uygulamasında saklayın."
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_model_fields__store
@@ -32645,7 +32722,7 @@ msgstr "İsviçre - Satış Noktası"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ch_hr_payroll_elm_transmission
 msgid "Swissdec Certified Payroll (ELM 5.0)"
-msgstr ""
+msgstr "Swissdec Sertifikalı Bordro (ELM 5.0)"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.language_install_view_form_lang_switch
@@ -32686,7 +32763,7 @@ msgstr ""
 #: model:ir.module.module,shortdesc:base.module_l10n_ch_hr_payroll_account
 #: model:ir.module.module,shortdesc:base.module_l10n_ch_hr_payroll_elm_transmission_account
 msgid "Switzerland - Payroll with Accounting"
-msgstr ""
+msgstr "İsviçre - Muhasebe ile Bordro"
 
 #. module: base
 #: model:res.country.group,name:base.ch_and_li
@@ -32916,7 +32993,7 @@ msgstr "Teknik"
 #. module: base
 #: model:ir.module.module,summary:base.module_industry_fsm_sale_subscription
 msgid "Technical Bridge"
-msgstr ""
+msgstr "Teknik Köprü"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.module_form
@@ -32953,6 +33030,8 @@ msgstr "Teknik klavuz"
 #: model:ir.module.module,description:base.module_approvals_purchase_stock
 msgid "Technical module to link Approvals, Purchase and Inventory together. "
 msgstr ""
+"Onay, Satın Alma ve Envanter uygulamalarını birbirine bağlamak için teknik "
+"modül."
 
 #. module: base
 #: model:ir.module.module,summary:base.module_product_matrix
@@ -35425,7 +35504,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_hr_payroll
 msgid "United Arab Emirates - Payroll"
-msgstr ""
+msgstr "Birleşik Arap Emirlikleri - Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_hr_payroll_account
@@ -35465,7 +35544,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_us_hr_payroll_account
 msgid "United States - Payroll with Accounting"
-msgstr ""
+msgstr "Amerika Birleşik Devletleri - Muhasebe ile Bordro"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_usps_rest
@@ -36559,7 +36638,7 @@ msgstr "Web Sitesi Randevuları"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_documents
 msgid "Website Documents"
-msgstr ""
+msgstr "Web Sitesi Belgeleri"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_enterprise

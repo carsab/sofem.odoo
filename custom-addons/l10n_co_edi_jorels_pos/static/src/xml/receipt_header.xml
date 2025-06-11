@@ -24,10 +24,11 @@
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
             <t t-set="partner" t-value="props.data.partner"/>
             <t t-if="partner and props.data.company?.country?.code == 'CO'">
-                <div >
+                <div class="pos-receipt-left-align">
                     <div t-if="partner.name">Nombre: <t t-esc="partner.name"/></div>
                     <div t-if="partner.vat">Documento: <t t-esc="partner.vat"/></div>
                     <div t-if="partner.mobile or partner.phone">Teléfono: <t t-esc="partner.mobile or partner.phone"/></div>
+                    <br/>
                 </div>
             </t>
             <t t-set="invoice" t-value="props.data.invoice"/>
@@ -44,29 +45,33 @@
                         });
                     }
                 </script>
-                <div t-if="invoice.ei_is_valid" class="pos-receipt-order-data">
+                <div t-if="invoice.ei_is_valid">
                     <span>Factura electrónica de venta: </span>
                     <t t-esc="invoice.number"/>
+                    <br/>
                     <div style="word-wrap: break-word;">
                         <t t-esc="'CUFE:' + invoice.ei_uuid"/>
                     </div>
+                    <br/>
                     <span>Resolución: </span>
                     <t t-esc="invoice.resolution_resolution"/>
                     <span> De: </span>
                     <t t-esc="invoice.resolution_resolution_date"/>
+                    <br/>
                     <span>Numeración desde: </span>
                     <t t-esc="invoice.resolution_prefix"/>
                     <t t-esc="invoice.resolution_from"/>
                     <span> Hasta: </span>
                     <t t-esc="invoice.resolution_prefix"/>
                     <t t-esc="invoice.resolution_to"/>
+                    <br/>
                     <span>Fecha desde: </span>
                     <t t-esc="invoice.resolution_date_from"/>
                     <span> Hasta: </span>
                     <t t-esc="invoice.resolution_date_to"/>
                 </div>
-                <div t-else="" class="pos-receipt-order-data">
-                    <span>Factura electrónica de venta: </span>
+                <div t-else="">
+                    <span>Factura de venta: </span>
                     <t t-esc="invoice.number"/>
                     <br/>
                     <span t-if="invoice.resolution_resolution">Resolución: </span>

@@ -30,12 +30,15 @@ _logger = logging.getLogger(__name__)
 class AccountMoveSend(models.TransientModel):
     _inherit = 'account.move.send'
 
-    def _get_default_mail_attachments_widget(self, move, mail_template):
-        res = super()._get_default_mail_attachments_widget(move, mail_template)
+    def _get_default_mail_attachments_widget(self, move, mail_template, **kwargs):
+        res = super()._get_default_mail_attachments_widget(move, mail_template, **kwargs)
         return res + self._get_invoice_edi_attachments_data(move)
 
     def _get_invoice_edi_attachments_data(self, move):
         if not move.company_id.ei_enable or not move.is_to_send_edi_email():
+            return []
+
+        if not move.ei_attached_zip_base64_bytes:
             return []
 
         attached_document_name = move._compute_attached_document_name()

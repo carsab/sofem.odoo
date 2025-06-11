@@ -19,6 +19,9 @@
                 <div>--------------------------------</div>
                 <div>Served by <t t-esc="props.data.cashier" /></div>
             </div>
+           <--! <div class="fw-bolder" t-if="props.data.trackingNumber and !props.data.bigTrackingNumber">
+                <span class="fs-2" t-esc="props.data.trackingNumber" />
+            </div>-->
         </div>
     </t>
 </templates>

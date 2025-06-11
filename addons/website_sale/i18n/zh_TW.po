@@ -127,7 +127,7 @@ msgstr "<b>價目表</b>"
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.address_on_payment
 msgid "<b>Shipping: </b>"
-msgstr "<b>送貨地址: </b>"
+msgstr "<b>送貨地址： </b>"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.o_wsale_offcanvas
@@ -2137,7 +2137,7 @@ msgstr "圖片無效。"
 #: model:ir.model.fields,field_description:website_sale.field_res_config_settings__module_account
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form
 msgid "Invoicing"
-msgstr "會計"
+msgstr "發票"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.res_config_settings_view_form
@@ -3560,7 +3560,7 @@ msgstr "序列號"
 #. module: website_sale
 #: model:product.public.category,name:website_sale.services
 msgid "Services"
-msgstr "服務介紹"
+msgstr "服務"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
