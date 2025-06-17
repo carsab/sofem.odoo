@@ -71,7 +71,7 @@
                     <t t-esc="invoice.resolution_date_to"/>
                 </div>
                 <div t-else="">
-                    <span>Factura de venta: </span>
+                    <span>Factura electronica de venta: </span>
                     <t t-esc="invoice.number"/>
                     <br/>
                     <span t-if="invoice.resolution_resolution">Resolución: </span>

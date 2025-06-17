@@ -76,7 +76,6 @@ export class PaymentScreen extends Component {
             { value: "Backspace", text: "⌫" },
         ];
     }
-
     showMaxValueError() {
         this.popup.add(ErrorPopup, {
             title: _t("Maximum value reached"),
@@ -92,7 +91,6 @@ export class PaymentScreen extends Component {
             triggerAtInput: () => this.updateSelectedPaymentline(),
             useWithBarcode: true,
         };
-
         return config;
     }
     get currentOrder() {
@@ -391,8 +389,8 @@ export class PaymentScreen extends Component {
      * @returns {boolean} true if the invoice pdf should be downloaded
      */
     shouldDownloadInvoice() {
-        return true;
-    }
+        return false;
+    }    
     get nextScreen() {
         return !this.error ? "ReceiptScreen" : "ProductScreen";
     }
