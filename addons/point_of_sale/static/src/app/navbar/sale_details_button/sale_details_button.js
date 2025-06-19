@@ -2,18 +2,21 @@
 
 import { useService } from "@web/core/utils/hooks";
 import { renderToElement } from "@web/core/utils/render";
-import { ErrorPopup } from "@point_of_sale/app/errors/popups/error_popup";
 import { Component } from "@odoo/owl";
 import { usePos } from "@point_of_sale/app/store/pos_hook";
 
 export class SaleDetailsButton extends Component {
     static template = "point_of_sale.SaleDetailsButton";
-
+    static props = {
+        data: Object,
+        formatCurrency: Function,
+    };
     setup() {
         super.setup(...arguments);
         this.pos = usePos();
         this.popup = useService("popup");
         this.orm = useService("orm");
+        this.printer = useService("printer");
         this.hardwareProxy = useService("hardware_proxy");
     }
 
@@ -26,6 +29,10 @@ export class SaleDetailsButton extends Component {
             "get_sale_details",
             [false, false, false, [this.pos.pos_session.id]]
         );
+        console.log("IMPRESION TIRILLA :::::>", this.pos.pos_session.id)
+        saleDetails.headerData = this.pos.getReceiptHeaderData()
+
+        console.log("DATA TIRILLA:::::>", saleDetails)
         const report = renderToElement(
             "point_of_sale.SaleDetailsReport",
             Object.assign({}, saleDetails, {
@@ -34,12 +41,19 @@ export class SaleDetailsButton extends Component {
                 formatCurrency: this.env.utils.formatCurrency,
             })
         );
-        const { successful, message } = await this.hardwareProxy.printer.printReceipt(report);
-        if (!successful) {
-            await this.popup.add(ErrorPopup, {
-                title: message.title,
-                body: message.body,
-            });
-        }
+        console.log("RENDER TIRILLA:::::>", report)
+        let rta = this.printer.printHtml(report, { webPrintFallback: true })
+        console.log("Impresión detalle de ventas en tirilla", rta)
+    }
+
+    async printReport(report) {
+        const isPrinted = await this.printer.print(
+            report,
+            {
+                data: report,
+                formatCurrency: this.env.utils.formatCurrency,
+            },
+            { webPrintFallback: true }
+        );
     }
 }
