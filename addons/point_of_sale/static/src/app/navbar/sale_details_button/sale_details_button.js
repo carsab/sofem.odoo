@@ -1,5 +1,4 @@
 /** @odoo-module */
-
 import { useService } from "@web/core/utils/hooks";
 import { renderToElement } from "@web/core/utils/render";
 import { Component } from "@odoo/owl";
@@ -7,10 +6,7 @@ import { usePos } from "@point_of_sale/app/store/pos_hook";
 
 export class SaleDetailsButton extends Component {
     static template = "point_of_sale.SaleDetailsButton";
-    static props = {
-        data: Object,
-        formatCurrency: Function,
-    };
+
     setup() {
         super.setup(...arguments);
         this.pos = usePos();

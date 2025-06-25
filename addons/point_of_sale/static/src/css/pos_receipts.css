@@ -34,17 +34,17 @@
 
 .pos-receipt .pos-receipt-contact {
     text-align: center;
-    font-size: 75%;
+    font-size: 95%;
 }
 
 .pos-receipt .pos-receipt-order-data {
     text-align: center;
-    font-size: 75%;
+    font-size: 95%;
 }
 
 .pos-receipt .pos-receipt-order-name {
     text-align: center;
-    font-size: 75%;
+    font-size: 95%;
 }
 
 .pos-receipt .pos-receipt-amount {
@@ -60,12 +60,12 @@
 
 .pos-receipt .pos-receipt-title {
     font-weight: bold;
-    font-size: 125%;
+    font-size: 100%;
     text-align: center;
 }
 
 .pos-receipt .pos-receipt-header {
-    font-size: 125%;
+    font-size: 95%;
     text-align: center;
 }
 
@@ -79,7 +79,7 @@
 
 .pos-payment-terminal-receipt {
     text-align: center;
-    font-size: 75%;
+    font-size: 85%;
 }
 
 .pos-payment-terminal-receipt pre {

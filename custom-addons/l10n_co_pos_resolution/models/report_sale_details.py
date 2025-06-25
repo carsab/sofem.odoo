@@ -35,8 +35,6 @@ class ReportSaleDetailsInherit(models.AbstractModel):
                     if resolution_info:
                         result['resolution_info'] = resolution_info
                     _logger.info("INFORMACION DE REPORTE CON RESOLUCION DEL POS ::> %s", str(result))   
-                    _logger.info("CONTEXTO ::> %s", str(self.env.context))    
-                    _logger.info("COMPANY_NAME::> %s", str(self.env.company_name))   
 
             except Exception as e:
                 # Registrar el error pero continuar
