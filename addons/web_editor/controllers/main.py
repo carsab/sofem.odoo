@@ -23,7 +23,7 @@ from odoo.addons.web_editor.tools import get_video_url_data
 from odoo.exceptions import UserError, MissingError, AccessError
 from odoo.tools.misc import file_open
 from odoo.tools.mimetypes import guess_mimetype
-from odoo.tools.image import image_data_uri, binary_to_image
+from odoo.tools.image import image_data_uri, binary_to_image, get_webp_size
 from odoo.addons.iap.tools import iap_tools
 from odoo.addons.base.models.assetsbundle import AssetsBundle
 
@@ -175,7 +175,7 @@ class Web_Editor(http.Controller):
     @http.route('/web_editor/checklist', type='json', auth='user')
     def update_checklist(self, res_model, res_id, filename, checklistId, checked, **kwargs):
         record = request.env[res_model].browse(res_id)
-        value = filename in record._fields and record[filename]
+        value = filename in record._fields and record.read([filename])[0][filename]
         htmlelem = etree.fromstring("<div>%s</div>" % value, etree.HTMLParser())
         checked = bool(checked)
 
@@ -205,7 +205,7 @@ class Web_Editor(http.Controller):
     @http.route('/web_editor/stars', type='json', auth='user')
     def update_stars(self, res_model, res_id, filename, starsId, rating):
         record = request.env[res_model].browse(res_id)
-        value = filename in record._fields and record[filename]
+        value = filename in record._fields and record.read([filename])[0][filename]
         htmlelem = etree.fromstring("<div>%s</div>" % value, etree.HTMLParser())
 
         stars_widget = htmlelem.find(".//span[@id='checkId-%s']" % starsId)
@@ -748,8 +748,11 @@ class Web_Editor(http.Controller):
             return stream.get_response()
 
         image = stream.read()
-        img = binary_to_image(image)
-        width, height = tuple(str(size) for size in img.size)
+        if record.mimetype == "image/webp":
+            width, height = tuple(str(size) for size in get_webp_size(image))
+        else:
+            img = binary_to_image(image)
+            width, height = tuple(str(size) for size in img.size)
         root = etree.fromstring(svg)
 
         if root.attrib.get("data-forced-size"):

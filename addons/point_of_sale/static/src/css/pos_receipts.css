@@ -48,14 +48,20 @@
 }
 
 .pos-receipt .pos-receipt-amount {
-    font-size: 125%;
-    padding-left: 6em;
+    font-size: 100%;
+    padding-left: 3em;
 }
 
 .pos-receipt .pos-receipt-qty {
     font-size: 100%;
     text-align: center;
-    padding-left: 6em;
+    padding-left: 0em;
+    font-weight: bold;
+}
+.pos-receipt .pos-receipt-invoice {
+    text-align:right;
+    font-size:12px;
+    font-weight:bold;
 }
 
 .pos-receipt .pos-receipt-title {
@@ -84,6 +90,7 @@
 
 .pos-payment-terminal-receipt pre {
     font-family: inherit;
+    font-size: 75%;
 }
 
 .responsive-price {

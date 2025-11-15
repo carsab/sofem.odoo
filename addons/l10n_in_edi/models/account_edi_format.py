@@ -187,7 +187,7 @@ class AccountEdiFormat(models.Model):
                 return {invoice: {
                     "success": False,
                     "error": error_message,
-                    "blocking_level": ("404" in error_codes) and "warning" or "error",
+                    "blocking_level": "warning" if {'404', 'timeout'} & set(error_codes) else "error",
                 }}
         if not response.get("error"):
             json_dump = json.dumps(response.get("data"))
@@ -381,9 +381,9 @@ class AccountEdiFormat(models.Model):
             # government does not accept negative in qty or unit price
             unit_price_in_inr = unit_price_in_inr * -1
             quantity = quantity * -1
-        return {
+
+        line_details = {
             "SlNo": str(index),
-            "PrdDesc": line.name.replace("\n", ""),
             "IsServc": line.product_id.type == "service" and "Y" or "N",
             "HsnCd": self._l10n_in_edi_extract_digits(line.product_id.l10n_in_hsn_code),
             "Qty": self._l10n_in_round_value(quantity or 0.0, 3),
@@ -410,6 +410,10 @@ class AccountEdiFormat(models.Model):
             "OthChrg": self._l10n_in_round_value(tax_details_by_code.get("other_amount", 0.00)),
             "TotItemVal": self._l10n_in_round_value(((sign * line.balance) + line_tax_details.get("tax_amount", 0.00))),
         }
+        if line.name:
+            line_details['PrdDesc'] = line.name.replace("\n", "")[:300]
+
+        return line_details
 
     def _l10n_in_edi_generate_invoice_json_managing_negative_lines(self, invoice, json_payload):
         """Set negative lines against positive lines as discount with same HSN code and tax rate
@@ -520,7 +524,7 @@ class AccountEdiFormat(models.Model):
                 "RegRev": tax_details_by_code.get("is_reverse_charge") and "Y" or "N",
                 "IgstOnIntra": is_intra_state and tax_details_by_code.get("igst_amount") and "Y" or "N"},
             "DocDtls": {
-                "Typ": invoice.move_type == "out_refund" and "CRN" or "INV",
+                "Typ": (invoice.move_type == "out_refund" and "CRN") or (invoice._get_debit_note_origin() and "DBN") or "INV",
                 "No": invoice.name,
                 "Dt": invoice.invoice_date.strftime("%d/%m/%Y")},
             "SellerDtls": self._get_l10n_in_edi_partner_details(saler_buyer.get("seller_details")),

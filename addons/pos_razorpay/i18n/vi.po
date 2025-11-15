@@ -92,17 +92,17 @@ msgstr ""
 #. module: pos_razorpay
 #: model:ir.model,name:pos_razorpay.model_pos_order
 msgid "Point of Sale Orders"
-msgstr "Đơn hàng máy tính tiền"
+msgstr "Đơn hàng POS"
 
 #. module: pos_razorpay
 #: model:ir.model,name:pos_razorpay.model_pos_payment_method
 msgid "Point of Sale Payment Methods"
-msgstr "Phương thức thanh toán máy tính tiền"
+msgstr "Phương thức thanh toán POS"
 
 #. module: pos_razorpay
 #: model:ir.model,name:pos_razorpay.model_pos_payment
 msgid "Point of Sale Payments"
-msgstr "Thanh toán máy tính tiền"
+msgstr "Thanh toán POS"
 
 #. module: pos_razorpay
 #: model:ir.model.fields,field_description:pos_razorpay.field_pos_payment_method__razorpay_api_key
@@ -234,7 +234,7 @@ msgstr "Mã số không khớp"
 #: code:addons/pos_razorpay/models/pos_payment_method.py:0
 #, python-format
 msgid "This Payment Terminal is only valid for INR Currency"
-msgstr "Thiết bị đầu cuối thanh toán này chỉ có hiệu lực với đồng INR"
+msgstr "Thiết bị thanh toán này chỉ có hiệu lực với đồng INR"
 
 #. module: pos_razorpay
 #. odoo-javascript

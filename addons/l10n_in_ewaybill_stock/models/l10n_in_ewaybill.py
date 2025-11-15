@@ -410,7 +410,7 @@ class Ewaybill(models.Model):
         self._handle_internal_warning_if_present(ewaybill_error.error_json)
         error_message = ewaybill_error.get_all_error_message()
         blocking_level = "error"
-        if "404" in ewaybill_error.error_codes:
+        if "access_error" in ewaybill_error.error_codes:
             blocking_level = "warning"
         self._write_error(error_message, blocking_level)
 
@@ -418,15 +418,16 @@ class Ewaybill(models.Model):
         cancel_json = {
             "ewbNo": int(self.name),
             "cancelRsnCode": int(self.cancel_reason),
-            "CnlRem": self.cancel_remarks,
+            "cancelRmrk": self.cancel_remarks,
         }
         ewb_api = EWayBillApi(self.company_id)
         self._lock_ewaybill()
         try:
-            ewb_api._ewaybill_cancel(cancel_json)
+            response = ewb_api._ewaybill_cancel(cancel_json)
         except EWayBillError as error:
             self._handle_error(error)
             return False
+        self._handle_internal_warning_if_present(response)  # In case of error 312
         self._write_successfully_response({'state': 'cancel'})
         self._cr.commit()
 
@@ -524,9 +525,9 @@ class Ewaybill(models.Model):
         AccountEDI = self.env['account.edi.format']
         product = line.product_id
         line_details = {
-            "productName": product.name,
+            "productName": product.name[:100],
             "hsnCode": AccountEDI._l10n_in_edi_extract_digits(product.l10n_in_hsn_code),
-            "productDesc": product.name,
+            "productDesc": line.description_picking[:100] if line.description_picking else "",
             "quantity": line.quantity,
             "qtyUnit": line.product_uom.l10n_in_code and line.product_uom.l10n_in_code.split("-")[
                 0] or "OTH",

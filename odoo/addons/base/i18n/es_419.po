@@ -1,27 +1,30 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* base
-# 
+# * base
+#
 # Translators:
 # Lucia Pacheco, 2024
 # Iran Villalobos López, 2024
 # Wil Odoo, 2024
-# Fernanda Alvarez, 2025
 # Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2025
-# 
+# Fernanda Alvarez, 2025
+# "Fernanda Alvarez (mfar)" <mfar@odoo.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-03 11:38+0000\n"
-"PO-Revision-Date: 2023-10-26 23:09+0000\n"
-"Last-Translator: Patricia Gutiérrez Capetillo <pagc@odoo.com>, 2025\n"
-"Language-Team: Spanish (Latin America) (https://app.transifex.com/odoo/teams/41243/es_419/)\n"
+"PO-Revision-Date: 2025-11-08 08:10+0000\n"
+"Last-Translator: \"Fernanda Alvarez (mfar)\" <mfar@odoo.com>\n"
+"Language-Team: Spanish (Latin America) <https://translate.odoo.com/projects/"
+"odoo-17/base/es_419/>\n"
+"Language: es_419\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Language: es_419\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == 0)"
+" ? 1 : 2);\n"
+"X-Generator: Weblate 5.12.2\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_at_reports
@@ -691,11 +694,11 @@ msgstr ""
 "* Agrega un reporte de resumen del IVA que se utiliza para analizar la facturación.\n"
 "* Agrega la función de un libro de IVA digital que nos permite generar archivos TXT para importarlos a la AFIP. Los que implementamos son los siguientes:\n"
 "\n"
-"    * LIBRO_IVA_DIGITAL_VENTAS_CBTE\n"
-"    * LIBRO_IVA_DIGITAL_VENTAS_ALICUOTAS\n"
-"    * LIBRO_IVA_DIGITAL_COMPRAS_CBTE\n"
-"    * LIBRO_IVA_DIGITAL_COMPRAS_ALICUOTAS\n"
-"    * LIBRO_IVA_DIGITAL_IMPORTACION_BIENES_ALICUOTA\n"
+"* LIBRO_IVA_DIGITAL_VENTAS_CBTE\n"
+"* LIBRO_IVA_DIGITAL_VENTAS_ALICUOTAS\n"
+"* LIBRO_IVA_DIGITAL_COMPRAS_CBTE\n"
+"* LIBRO_IVA_DIGITAL_COMPRAS_ALICUOTAS\n"
+"* LIBRO_IVA_DIGITAL_IMPORTACION_BIENES_ALICUOTA\n"
 "\n"
 "Documentación oficial de la AFIP\n"
 "\n"
@@ -5246,69 +5249,93 @@ msgstr ""
 "Funcional\n"
 "----------\n"
 "\n"
-"Crear diarios en Odoo para crear facturas electrónicas de los clientes y después reportarlas a la AFIP (a través de los servicios web).\n"
+"Crea diarios en Odoo para generar facturas electrónicas de clientes y "
+"repórtalas a la ARCA (a través de los servicios web).\n"
 "Las opciones disponibles son:\n"
 "\n"
 "    * Factura electrónica - Web Service\n"
-"    * Voucher para exportar - Web Service\n"
+"    * Comprobante de exportación - Web Service\n"
 "    * Bono fiscal electrónico - Web Service\n"
 "\n"
-"Si valida una factura en los diarios electrónicos, entonces se validará tanto en Odoo como en la AFIP. Esta validación\n"
-"se hace de forma instantánea y recibimos un estado de la AFIP que puede ser \"aprobado/aprobado con observaciones/rechazado\". Si la AFIP\n"
-"rechazó la factura, esta no se publicará en el sistema y aparecerá una notificación con los motivos del error (por qué la rechazaron)\n"
-"y una PISTA de cuál es el problema.\n"
+"Si validas una factura en los diarios electrónicos, entonces se validará "
+"tanto en Odoo como en la ARCA. Esta validación\n"
+"se hace de forma instantánea y recibimos un estado que puede ser "
+"\"aprobado/aprobado con observaciones/rechazado\" de la ARCA. Si la ARCA\n"
+"rechazó la factura, esta no se registrará en el sistema y aparecerá una "
+"notificación con los detalles del error (motivo por el que la rechazaron)\n"
+"y una PISTA sobre cuál podría ser el problema.\n"
 "\n"
-"Para auditorías y solución de problemas también agregamos el menú \"Consulta de facturas de AFIP\". Con este menú podrá consultar las facturas\n"
-"que se enviaron con anterioridad a la AFIP y el último número que se usó como soporte para posibles errores en las secuencias de sincronización entre Odoo y la AFIP.\n"
+"Para auditorías y solución de problemas, también agregamos el menú "
+"\"Consulta de facturas de ARCA\" con el que podrás consultar las facturas\n"
+"enviadas con anterioridad a la ARCA y el último número utilizado como "
+"soporte para posibles problemas de sincronización de secuencias entre Odoo y "
+"ARCA.\n"
 "\n"
-"    NOTA: Desde la vista del diario podemos forzar una sincronización entre las secuencias de Odoo y cada uno de los tipos de documentos en\n"
-"    los últimos números que se registraron en la AFIP.\n"
+"    NOTA: Desde la vista de formulario del diario podemos forzar una "
+"sincronización entre las secuencias de Odoo y cada uno de los tipos de "
+"documentos en\n"
+"    los últimos números registrados en la ARCA.\n"
 "\n"
-"Agregamos una funcionalidad a las facturas de proveedores que se puede configurar en los ajustes de contabilidad para poder verificar\n"
-"facturas de proveedores en la AFIP para revisar si estas facturas son reales (para más información revise la descripción de los ajustes).\n"
+"Agregamos una funcionalidad a las facturas de proveedores que se puede "
+"configurar en los ajustes de contabilidad para poder verificar\n"
+"las facturas de proveedores en la ARCA para revisar si estas facturas son "
+"reales (revisa la descripción de los ajustes para obtener más información).\n"
 "\n"
 "Configuración:\n"
 "\n"
-"1. Vaya a los ajustes de Contabilidad > sección de localización argentina. \n"
+"1. Ve a los ajustes de Contabilidad > sección de localización argentina. \n"
 "\n"
-"    1.1. Configure el modo Web Service de AFIP:\n"
+"    1.1. Configura el modo Web Service de ARCA:\n"
 "\n"
-"    * Entorno de prueba para usar certificados de demostración que se utilizarán para probar el caso y para NO\n"
-"      crear facturas reales en la AFIP. Este entorno solo es para prueba. Para casos de demostración ya está predeterminado, no necesitará configurarlo\n"
-"      (por lo general, en la AFIP se llama entorno de homologación).\n"
-"    * Entorno de producción para generar certificados reales y facturas legales en la AFIP.\n"
+"    * Entorno de prueba para usar certificados de demostración que permiten "
+"probar la instancia y para NO\n"
+"      emitir facturas reales en la ARCA. Este entorno solo es para prueba. "
+"Es el entorno predeterminado en las instancias de demostración, no "
+"necesitarás configurarlo\n"
+"      (por lo general, en la ARCA se llama entorno de homologación).\n"
+"    * Entorno de producción para generar certificados reales y facturas "
+"legales en la ARCA.\n"
 "\n"
-"    1.2. Configure su certificado AFIP: si está en un entorno demo se programará en automático. Si está\n"
-"         en un entorno de producción, solo necesita subir su certificado de AFIP.\n"
+"    1.2. Configura tu certificado de ARCA: Si estás en una instancia de "
+"demostración ya estará configurado de forma predeterminada. Si estás\n"
+"         en un entorno de producción, solo necesitas subir tu certificado de "
+"ARCA.\n"
 "\n"
-"    1.3. De forma opcional puede definir si le gustaría poder verificar facturas de proveedor en la AFIP.\n"
+"    1.3. De forma opcional, puedes definir si quieres habilitar la "
+"verificación de facturas de proveedor en la ARCA.\n"
 "\n"
-"2. Cree diarios de ventas que representarán cada uno de sus PdV de AFIP (disponible en el portal de la AFIP) que quiera usar en Odoo.\n"
+"2. Crea diarios de ventas que representarán cada uno de tus PdV de ARCA ("
+"disponible en el portal de la ARCA) que quieras usar en Odoo.\n"
 "\n"
-"    2.1. El campo de usar Documentos está configurado en automático, no lo cambie.\n"
-"    2.2. Configure el sistema de AFIP POS para uno de los electrónicos.\n"
+"    2.1. El campo \"Usar Documentos\" está configurado de forma "
+"predeterminada, no lo cambies.\n"
+"    2.2. Configura el sistema ARCA POS para uno de los electrónicos.\n"
 "\n"
 "        * Factura electrónica - Web Service\n"
 "        * Bono fiscal electrónico - Web Service\n"
-"        * Exportar voucher - Web Service\n"
+"        * Comprobante de exportación - Web Service\n"
 "\n"
-"    2.3. Establezca el número POS de la AFIP y la dirección POS de la AFIP tomando en cuenta lo que configuró en su portal AFIP.\n"
+"    2.3. Configura el número PdV de la ARCA y la dirección PdV de la ARCA "
+"según lo que tengas configurado en tu portal ARCA.\n"
 "\n"
-"    NOTA: puede revisar el botón de \"revisar POS AFIP disponible\" en el formulario del diario para corroborar el uso para crear diarios.\n"
+"    NOTA: Puedes usar el botón \"Verificar PdV ARCA disponible\" en el "
+"formulario del diario para corroborar cuál usar al crear los diarios..\n"
 "\n"
-"Vaya a http://www.afip.gob.ar/fe/ayuda.asp para obtener más información sobre la facturación electrónica de Argentina\n"
+"Ve a http://www.afip.gob.ar/fe/ayuda.asp para obtener más información sobre "
+"la facturación electrónica en Argentina\n"
 "\n"
 "Técnico\n"
 "---------\n"
 "\n"
-"Los servicios web que se implementan son los más comunes:\n"
+"Los servicios web implementados son los más comunes:\n"
 "\n"
-"* wsfev1 - \"Factura Electrónica\" \n"
-"* wsbfev1 - \"Bono Fiscal Electrónico\" \n"
-"* wsfexv1 - \"Factura de Exportación Electrónica\" \n"
-"* wscdc - \"Constatación de Comprobantes\" \n"
+"* wsfev1 - \"Factura electrónica\" \n"
+"* wsbfev1 - \"Bono fiscal electrónico\" \n"
+"* wsfexv1 - \"Factura de exportación electrónica\" \n"
+"* wscdc - \"Constatación de comprobantes\" \n"
 "\n"
-"Para consultar la información de desarrollo, vaya a http://www.afip.gob.ar/fe/documentos/WSBFEv1%20-%20Manual%20para%20el%20desarrollador.pdf\n"
+"Para consultar la información de desarrollo, ve a http://www.afip.gob.ar/fe/"
+"documentos/WSBFEv1%20-%20Manual%20para%20el%20desarrollador.pdf\n"
 "\n"
 
 #. module: base
@@ -8173,33 +8200,48 @@ msgid ""
 "    https://www.sii.cl/factura_electronica/factura_mercado/Instructivo_Emision_Boleta_Elect.pdf\n"
 msgstr ""
 "\n"
-"Propósito del modulo:\n"
+"Propósito del módulo:\n"
 "======================\n"
 "\n"
 "Como parte de los requisitos del SII (requisitos legales en Chile), \n"
-"a partir de marzo 2021 las transacciones de boletas se deben enviar al SII como \n"
-"flujo de trabajo electrónico mediante un servicio web distinto al que se usa para las facturas electrónicas. \n"
+"a partir de marzo de 2021, las transacciones de boletas se deben enviar al "
+"SII mediante el \n"
+"flujo de trabajo electrónico a través de un servicio web distinto al de las "
+"facturas electrónicas. \n"
 "Antes no era necesario enviar las boletas al SII, solo un reporte diario.\n"
 "\n"
-"El requisito de enviar el \"Libro de ventas diarias\"\n"
-"(antes \"reporte de consumo de folios\" o RCOF) se eliminó desde el \n"
-"1 de agosto 2022. Por eso se eliminó de esta versión de Odoo.\n"
+"El requisito de enviar el \"libro de ventas diarias\"\n"
+"(antes \"reporte de consumo de folios\" o RCOF) fue eliminado por las "
+"autoridades desde el \n"
+"1 de agosto de 2022. Por ese motivo, se eliminó de esta versión de Odoo.\n"
 "\n"
-"Diferencias entre el flujo de trabajo de las boletas electrónicas y el de la facturación electrónica:\n"
+"Diferencias entre el flujo de trabajo de las boletas electrónicas y la "
+"facturación electrónica:\n"
 "=========================================================================\n"
 "\n"
-"Estos flujos de trabajo tienen diferencias importantes que nos llevaron a incorporar varios cambios.\n"
+"Estos flujos de trabajo tienen varias diferencias que justifica estos "
+"cambios.\n"
 "Estas son las diferencias:\n"
 "\n"
-"* El mecanismo para enviar información de las boletas electrónicas necesita de servidores específicos que son distintos a los que se usan para recibir facturas electrónicas (\"Palena\" para un entorno de producción - palena.sii.cl y \"Maullin\" para un entorno de prueba - maullin.sii.cl).\n"
-"* Los servicios de autenticación que solicitan el estado de una entrega y el estado de un documento serán diferentes.\n"
+"* El mecanismo para enviar la información de las boletas electrónicas "
+"necesita de servidores específicos distintos a los que se usan para la "
+"recepción de facturas electrónicas (\"Palena\" para un entorno de producción "
+"- palena.sii.cl y \"Maullin\" para un entorno de prueba - maullin.sii.cl).\n"
+"* Los servicios de autenticación, la consulta del estado de un envío y del "
+"estado de un documento serán diferentes..\n"
 "* El token de autenticación obtenido\n"
-"* El esquema XML para enviar boletas electrónicas se actualizó con la incorporación de nuevas etiquetas\n"
-"* El diagnóstico de validación de boletas electrónicas se entregará a a través de un servicio web \"REST\" que tiene como entrada el identificador de envío de la entrega. Las facturas electrónicas continuarán recibiendo los diagnósticos a través de correo electrónico.\n"
-"* El identificador de envío asociado a las boletas electrónicas será de 15 dígitos (las facturas electrónicas tienen 10)\n"
+"* El esquema XML para enviar boletas electrónicas se actualizó con la "
+"incorporación de nuevas etiquetas\n"
+"* El diagnóstico de validación de las boletas electrónicas se entregará a a "
+"través de un servicio web \"REST\" que recibe como entrada el identificador "
+"de envío de la entrega. Las facturas electrónicas continuarán recibiendo los "
+"diagnósticos a través de correo electrónico.\n"
+"* El identificador de envío asociado a las boletas electrónicas tendrá 15 "
+"dígitos (las facturas electrónicas tienen 10)\n"
 "\n"
 "Información importante sobre la guía del SII:\n"
-"    https://www.sii.cl/factura_electronica/factura_mercado/Instructivo_Emision_Boleta_Elect.pdf\n"
+"    https://www.sii.cl/factura_electronica/factura_mercado/"
+"Instructivo_Emision_Boleta_Elect.pdf\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_quality
@@ -10839,8 +10881,8 @@ msgid ""
 "On a simple click, your visitors can subscribe to mailing lists managed in the Email Marketing app.\n"
 msgstr ""
 "\n"
-"Este módulo presenta un nuevo bloque de creación con una herramienta de lista de correo que se puede agregar a cualquier página de su sitio web.\n"
-"Sus visitantes pueden suscribirse con un simple clic a las listas de correo gestionadas en la aplicación Marketing por correo electrónico.\n"
+"Este módulo agrega un nuevo bloque de creación con un widget de lista de correo que puede incluir en cualquier página de su sitio web.\n"
+"Sus visitantes pueden suscribirse con un solo clic a las listas de correo gestionadas en la aplicación Marketing por correo.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ar_pos
@@ -14882,7 +14924,7 @@ msgstr "Agregue los cursos completados a los currículums de sus empleados"
 #. module: base
 #: model:ir.module.module,summary:base.module_social_crm
 msgid "Add crm UTM info on social"
-msgstr "Agregue información de UTM y CRM a Marketing social"
+msgstr "Agregue información de UTM y CRM a Redes sociales"
 
 #. module: base
 #. odoo-python
@@ -14936,7 +14978,7 @@ msgstr "Agregue soporte por chat en línea para OdooBot"
 #. module: base
 #: model:ir.module.module,summary:base.module_social_sale
 msgid "Add sale UTM info on social"
-msgstr "Agregue información sobre UTM a Marketing social"
+msgstr "Agregue información sobre UTM de ventas a Redes sociales"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_mass_mailing_sale
@@ -15892,12 +15934,12 @@ msgstr "Aprobaciones"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_approvals_purchase
 msgid "Approvals - Purchase"
-msgstr "Aprobaciones  - Compra"
+msgstr "Aprobaciones  - Compras"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_approvals_purchase_stock
 msgid "Approvals - Purchase - Stock"
-msgstr "Aprobaciones - Compra - Inventario"
+msgstr "Aprobaciones - Compras - Inventario"
 
 #. module: base
 #: model:ir.actions.act_window,name:base.open_module_tree
@@ -16677,7 +16719,7 @@ msgstr "Base"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_base_install_request
 msgid "Base - Module Install Request"
-msgstr "Base - Solicitud de instalación de modulo"
+msgstr "Base - Solicitud de instalación del módulo"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_test_base_automation
@@ -16782,7 +16824,7 @@ msgstr "Pago por lotes"
 #. module: base
 #: model:ir.module.module,summary:base.module_delivery_stock_picking_batch
 msgid "Batch Transfer, Carrier"
-msgstr "Translado por lotes, transportista"
+msgstr "Traslado por lotes, transportista"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ar_website_sale
@@ -17281,7 +17323,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,description:base.module_mrp_subcontracting_enterprise
 msgid "Bridge module for MRP subcontracting and enterprise"
-msgstr "Modulo de enlace para subcontratación MRP y Enterprise"
+msgstr "Módulo de enlace para subcontratación, MRP y Enterprise"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_mrp_subcontracting_enterprise
@@ -18563,7 +18605,7 @@ msgstr "Config.: ejecutar las acciones pendientes"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_config_view_base
 msgid "Configuration"
-msgstr "Configuration"
+msgstr "Configuración"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_config_installer
@@ -19038,7 +19080,7 @@ msgstr "Crear una etiqueta de contacto"
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_partner_form
 msgid "Create a Contact in your address book"
-msgstr "Crear un contacto en su libreta de direcciones"
+msgstr "Crear un contacto en la libreta de direcciones"
 
 #. module: base
 #: model_terms:ir.actions.act_window,help:base.action_country_group
@@ -19489,7 +19531,7 @@ msgstr "El campo de la divisa debe tener una relación res.currency"
 #. module: base
 #: model:ir.model.fields,help:base.field_res_currency__symbol
 msgid "Currency sign, to be used when printing amounts."
-msgstr "Símbolo de la divisa, se utiliza cuando se imprimen importes."
+msgstr "Símbolo de la moneda, se utiliza al imprimir importes."
 
 #. module: base
 #. odoo-python
@@ -19991,7 +20033,7 @@ msgstr "Tema del sitio web predeterminado"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_tax_python
 msgid "Define Taxes as Python Code"
-msgstr "Defina impuestos como código Python"
+msgstr "Definir impuestos como código Python"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.module_form
@@ -20305,7 +20347,7 @@ msgstr "Gastos rechazados en Flotas"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_module_uninstall
 msgid "Discard"
-msgstr "Descartar "
+msgstr "Descartar"
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_1
@@ -20654,7 +20696,7 @@ msgstr "Documentos - Nómina de Suiza"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_hr_holidays
 msgid "Documents - Time Off"
-msgstr "Documentos - Tiempo personal"
+msgstr "Documentos - Vacaciones"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_documents_project_sign
@@ -21046,7 +21088,7 @@ msgstr "Dirección de correo electrónico"
 #: model:ir.module.category,name:base.module_category_marketing_email_marketing
 #: model:ir.module.module,shortdesc:base.module_mass_mailing
 msgid "Email Marketing"
-msgstr "Marketing por correo electrónico"
+msgstr "Marketing por correo"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_users__signature
@@ -22587,7 +22629,7 @@ msgstr ""
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_fields__relation
 msgid "For relationship fields, the technical name of the target model"
-msgstr "Para campos de relación, el nombre técnico del modelo destino"
+msgstr "Para los campos de relación, el nombre técnico del modelo destino"
 
 #. module: base
 #. odoo-python
@@ -22624,7 +22666,7 @@ msgstr "Uso prohibido de   `__comp__` en la arquitectura. "
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.res_users_identitycheck_view_form
 msgid "Forgot password?"
-msgstr "¿Olvidó su contraseña?"
+msgstr "¿Olvidaste tu contraseña?"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_actions_act_window_view__view_mode__form
@@ -22733,7 +22775,7 @@ msgstr "Francia - Nómina y contabilidad"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_hr_holidays
 msgid "France - Time Off"
-msgstr "Francia - Tiempo personal "
+msgstr "Francia - Vacaciones"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_pos_cert
@@ -22957,7 +22999,7 @@ msgstr "Ajustes generales"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_mx_edi_landing
 msgid "Generate Electronic Invoice with custom numbers"
-msgstr "Genere facturas electrónicas con números personalizados"
+msgstr "Genera facturas electrónicas con números personalizados"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_crm_iap_mine
@@ -23103,7 +23145,7 @@ msgid ""
 "Get demo data for the social module.\n"
 "    This module creates a social 'sandbox' where you can play around with the social app without publishing anything on actual social media."
 msgstr ""
-"Obtenga datos de demostración para el módulo de Marketing social.\n"
+"Obtenga datos de demostración para el módulo de Redes sociales.\n"
 "    Este módulo crea un entorno de prueba donde puede experimentar con la aplicación sin tener que publicar en sus redes sociales reales."
 
 #. module: base
@@ -23649,7 +23691,7 @@ msgstr "Soporte al cliente, existencias y contabilidad"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_helpdesk_holidays
 msgid "Helpdesk Time Off"
-msgstr "Soporte al cliente y tiempo personal"
+msgstr "Soporte al cliente y Vacaciones"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_helpdesk_timesheet
@@ -26379,12 +26421,12 @@ msgstr "Módulo de enlace entre point_of_sale y sale_product_configurator"
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_hr_restaurant
 msgid "Link module between pos_hr and pos_restaurant"
-msgstr "Modulo de enlace entre pos_hr y pos_restaurant"
+msgstr "Módulo de enlace entre pos_hr y pos_restaurant"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_restaurant_loyalty
 msgid "Link module between pos_restaurant and pos_loyalty"
-msgstr "Modulo de enlace entre pos_restaurant y pos_loyalty"
+msgstr "Módulo de enlace entre pos_restaurant y pos_loyalty"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_be_pos_sale
@@ -26394,7 +26436,7 @@ msgstr "Módulo de enlace entre pos_sale y l10n_be"
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_sale_loyalty
 msgid "Link module between pos_sale and pos_loyalty"
-msgstr "Modulo de enlace entre pos_sale y pos_loyalty"
+msgstr "Módulo de enlace entre pos_sale y pos_loyalty"
 
 #. module: base
 #. odoo-python
@@ -27739,7 +27781,7 @@ msgstr "Varios"
 #: model_terms:ir.ui.view,arch_db:base.view_model_fields_form
 #: model_terms:ir.ui.view,arch_db:base.view_model_form
 msgid "Miscellaneous"
-msgstr "Varios"
+msgstr "Misceláneo"
 
 #. module: base
 #: model:res.partner.title,name:base.res_partner_title_miss
@@ -27981,9 +28023,9 @@ msgid ""
 "Module %r not loaded or inexistent (try to inherit %r), or templates of "
 "addon being loaded %r are misordered (template %r)"
 msgstr ""
-"El modulo %r no se ha cargado o no existe (intente heredar %r), o las "
-"plantillas de complemento que se están cargando %r están desordenadas "
-"(plantilla %r)"
+"El módulo %r no está cargado o no existe (intenta heredar de %r), o las "
+"plantillas del complemento que se están cargando %r están desordenadas ("
+"plantilla %r)."
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_module_category_form
@@ -29222,6 +29264,7 @@ msgstr ""
 "### Objetivos por equipo\n"
 "\n"
 "Compare los ingresos con los pronósticos y los presupuestos en tiempo real.\n"
+"\n"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_module_module__license__oeel-1
@@ -29539,11 +29582,11 @@ msgstr ""
 "Lleve seguimiento de la evolución del valor del inventario de acuerdo con el nivel de actividades de fabricación\n"
 "a medida que avanzan en el proceso de transformación.\n"
 "\n"
-"Integrada por completo con las operaciones\n"
+"Integrada por completo con sus operaciones\n"
 "--------------------------------\n"
 "\n"
 "Planifique sus recursos de fabricación de manera precisa gracias a la integración completa\n"
-"con las aplicaciones Ventas y Compra. La integración en tiempo real con la aplicación Contabilidad permite\n"
+"con las aplicaciones Ventas y Compras. La integración en tiempo real con la aplicación Contabilidad le permite\n"
 "realizar valoraciones contables y elaborar reportes más exactos de los costos e ingresos de sus\n"
 "operaciones de fabricación.\n"
 "\n"
@@ -29652,7 +29695,7 @@ msgstr ""
 "Envío masivo de correos en Odoo\n"
 "-----------------\n"
 "\n"
-"Con la aplicación <a href=\"https://www.odoo.com/app/email-marketing\">Marketing por correo electrónico</a> de Odoo podrá enviar correos masivos a sus leads, oportunidades, o clientes con facilidad. Lleve seguimiento de sus\n"
+"Con la aplicación <a href=\"https://www.odoo.com/app/email-marketing\">Marketing por correo</a> de Odoo podrá enviar correos masivos a sus leads, oportunidades, o clientes con facilidad. Lleve seguimiento de sus\n"
 "campañas de marketing para mejorar las tasas de conversión. Diseñe\n"
 "correos electrónicos profesionales y vuelva a utilizar plantillas con unos cuantos clics.\n"
 "\n"
@@ -29686,7 +29729,7 @@ msgstr ""
 "segmentos de marketing, envíe <a href=\"https://www.odoo.com/app/recruitment\">ofertas de trabajo</a> y automatice\n"
 "las respuestas a los candidatos. Reutilice la plantilla de correo electrónico en las campañas de marketing de automatización de leads.\n"
 "\n"
-"Si cuenta con el módulo de redes sociales, las respuestas a sus correos electrónicos aparecerán en \n"
+"Si cuenta con el módulo de Redes sociales, las respuestas a sus correos electrónicos aparecerán en \n"
 "el historial de cada documento de forma automática.\n"
 "\n"
 "Leads útiles en su base de datos\n"
@@ -29725,7 +29768,7 @@ msgstr ""
 "de cada campaña: tasas de devolución, correos enviados, mejor contenido, etc. Los tableros \n"
 "le ofrecen una visión general directa del rendimiento de su campaña.\n"
 "\n"
-"Totalmente integrado con otras aplicaciones\n"
+"Integración completa con otras aplicaciones\n"
 "---------------------------------\n"
 "\n"
 "Automatice acciones (pídale a un vendedor que haga una llamada, envíe un correo electrónico, etc.)\n"
@@ -29757,7 +29800,7 @@ msgstr "Exportación en XML de pólizas mexicanas de Odoo"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mx_edi_landing
 msgid "Odoo Mexico Localization for Stock/Landing"
-msgstr "Localización mexicana de Odoo para las existencias y el embarque"
+msgstr "Localización mexicana de Odoo para existencias y pedimentos"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_web_mobile
@@ -30688,8 +30731,8 @@ msgstr ""
 #: model_terms:ir.actions.act_window,help:base.action_partner_form
 msgid "Odoo helps you track all activities related to your contacts."
 msgstr ""
-"Odoo le ayuda a llevar seguimiento de todas las actividades relacionadas con"
-" sus contactos."
+"Odoo te ayuda a llevar seguimiento de todas las actividades relacionadas con"
+" tus contactos."
 
 #. module: base
 #. odoo-python
@@ -32320,7 +32363,7 @@ msgstr "Planeación - habilidades"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_planning_holidays
 msgid "Planning Time Off"
-msgstr "Planeación y Tiempo personal"
+msgstr "Planeación y Vacaciones"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_planning_contract
@@ -33025,7 +33068,7 @@ msgstr "Suscripciones de las ventas del proyecto"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_project_holidays
 msgid "Project Time Off"
-msgstr "Tiempo personal del proyecto"
+msgstr "Proyecto y Vacaciones"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_project_account_budget
@@ -33235,7 +33278,7 @@ msgstr "Puerto Rico"
 #: model:ir.module.module,shortdesc:base.module_purchase
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 msgid "Purchase"
-msgstr "Compra"
+msgstr "Compras"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_requisition
@@ -33644,7 +33687,7 @@ msgstr "Registre el tiempo"
 #: model:ir.model.fields,field_description:base.field_ir_actions_server__crud_model_id
 #: model:ir.model.fields,field_description:base.field_ir_cron__crud_model_id
 msgid "Record to Create"
-msgstr "Registro por crear"
+msgstr "Registro a crear"
 
 #. module: base
 #. odoo-python
@@ -34592,7 +34635,7 @@ msgstr "Ventas"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 msgid "Sales & Purchase"
-msgstr "Ventas y compra"
+msgstr "Ventas y compras"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_async_emails
@@ -35191,8 +35234,8 @@ msgid ""
 "one as soon as possible."
 msgstr ""
 "Esta es una integración de DHL Express obsoleta y ya no es compatible. "
-"Instale el nuevo modulo \"Envíos por DHL Express\" y desinstale este tan "
-"pronto como le sea posible."
+"Instala el nuevo módulo \"Envíos por DHL Express\" y desinstala este lo "
+"antes posible."
 
 #. module: base
 #: model:ir.module.module,description:base.module_delivery_fedex_rest
@@ -35725,7 +35768,7 @@ msgstr "Social"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_social_demo
 msgid "Social Demo Module"
-msgstr "Modulo Social de demostración "
+msgstr "Módulo de demostración para Redes sociales"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_social_facebook
@@ -35746,7 +35789,7 @@ msgstr "Redes sociales - LinkedIn"
 #: model:ir.module.category,name:base.module_category_marketing_social_marketing
 #: model:ir.module.module,shortdesc:base.module_social
 msgid "Social Marketing"
-msgstr "Marketing social"
+msgstr "Redes sociales"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_social_media
@@ -36497,7 +36540,7 @@ msgstr "Envíe, valide y vuelva a facturar los gastos de los empleados"
 #: model:ir.module.category,name:base.module_category_sales_subscriptions
 #: model:ir.module.module,shortdesc:base.module_sale_subscription
 msgid "Subscriptions"
-msgstr "Suscripciones "
+msgstr "Suscripciones"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_sequence__date_range_ids
@@ -37212,7 +37255,7 @@ msgid ""
 "You can use this field for quick search."
 msgstr ""
 "El código ISO del país en dos caracteres.\n"
-"Puede utilizar este campo para realizar una búsqueda rápida."
+"Puedes utilizar este campo para realizar una búsqueda rápida."
 
 #. module: base
 #: model:res.partner,website_short_description:base.res_partner_10
@@ -37656,7 +37699,7 @@ msgstr "El nombre del módulo debe ser único."
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_server_action_form
 msgid "The name of the record to create"
-msgstr "El nombre del registro por crear"
+msgstr "El nombre del registro a crear"
 
 #. module: base
 #. odoo-python
@@ -38246,9 +38289,9 @@ msgid ""
 "         Please install the new \"UPS Shipping\" module and uninstall this "
 "one as soon as possible. This integration will stop working in 2024."
 msgstr ""
-"Esta es la integración heredada con UPS y ya no es compatible.         "
-"Instale el nuevo modulo \"Envíos por UPS\" y desinstale este tan pronto como"
-" le sea posible. Esta integración dejará de funcionar en el 2024. "
+"Esta es una integración de UPS obsoleta y ya no es compatible.         "
+"Instala el nuevo módulo \"Envíos por UPS\" y desinstala este lo antes "
+"posible. Esta integración dejará de funcionar en 2024."
 
 #. module: base
 #: model:ir.module.module,description:base.module_delivery_usps
@@ -38376,7 +38419,7 @@ msgid ""
 "present in a separate module as it contains models used only to perform\n"
 "tests independently to functional aspects of other models. "
 msgstr ""
-"Este módulo contiene pruebas relacionadas a SMS. Están\n"
+"Este módulo contiene pruebas relacionadas con SMS. Están\n"
 "presentes en un módulo separado, ya que contiene módulos que se usan solo para realizar \n"
 "pruebas de forma independiente a los aspectos funcionales de otros modelos."
 
@@ -38403,7 +38446,7 @@ msgid ""
 "present in a separate module as it contains models used only to perform\n"
 "tests independently to functional aspects of other models. "
 msgstr ""
-"Este módulo contiene pruebas relacionadas a correo. Están\n"
+"Este módulo contiene pruebas relacionadas con correo. Están\n"
 "presentes en un módulo separado, ya que contiene módulos que se usan solo para realizar \n"
 "pruebas de forma independiente a los aspectos funcionales de otros modelos."
 
@@ -38416,10 +38459,10 @@ msgid ""
 "modules build on mail (sms, snailmail, mail_enterprise) are set as dependencies\n"
 "in order to test the whole mail codebase. "
 msgstr ""
-"Este módulo contiene pruebas relacionadas al correo. Están\n"
+"Este módulo contiene pruebas relacionadas con el correo. Están\n"
 "en un módulo separado, pues incluye modelos que se usan solo para realizar\n"
 "pruebas de forma independiente a los aspectos funcionales de otros modelos. Además, la mayoría de\n"
-"los módulos construidos sobre correo (sms, correo postal, mail_enterprise) se establecen como dependencias\n"
+"los módulos construidos sobre correo (sms, correo postal, mail_enterprise) están definidos como dependencias\n"
 "para probar todo el código relacionado con el código base de correo. "
 
 #. module: base
@@ -38429,7 +38472,7 @@ msgid ""
 "are present in a separate module to use specific test models defined in\n"
 "test_mail. "
 msgstr ""
-"Este módulo contiene pruebas relacionadas a los correos masivos. Están\n"
+"Este módulo contiene pruebas relacionadas con los correos masivos. Están\n"
 "en otro módulo para usar modelos de prueba específicos definidos en\n"
 "test_mail. "
 
@@ -38734,28 +38777,28 @@ msgstr "Formato de hora"
 #: model:ir.module.category,name:base.module_category_human_resources_time_off
 #: model:ir.module.module,shortdesc:base.module_hr_holidays
 msgid "Time Off"
-msgstr "Tiempo personal"
+msgstr "Vacaciones"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_payroll_holidays
 #: model:ir.module.module,shortdesc:base.module_hr_work_entry_holidays
 msgid "Time Off in Payslips"
-msgstr "Tiempo personal en recibo de nómina"
+msgstr "Vacaciones en recibos de nómina"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_work_entry_holidays_enterprise
 msgid "Time Off in Payslips Enterprise"
-msgstr "Tiempo personal en la nómina empresarial"
+msgstr "Vacaciones en la nómina empresarial"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_contract_gantt
 msgid "Time off - Contract Gantt"
-msgstr "Tiempo personal - Gantt de contrato"
+msgstr "Vacaciones - Gantt de contrato"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_holidays_gantt
 msgid "Time off Gantt"
-msgstr "Tiempo personal y Gantt"
+msgstr "Vacaciones y Gantt"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_timer
@@ -38788,7 +38831,7 @@ msgstr "Hojas de horas durante tiempo personal"
 #: model:ir.module.category,name:base.module_category_services_timesheets
 #: model:ir.module.module,shortdesc:base.module_timesheet_grid
 msgid "Timesheets"
-msgstr "Hojas de trabajo"
+msgstr "Hojas de horas"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_timesheet_grid_holidays
@@ -39178,15 +39221,20 @@ msgid ""
 "- 'Send Webhook Notification': send a POST request to an external system, also known as a Webhook\n"
 "- 'Execute Existing Actions': define an action that triggers several other server actions\n"
 msgstr ""
-"Tipo de acción de servidor. Los valores disponibles son:\n"
-"- 'Actualizar un registro': actualiza los valores de un registro\n"
-"- 'Crear actividad': crea una actividad (Conversaciones)\n"
-"- 'Enviar correo electrónico': publica un mensaje, una nota o envia un correo electrónico (Conversaciones)\n"
-"- 'Enviar SMS': envía SMS y los registra en los documentos (SMS)- 'Agregar o eliminar seguidores': agrega o elimina seguidores de un registro (Conversaciones)\n"
-"- 'Crear registro': crea un nuevo registro con nuevos valores\n"
-"- 'Ejecutar código': se ejecuta un bloque de código Python\n"
-"- 'Enviar notificación webhook': envía una solicitud POST a un sistema externo, también conocido como Webhook\n"
-"- 'Ejecutar acciones existentes': define una acción que activa otras acciones de servidor\n"
+"Tipo de acción del servidor. Los valores disponibles son:\n"
+"- \"Actualizar un registro\": actualiza los valores de un registro \n"
+"- \"Crear actividad\": crea una actividad (Conversaciones) \n"
+"- \"Enviar correo electrónico\"': registra un mensaje, una nota o envía un "
+"correo electrónico (Conversaciones) \n"
+"- \"Enviar SMS\": envía SMS y los registra en los documentos (SMS) - "
+"\"Agregar o eliminar seguidores\": agrega o elimina seguidores de un "
+"registro (Conversaciones) \n"
+"- \"Crear registro\": crea un nuevo registro con nuevos valores \n"
+"- \"Ejecutar código\": ejecuta un bloque de código Python \n"
+"- \"Enviar notificación webhook\": envía una solicitud POST a un sistema "
+"externo, también conocido como webhook \n"
+"- \"Ejecutar acciones existentes\": define una acción que activa otras "
+"acciones del servidor\n"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_constraint__type
@@ -39430,8 +39478,8 @@ msgid ""
 "Unable to process module \"%s\" because an external dependency is not met: "
 "%s"
 msgstr ""
-"No es posible procesar el modulo \"%s\". Hay una dependencia externa sin "
-"resolver: %s"
+"No es posible procesar el módulo \"%s\" porque hay una dependencia externa "
+"sin resolver: %s"
 
 #. module: base
 #. odoo-python
@@ -40447,7 +40495,7 @@ msgstr "VoIP para CRM"
 #. module: base
 #: model:ir.module.module,summary:base.module_voip_crm
 msgid "VoIP integration with CRM module."
-msgstr "Integración VoIP con el modulo CRM."
+msgstr "Integración VoIP con el módulo CRM."
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_stock_account

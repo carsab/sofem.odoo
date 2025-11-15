@@ -266,9 +266,9 @@ export class WebsiteTranslator extends WebsiteEditorComponent {
         const toTranslateColor = window.getComputedStyle(document.documentElement).getPropertyValue('--o-we-content-to-translate-color');
         const translatedColor = window.getComputedStyle(document.documentElement).getPropertyValue('--o-we-translated-content-color');
 
-        styleEl.sheet.insertRule(`[data-oe-translation-state].o_dirty {background: ${translatedColor} !important;}`);
-        styleEl.sheet.insertRule(`[data-oe-translation-state="translated"] {background: ${translatedColor} !important;}`);
-        styleEl.sheet.insertRule(`[data-oe-translation-state] {background: ${toTranslateColor} !important;}`);
+        styleEl.sheet.insertRule(`[data-oe-translation-state].o_dirty { background-color: ${translatedColor} !important; }`);
+        styleEl.sheet.insertRule(`[data-oe-translation-state="translated"] { background-color: ${translatedColor} !important; }`);
+        styleEl.sheet.insertRule(`[data-oe-translation-state] { background-color: ${toTranslateColor} !important; }`);
 
         const showNotification = ev => {
             let message = _t('This translation is not editable.');
@@ -282,7 +282,11 @@ export class WebsiteTranslator extends WebsiteEditorComponent {
         };
         for (const translationEl of $editable) {
             if (translationEl.closest('.o_not_editable')) {
-                translationEl.addEventListener('click', showNotification);
+                translationEl.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    showNotification(ev);
+                });
             }
             if (translationEl.closest('.s_table_of_content_navbar_wrap')) {
                 // Make sure the same translation ids are used.

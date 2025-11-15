@@ -86,6 +86,7 @@ import {
     isLinkEligibleForZwnbsp,
     isZwnbsp,
     fixInvalidHTML,
+    childNodeIndex,
 } from './utils/utils.js';
 import { editorCommands } from './commands/commands.js';
 import { Powerbox } from './powerbox/Powerbox.js';
@@ -1561,10 +1562,10 @@ export class OdooEditor extends EventTarget {
                         }
                         this.idSet(nodeToRemove);
                     }
-                    if (mutation.nextId && this.idFind(mutation.nextId)?.isConnected) {
+                    if (mutation.nextId && this.idFind(mutation.nextId)?.parentElement) {
                         const node = this.idFind(mutation.nextId);
                         node && node.before(nodeToRemove);
-                    } else if (mutation.previousId && this.idFind(mutation.previousId)?.isConnected) {
+                    } else if (mutation.previousId && this.idFind(mutation.previousId)?.parentElement) {
                         const node = this.idFind(mutation.previousId);
                         node && node.after(nodeToRemove);
                     } else {
@@ -2246,6 +2247,10 @@ export class OdooEditor extends EventTarget {
             && (startBlock.tagName !== 'TD' && endBlock.tagName !== 'TD')
             && !(firstLeafOfStartBlock === start && lastLeafOfEndBlock === end);
         let next = nextLeaf(end, this.editable);
+        if (isBlock(end)) {
+            // end can be block so we take the next leaf at the endOffset
+            next = nextLeaf(end.childNodes[endOffset], this.editable);
+        }
 
         // Get the boundaries of the range so as to get the state to restore.
         if (end.nodeType === Node.TEXT_NODE) {
@@ -2366,6 +2371,7 @@ export class OdooEditor extends EventTarget {
             doJoin &&
             next &&
             !(next.previousSibling && next.previousSibling === joinWith) &&
+            !(joinWith.nodeType === Node.ELEMENT_NODE && joinWith.contains(next) && childNodeIndex(next) === range.endOffset) &&
             this.editable.contains(next) && (closestElement(joinWith,'TD') === closestElement(next, 'TD'))
         ) {
             const restore = preserveCursor(this.document);
@@ -2978,7 +2984,9 @@ export class OdooEditor extends EventTarget {
                 const sizeDelta = newSize - currentSize;
                 const currentNeighborSize = neighborRect[sizeProp];
                 const newNeighborSize = currentNeighborSize - sizeDelta;
-                const maxWidth = this.editable.clientWidth - pxToFloat(editableStyle.paddingLeft) - pxToFloat(editableStyle.paddingRight);
+                const enclosingCell = closestElement(table, "td, th");
+                const containerWidth = enclosingCell?.getBoundingClientRect().width || this.editable.clientWidth;
+                const maxWidth = containerWidth - pxToFloat(editableStyle.paddingLeft) - pxToFloat(editableStyle.paddingRight);
                 const tableRect = table.getBoundingClientRect();
                 if (newSize > MIN_SIZE &&
                         // prevent resizing horizontally beyond the bounds of
@@ -3241,6 +3249,10 @@ export class OdooEditor extends EventTarget {
         }
 
         const sel = this.document.getSelection();
+        if (sel === null) {
+            // The iframe is no longer in the document => no need to do anything.
+            return;
+        }
         if (!hasTableSelection(this.editable)) {
             if (this.editable.classList.contains('o_col_resize') || this.editable.classList.contains('o_row_resize')) {
                 show = false;
@@ -3401,6 +3413,7 @@ export class OdooEditor extends EventTarget {
         const isInMedia = this.toolbar.classList.contains('oe-media');
         const linkNode = getInSelection(this.document, 'a');
         const linkButton = this.toolbar.querySelector('#create-link');
+        const transformButton = this.toolbar.querySelector("#image-transform");
         linkButton && linkButton.classList.toggle('active', !!linkNode);
         // Hide unlink button if no link in selection, always hide on media
         // elements.
@@ -3416,7 +3429,9 @@ export class OdooEditor extends EventTarget {
         const range = getDeepRange(this.editable, { sel, correctTripleClick: true });
         const spansBlocks = [...range.commonAncestorContainer.childNodes].some(isBlock);
         linkButton?.classList.toggle('d-none', spansBlocks || isInMedia);
-
+        if (this.options.disableTransform) {
+            transformButton.classList.add("d-none");
+        }
         // Hide link button group if it has no visible button.
         const linkBtnGroup = this.toolbar.querySelector('#link.btn-group');
         linkBtnGroup?.classList.toggle('d-none', !linkBtnGroup.querySelector('.btn:not(.d-none)'));

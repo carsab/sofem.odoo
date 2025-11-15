@@ -522,3 +522,64 @@ class TestAccountPayment(AccountPaymentCommon):
 
         self.assertNotEqual(self.partner.property_account_receivable_id, payment.payment_id.destination_account_id)
         self.assertEqual(payment.payment_id.destination_account_id, invoice.line_ids[-1].account_id)
+
+    def test_reconcile_after_done_does_not_fail_on_cancelled_invoice(self):
+        """ If the payment state is 'pending' and the invoice gets cancelled, and later the payment is confirmed,
+            ensure that the _reconcile_after_done() method does not raise an error.
+        """
+        invoice = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner.id,
+            'invoice_line_ids': [
+                Command.create({
+                    'name': 'test line',
+                    'price_unit': 100.0,
+                }),
+            ],
+        })
+        tx = self._create_transaction(
+            flow='direct',
+            state='pending',
+            invoice_ids=[invoice.id],
+        )
+        invoice.button_cancel()
+        tx._set_done()
+        # _reconcile_after_done() shouldn't raise an error even though the invoice is cancelled
+        tx._reconcile_after_done()
+        self.assertEqual(tx.payment_id.state, 'posted')
+
+    def test_payment_token_for_invoice_partner_is_available(self):
+        """Test that the payment token of the invoice partner is available"""
+        with self.mocked_get_payment_method_information():
+            bank_journal = self.company_data['default_journal_bank']
+            payment_method_line = bank_journal.inbound_payment_method_line_ids\
+                .filtered(lambda line: line.payment_provider_id == self.dummy_provider)
+            self.assertTrue(payment_method_line)
+            child_partner = self.env['res.partner'].create(
+                {
+                    'name': "test_payment_token_for_invoice_partner_is_available",
+                    'is_company': False,
+                    'parent_id': self.partner.id,
+                }
+            )
+            invoice = self.env['account.move'].create({
+                'move_type': 'out_invoice',
+                'partner_id': child_partner.id,
+                'invoice_line_ids': [
+                    Command.create({
+                        'name': 'test line',
+                        'price_unit': 100.0,
+                    }),
+                ],
+            })
+            invoice.action_post()
+            payment_token = self._create_token(partner_id=child_partner.id)
+            wizard = (
+                self.env["account.payment.register"]
+                .with_context(active_model="account.move", active_ids=invoice.ids)
+                .create({"payment_method_line_id": payment_method_line.id})
+            )
+            self.assertRecordValues(wizard, [{
+                'suitable_payment_token_ids': payment_token.ids,
+                'payment_token_id': payment_token.id,
+            }])

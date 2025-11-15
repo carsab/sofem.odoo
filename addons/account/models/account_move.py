@@ -838,6 +838,7 @@ class AccountMove(models.Model):
         for move in self:
             move.made_sequence_hole = move.id in made_sequence_hole
 
+    @api.depends_context('lang')
     @api.depends('move_type')
     def _compute_type_name(self):
         type_name_mapping = dict(
@@ -2421,7 +2422,7 @@ class AccountMove(models.Model):
                     if command == Command.CREATE
                 ]
             elif move.move_type == 'entry':
-                if 'partner_id' not in data:
+                if 'partner_id' not in data or not self._context.get('move_reverse_cancel'):
                     data['partner_id'] = False
         if not self.journal_id.active and 'journal_id' in data_list:
             del default['journal_id']
@@ -2644,6 +2645,10 @@ class AccountMove(models.Model):
             * is_fully_paid:            A flag indicating the current move is now fully paid.
         '''
         self.ensure_one()
+
+        # No cash basis journal entry should be created for an account move in a bank or cash journal
+        if self.journal_id.type in ('bank', 'cash'):
+            return None
 
         values = {
             'move': self,
@@ -3249,7 +3254,8 @@ class AccountMove(models.Model):
     # -------------------------------------------------------------------------
 
     def _get_tax_lines_to_aggregate(self):
-        return self.line_ids.filtered(lambda x: x.display_type == 'tax')
+        # Note: We need to include cash rounding lines created by the 'biggest_tax' strategy too.
+        return self.line_ids.filtered('tax_repartition_line_id')
 
     def _prepare_invoice_aggregated_taxes(self, filter_invl_to_apply=None, filter_tax_values_to_apply=None, grouping_key_generator=None):
         self.ensure_one()
@@ -3289,17 +3295,22 @@ class AccountMove(models.Model):
 
         # Collect the computed tax_amount_currency/tax_amount from the taxes computation.
         tax_details_per_rep_line = {}
-        for _base_line, _to_update_vals, tax_values_list in to_process:
-            for tax_values in tax_values_list:
-                tax_rep_id = tax_values['tax_repartition_line_id']
-                tax_rep_amounts = tax_details_per_rep_line.setdefault(tax_rep_id, {
-                    'tax_amount_currency': 0.0,
-                    'tax_amount': 0.0,
-                    'distribute_on': [],
-                })
-                tax_rep_amounts['tax_amount_currency'] += tax_values['tax_amount_currency']
-                tax_rep_amounts['tax_amount'] += tax_values['tax_amount']
-                tax_rep_amounts['distribute_on'].append(tax_values)
+        aggregated_taxes = self.env['account.tax'].with_company(self.company_id)._aggregate_taxes(
+            to_process,
+            filter_tax_values_to_apply=filter_tax_values_to_apply,
+        )
+        for tax_index, tax_values in aggregated_taxes['tax_details'].items():
+            group_tax_details = tax_values['group_tax_details']
+            tax_rep_id = group_tax_details[0]['tax_repartition_line'].id
+            tax_rep_amounts = tax_details_per_rep_line.setdefault(tax_rep_id, {
+                'tax_amount_currency': 0.0,
+                'tax_amount': 0.0,
+                'distribute_on': [],
+            })
+            tax_rep_amounts['tax_amount_currency'] += tax_values['tax_amount_currency']
+            tax_rep_amounts['tax_amount'] += tax_values['tax_amount']
+            for tax_details in group_tax_details:
+                tax_rep_amounts['distribute_on'].append(tax_details)
 
         # Dispatch the delta on tax_values.
         for key, currency in (('tax_amount_currency', self.currency_id), ('tax_amount', self.company_currency_id)):
@@ -3389,6 +3400,13 @@ class AccountMove(models.Model):
             'base_lines': defaultdict(lambda: {}),
         }
 
+        epd_analytic_distribution = self.env['account.analytic.distribution.model']._get_distribution({
+            'account_prefix': cash_discount_account.code,
+            'company_id': self.company_id.id,
+            'partner_id': self.commercial_partner_id.id,
+            'partner_category_id': self.partner_id.category_id.ids,
+        })
+
         bases_details = {}
         payment_term_line = self.line_ids.filtered(lambda x: x.display_type == 'payment_term')
         discount_percentage = payment_term_line.move_id.invoice_payment_term_id.discount_percentage
@@ -3417,7 +3435,7 @@ class AccountMove(models.Model):
                     'partner_id': base_line['partner'].id,
                     'currency_id': base_line['currency'].id,
                     'account_id': cash_discount_account.id,
-                    'analytic_distribution': base_line['analytic_distribution'],
+                    'analytic_distribution': base_line['analytic_distribution'] or epd_analytic_distribution,
                 }
                 base_detail = resulting_delta_base_details.setdefault(frozendict(grouping_dict), {
                     'balance': 0.0,
@@ -3510,6 +3528,7 @@ class AccountMove(models.Model):
                 'currency_id': payment_term_line.currency_id.id,
                 'amount_currency': term_amount_currency,
                 'balance': term_balance,
+                'analytic_distribution': epd_analytic_distribution,
             }
 
         return res
@@ -3915,6 +3934,15 @@ class AccountMove(models.Model):
             if move.line_ids.account_id.filtered(lambda account: account.deprecated) and not self._context.get('skip_account_deprecation_check'):
                 raise UserError(_("A line of this move is using a deprecated account, you cannot post it."))
 
+            account_companies = move.line_ids.account_id.company_id
+
+            if not ((move.journal_id.company_id.sudo().child_ids | move.journal_id.company_id) & account_companies == account_companies):
+                raise UserError(_(
+                    "The entry %s (id %s) is using accounts from a different company.",
+                    move.name,
+                    move.id
+                ))
+
         if soft:
             future_moves = self.filtered(lambda move: move.date > fields.Date.context_today(self))
             for move in future_moves:
@@ -4007,7 +4035,7 @@ class AccountMove(models.Model):
 
     def _link_bill_origin_to_purchase_orders(self, timeout=10):
         for move in self.filtered(lambda m: m.move_type in self.get_purchase_types()):
-            references = [move.invoice_origin] if move.invoice_origin else []
+            references = [ref.strip() for ref in move.invoice_origin.split(',')] if move.invoice_origin else []
             move._find_and_set_purchase_orders(references, move.partner_id.id, move.amount_total, timeout=timeout)
         return self
 
@@ -4443,7 +4471,7 @@ class AccountMove(models.Model):
             payment_state = 'partially_paid'
 
         term_lines = self.line_ids.filtered(lambda line: line.display_type == 'payment_term')
-        epd_installment = term_lines._get_epd_data()
+        epd_installment = term_lines and term_lines._get_epd_data()
         discount_date = epd_installment and epd_installment['line'].discount_date
         epd_info = {}
         if epd_installment and discount_date:
@@ -4824,7 +4852,11 @@ class AccountMove(models.Model):
             'invoice_source_email': from_mail_addresses[0],
             'partner_id': partners and partners[0].id or False,
         }
-        move_ctx = self.with_context(default_move_type=custom_values['move_type'], default_journal_id=custom_values['journal_id'])
+        move_ctx = self.with_context(
+            default_move_type=custom_values['move_type'],
+            default_journal_id=custom_values['journal_id'],
+            default_company_id=company.id,
+        )
         move = super(AccountMove, move_ctx).message_new(msg_dict, custom_values=values)
         move._compute_name()  # because the name is given, we need to recompute in case it is the first invoice of the journal
 
@@ -5045,6 +5077,12 @@ class AccountMove(models.Model):
                                          and credit_note.invoice_line_ids.sale_line_ids in inv.invoice_line_ids.sale_line_ids)
         if len(original_invoice) == 1 and original_invoice._refunds_origin_required():
             credit_note.reversed_entry_id = original_invoice.id
+
+    def _get_debit_note_origin(self):
+        """ Return the original move for a debit note.
+        This method is overridden in the account_debit_note module to return the original move.
+        """
+        return False
 
     @api.model
     def get_invoice_localisation_fields_required_to_invoice(self, country_id):

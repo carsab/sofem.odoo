@@ -32,15 +32,6 @@ from odoo.tools.misc import file_path
 lock = Lock()
 _logger = logging.getLogger(__name__)
 
-try:
-    import crypt
-except ImportError:
-    _logger.warning('Could not import library crypt')
-
-#----------------------------------------------------------
-# Helper
-#----------------------------------------------------------
-
 
 class CertificateStatus(Enum):
     OK = 1
@@ -204,33 +195,32 @@ def check_image():
     return {'major': version[0], 'minor': version[1]}
 
 
-def save_conf_server(url, token, db_uuid, enterprise_code):
+def save_conf_server(url, token, db_uuid, enterprise_code, db_name=None):
     """
     Save server configurations in odoo.conf
     :param url: The URL of the server
     :param token: The token to authenticate the server
     :param db_uuid: The database UUID
     :param enterprise_code: The enterprise code
+    :param db_name: The database name
     """
     update_conf({
         'remote_server': url,
         'token': token,
         'db_uuid': db_uuid,
         'enterprise_code': enterprise_code,
+        'db_name': db_name,
     })
 
 
 def generate_password():
+    """Resets (pi) user password generating a new random one.
+
+    :return: The new generated password
     """
-    Generate an unique code to secure raspberry pi
-    """
-    alphabet = 'abcdefghijkmnpqrstuvwxyz23456789'
-    password = ''.join(secrets.choice(alphabet) for i in range(12))
+    password = secrets.token_urlsafe(16)
     try:
-        shadow_password = crypt.crypt(password, crypt.mksalt())
-        subprocess.run(('sudo', 'usermod', '-p', shadow_password, 'pi'), check=True)
-        with writable():
-            subprocess.run(('sudo', 'cp', '/etc/shadow', '/root_bypass_ramdisks/etc/shadow'), check=True)
+        subprocess.run(['sudo', 'chpasswd'], input=f"pi:{password}", text=True, check=True)
         return password
     except subprocess.CalledProcessError as e:
         _logger.exception("Failed to generate password: %s", e.output)
@@ -277,6 +267,20 @@ def get_mac_address():
             addr = netifaces.ifaddresses(interface).get(netifaces.AF_LINK)[0]['addr']
             if addr != '00:00:00:00:00:00':
                 return addr
+
+
+def get_serial_number():
+    if platform.system() == 'Linux':
+        return read_file_first_line('/sys/firmware/devicetree/base/serial-number').strip("\x00")
+
+    # On windows, get motherboard's uuid (serial number isn't reliable as it's not always present)
+    command = ['powershell', '-Command', "(Get-CimInstance Win32_ComputerSystemProduct).UUID"]
+    p = subprocess.run(command, stdout=subprocess.PIPE, check=False)
+    if p.returncode != 0:
+        _logger.error("Failed to get Windows IoT serial number")
+        return False
+
+    return p.stdout.decode().strip() or False
 
 def get_path_nginx():
     return str(list(Path().absolute().parent.glob('*nginx*'))[0])
@@ -427,16 +431,21 @@ def download_iot_handlers(auto=True):
     server = get_odoo_server_url()
     if server:
         urllib3.disable_warnings()
-        pm = urllib3.PoolManager(cert_reqs='CERT_NONE')
+        pm = urllib3.PoolManager()
         server = server + '/iot/get_handlers'
         try:
             resp = pm.request('POST', server, fields={'mac': get_mac_address(), 'auto': auto}, timeout=8)
+            if resp.status != 200:
+                _logger.error('Bad IoT handlers response received: status %s', resp.status)
+                return
             if resp.data:
+                zip_file = zipfile.ZipFile(io.BytesIO(resp.data))
                 delete_iot_handlers()
+                path = path_file('odoo', 'addons', 'hw_drivers', 'iot_handlers')
                 with writable():
-                    path = path_file('odoo', 'addons', 'hw_drivers', 'iot_handlers')
-                    zip_file = zipfile.ZipFile(io.BytesIO(resp.data))
                     zip_file.extractall(path)
+        except zipfile.BadZipFile:
+            _logger.exception('Bad IoT handlers response received: not a zip file')
         except Exception:
             _logger.exception('Could not reach configured server to download IoT handlers')
 
@@ -571,18 +580,20 @@ def update_conf(values, section='iot.box'):
     :param values: The dictionary of key-value pairs to update the config with.
     :param section: The section to update the key-value pairs in (Default: iot.box).
     """
-    _logger.debug("Updating odoo.conf with values: %s", values)
-    conf = get_conf()
-    get_conf.cache_clear()  # Clear the cache to get the updated config
+    with writable():
+        _logger.debug("Updating odoo.conf with values: %s", values)
+        conf = get_conf()
+        get_conf.cache_clear()  # Clear the cache to get the updated config
 
-    if not conf.has_section(section):
-        _logger.debug("Creating new section '%s' in odoo.conf", section)
-        conf.add_section(section)
+        if not conf.has_section(section):
+            _logger.debug("Creating new section '%s' in odoo.conf", section)
+            conf.add_section(section)
 
-    for key, value in values.items():
-        conf.set(section, key, value) if value else conf.remove_option(section, key)
+        for key, value in values.items():
+            conf.set(section, key, value) if value else conf.remove_option(section, key)
 
-    write_file("odoo.conf", conf)
+        with open(path_file("odoo.conf"), "w", encoding='utf-8') as f:
+            conf.write(f)
 
 
 @cache
@@ -606,6 +617,7 @@ def disconnect_from_server():
         'remote_server': '',
         'token': '',
         'db_uuid': '',
+        'db_name': '',
         'screen_orientation': '',
         'browser_url': '',
         'iot_handlers_etag': '',

@@ -76,6 +76,7 @@ export class PaymentScreen extends Component {
             { value: "Backspace", text: "⌫" },
         ];
     }
+
     showMaxValueError() {
         this.popup.add(ErrorPopup, {
             title: _t("Maximum value reached"),
@@ -91,6 +92,7 @@ export class PaymentScreen extends Component {
             triggerAtInput: () => this.updateSelectedPaymentline(),
             useWithBarcode: true,
         };
+
         return config;
     }
     get currentOrder() {

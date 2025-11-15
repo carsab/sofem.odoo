@@ -180,7 +180,7 @@ msgstr "Čarovnik za izbiro dostavljalca"
 #. module: stock_delivery
 #: model:ir.model,name:stock_delivery.model_choose_delivery_package
 msgid "Delivery Package Selection Wizard"
-msgstr ""
+msgstr "Čarovnik za izbiro paketa dostave"
 
 #. module: stock_delivery
 #: model:ir.model.fields,field_description:stock_delivery.field_choose_delivery_package__delivery_package_type_id
@@ -234,7 +234,7 @@ msgstr ""
 #: code:addons/stock_delivery/models/stock_picking.py:0
 #, python-format
 msgid "Exception:"
-msgstr ""
+msgstr "Izjema:"
 
 #. module: stock_delivery
 #: model:ir.model.fields,field_description:stock_delivery.field_product_product__hs_code
@@ -485,6 +485,8 @@ msgid ""
 "The package cannot be created because the total weight of the products in "
 "the picking is 0.0 %s"
 msgstr ""
+"Paketa ni mogoče ustvariti, ker je skupna teža izdelkov v komisioniranju 0,0"
+" %s"
 
 #. module: stock_delivery
 #. odoo-python

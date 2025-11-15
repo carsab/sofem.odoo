@@ -29,7 +29,6 @@ class ReportSaleDetailsInherit(models.AbstractModel):
             try:
                 # Obtener la sesión
                 session = self.env['pos.session'].browse(session_ids[0])
-                # Verificar si existe el método get_resolution_data
                 if hasattr(session, 'get_resolution_data') and callable(session.get_resolution_data):
                     resolution_info = session.get_resolution_data()
                     if resolution_info:

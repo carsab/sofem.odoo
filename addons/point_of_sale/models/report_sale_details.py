@@ -6,6 +6,8 @@ import pytz
 
 from odoo import api, fields, models, _
 from odoo.osv.expression import AND
+import logging
+_logger = logging.getLogger(__name__)
 
 class ReportSaleDetails(models.AbstractModel):
 
@@ -284,7 +286,7 @@ class ReportSaleDetails(models.AbstractModel):
         currency = {
             'symbol': user_currency.symbol,
             'position': True if user_currency.position == 'after' else False,
-            'total_paid': user_currency.round(total),
+            'total_paid': user_currency.round(round(total,0)),
             'precision': user_currency.decimal_places,
         }
 
@@ -312,6 +314,7 @@ class ReportSaleDetails(models.AbstractModel):
                 'invoices': session._get_invoice_total_list(),
             })
             invoiceTotal += session._get_total_invoice()
+        invoiceTotal= round(invoiceTotal,0)
 
         for payment in payments:
             if payment.get('id'):

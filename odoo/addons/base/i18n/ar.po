@@ -604,6 +604,9 @@ msgid ""
 "            Egypt Tax Authority Invoice Integration\n"
 "        "
 msgstr ""
+"\n"
+"            دمج فواتير هيئة الضرائب المصرية\n"
+"        "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_ke_edi_oscu
@@ -4513,6 +4516,8 @@ msgid ""
 "\n"
 "E-invoice implementation for Saudi Arabia; Integration with ZATCA\n"
 msgstr ""
+"\n"
+"تطبيق نظام الفواتير الإلكترونية في المملكة العربية السعودية؛ التكامل مع هيئة الزكاة والضريبة والجمارك\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_sa_edi_pos
@@ -19563,7 +19568,7 @@ msgstr "D - الكهرباء، الغاز، البخار، والتكييف "
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_delivery_dhl
 msgid "DHL Express Shipping (Legacy)"
-msgstr ""
+msgstr "الشحن عن طريق DHL Express (القديم) "
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_din5008

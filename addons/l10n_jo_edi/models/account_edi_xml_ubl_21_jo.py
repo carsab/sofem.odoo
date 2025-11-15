@@ -1,4 +1,5 @@
 from lxml import etree
+import re
 from types import SimpleNamespace
 
 from odoo import models
@@ -12,21 +13,6 @@ from odoo.tools.float_utils import float_round
 JO_CURRENCY = SimpleNamespace(name='JO')
 
 JO_MAX_DP = 9
-
-PAYMENT_CODES_MAP = {
-    'income': {
-        'cash': '011',
-        'receivable': '021',
-    },
-    'sales': {
-        'cash': '012',
-        'receivable': '022',
-    },
-    'special': {
-        'cash': '013',
-        'receivable': '023',
-    }
-}
 
 
 class AccountEdiXmlUBL21JO(models.AbstractModel):
@@ -42,14 +28,19 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
         return float_round(value, JO_MAX_DP)
 
     def _get_line_amount_before_discount_jod(self, line):
-        amount_after_discount = abs(line.balance)
-        return (amount_after_discount / (1 - line.discount / 100)) \
-            if line.discount < 100 else line.currency_id._convert(
-            from_amount=line.price_unit * line.quantity,
-            to_currency=self.env.ref('base.JOD'),
-            company=line.company_id,
-            date=line.date,
-        )
+        if line.discount < 100 and line.tax_ids:
+            taxes_res = line.tax_ids.with_context({'round_base': False}).compute_all(
+                line.price_unit,
+                quantity=line.quantity,
+                currency=line.currency_id,
+                product=line.product_id,
+                partner=line.partner_id,
+                is_refund=line.is_refund,
+            )
+            return taxes_res['total_excluded']
+        else:
+            # reported numbers won't matter if discount is 100%
+            return line.price_unit * line.quantity
 
     def _get_line_discount_jod(self, line):
         return self._get_line_amount_before_discount_jod(line) * line.discount / 100
@@ -61,7 +52,7 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
         return self._round_max_dp(self._get_unit_price_jod(line)) * self._round_max_dp(line.quantity) - self._round_max_dp(self._get_line_discount_jod(line))
 
     def _get_payment_method_code(self, invoice):
-        return PAYMENT_CODES_MAP.get(invoice.company_id.l10n_jo_edi_taxpayer_type, {}).get('receivable', '')
+        return invoice._get_invoice_scope_code() + invoice._get_invoice_payment_method_code() + invoice._get_invoice_tax_payer_type_code()
 
     def _get_line_edi_id(self, line, default_id):
         if not line.is_refund:  # in case it's invoice not credit note
@@ -76,7 +67,8 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
         for invoice_line_id, invoice_line in enumerate(invoice_lines, 1):
             if line.product_id == invoice_line.product_id \
                     and line.name == invoice_line.name \
-                    and line.price_unit == invoice_line.price_unit:
+                    and line.price_unit == invoice_line.price_unit \
+                    and line.discount == invoice_line.discount:
                 line_id = invoice_line_id
                 break
         if line_id == -1:
@@ -113,6 +105,9 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
 
         vals['monetary_total_vals']['tax_inclusive_amount'] = vals['monetary_total_vals']['payable_amount'] = tax_inclusive_amount
         vals['monetary_total_vals']['tax_exclusive_amount'] = tax_exclusive_amount
+
+    def _sanitize_phone(self, raw):
+        return re.sub(r'[^0-9]', '', raw or '')[:15]
 
     ########################################################
     # overriding vals methods of account_edi_xml_ubl_20 file
@@ -208,7 +203,7 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
             return []
 
         special_tax_amount_per_line = {
-            line: line_tax['tax_amount']
+            line: line_tax['tax_amount_currency']
             for line, line_vals in taxes_vals['tax_details_per_record'].items()
             for line_tax in line_vals['tax_details'].values()
             if 'tax_amount_type' in line_tax and line_tax['tax_amount_type'] == 'fixed'
@@ -270,7 +265,7 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
         for grouping_key, tax_details_vals in taxes_vals['tax_details'].items():
             if grouping_key['tax_amount_type'] == 'fixed':
                 taxable_amount = sum(self._round_max_dp(self._get_line_taxable_amount(line)) for line in tax_details_vals['records'])
-                special_tax_amount = tax_details_vals['tax_amount']
+                special_tax_amount = tax_details_vals['tax_amount_currency']
                 special_tax_subtotal = {
                     'currency': JO_CURRENCY,
                     'currency_dp': self._get_currency_decimal_places(),
@@ -369,7 +364,7 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
         return {
             'id': (invoice.reversed_entry_id.name or '').replace('/', '_'),
             'uuid': invoice.reversed_entry_id.l10n_jo_edi_uuid,
-            'document_description': self.format_float(abs(invoice.reversed_entry_id.amount_total_signed), self._get_currency_decimal_places()),
+            'document_description': self.format_float(abs(invoice.reversed_entry_id.amount_total), self._get_currency_decimal_places()),
         }
 
     def _get_additional_document_reference_list(self, invoice):
@@ -408,14 +403,14 @@ class AccountEdiXmlUBL21JO(models.AbstractModel):
             'profile_id': 'reporting:1.0',
             'id': invoice.name.replace('/', '_'),
             'uuid': invoice.l10n_jo_edi_uuid,
-            'document_currency_code': 'JOD',
-            'tax_currency_code': 'JOD',
+            'document_currency_code': invoice.currency_id.name,
+            'tax_currency_code': invoice.currency_id.name,
             'document_type_code_attrs': {'name': self._get_payment_method_code(invoice)},
             'document_type_code': "381" if is_refund else "388",
             'accounting_customer_party_vals': {
                 'party_vals': self._get_empty_party_vals() if is_refund else self._get_partner_party_vals(customer, role='customer'),
                 'accounting_contact': {
-                    'telephone': '' if is_refund else invoice.partner_id.phone or invoice.partner_id.mobile,
+                    'telephone': '' if is_refund else self._sanitize_phone(invoice.partner_id.phone or invoice.partner_id.mobile),
                 },
             },
             'seller_supplier_party_vals': {

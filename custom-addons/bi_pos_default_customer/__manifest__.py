@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
-
 {
     'name': "POS Default Customer | Point of Sales Default Invoice Customer ",
     'version': '17.0',
@@ -25,5 +22,3 @@
     "live_test_url":"https://youtu.be/waB6-PgMe-Q",
     "images":['static/description/Banner.gif'],
 }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

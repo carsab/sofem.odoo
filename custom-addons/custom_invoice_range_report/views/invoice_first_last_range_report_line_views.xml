@@ -4,14 +4,15 @@
         <field name="model">invoice.first.last.range.report.line</field>
         <field name="arch" type="xml">
             <tree string="Resultado Reporte Facturas por Rango" create="false" delete="false" edit="false">
-                <field name="journal_id" string="Diario/Punto de Venta"/>
-                <field name="user_id" string="Vendedor" optional="show"/>
+                <field name="pos_name"/>
+                <field name="journal_id" string="Diario"/>
                 <field name="first_invoice_id" invisible="1"/>
                 <field name="first_invoice_name" string="Nro. Primera Factura"/>
-                <button name="action_open_invoice" type="object" icon="fa-external-link" string="Abrir" help="Abrir detalle de la primera factura" aria-label="Abrir Primera Factura" title="Abrir Primera Factura" context="{'invoice_id_to_open': first_invoice_id}" invisible="not first_invoice_id"/>
-                 <field name="last_invoice_id" invisible="1"/>
+                <button name="action_open_invoice" type="object" icon="fa-external-link" string="Abrir" context="{'invoice_id_to_open': first_invoice_id}" invisible="not first_invoice_id"/>
+                <field name="last_invoice_id" invisible="1"/>
                 <field name="last_invoice_name" string="Nro. Última Factura"/>
-                <button name="action_open_invoice" type="object" icon="fa-external-link" string="Abrir" help="Abrir detalle de la última factura" aria-label="Abrir Última Factura" title="Abrir Última Factura" context="{'invoice_id_to_open': last_invoice_id}" invisible="not last_invoice_id"/>
+                <button name="action_open_invoice" type="object" icon="fa-external-link" string="Abrir" context="{'invoice_id_to_open': last_invoice_id}" invisible="not last_invoice_id"/>
+                <!--<field name="journal_name" string="Nombre Diario"/>-->
             </tree>
         </field>
     </record>
@@ -23,5 +24,4 @@
         <field name="view_id" ref="invoice_first_last_range_report_line_tree_view"/>
         <field name="target">current</field>
     </record>
-
 </odoo>

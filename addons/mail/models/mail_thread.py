@@ -28,7 +28,7 @@ from markupsafe import Markup, escape
 from odoo import _, api, exceptions, fields, models, tools, registry, SUPERUSER_ID, Command
 from odoo.exceptions import MissingError, AccessError
 from odoo.osv import expression
-from odoo.tools import is_html_empty, html_escape, html2plaintext, parse_contact_from_email
+from odoo.tools import email_normalize, is_html_empty, html_escape, html2plaintext, parse_contact_from_email
 from odoo.tools.misc import clean_context, split_every
 
 from requests import Session
@@ -891,15 +891,15 @@ class MailThread(models.AbstractModel):
         If the email is related to a partner, we consider that the number of message_bounce
         is not relevant anymore as the email is valid - as we received an email from this
         address. The model is here hardcoded because we cannot know with which model the
-        incomming mail match. We consider that if a mail arrives, we have to clear bounce for
+        incoming mail match. We consider that if a mail arrives, we have to clear bounce for
         each model having bounce count.
 
         :param email_from: email address that sent the incoming email."""
-        valid_email = message_dict['email_from']
-        if valid_email:
+        normalized_from = email_normalize(message_dict['email_from'])
+        if normalized_from:
             bl_models = self.env['ir.model'].sudo().search(['&', ('is_mail_blacklist', '=', True), ('model', '!=', 'mail.thread.blacklist')])
             for model in [bl_model for bl_model in bl_models if bl_model.model in self.env]:  # transient test mode
-                self.env[model.model].sudo().search([('message_bounce', '>', 0), ('email_normalized', '=', valid_email)])._message_reset_bounce(valid_email)
+                self.env[model.model].sudo().search([('message_bounce', '>', 0), ('email_normalized', '=', normalized_from)])._message_reset_bounce(normalized_from)
 
     @api.model
     def _detect_is_bounce(self, message, message_dict):
@@ -3930,31 +3930,17 @@ class MailThread(models.AbstractModel):
 
     def _notify_get_action_link(self, link_type, **kwargs):
         """ Prepare link to an action: view document, follow document, ... """
-        params = {
-            'model': kwargs.get('model', self._name),
-            'res_id': kwargs.get('res_id', self.ids and self.ids[0] or False),
-        }
-        # keep only accepted parameters:
-        # - action (deprecated), token (assign), access_token (view)
-        # - auth_signup: auth_signup_token and auth_login
-        # - portal: pid, hash
-        params.update(dict(
-            (key, value)
-            for key, value in kwargs.items()
-            if key in ('action', 'token', 'access_token', 'auth_signup_token',
-                       'auth_login', 'pid', 'hash')
-        ))
+        params = self._get_action_link_params(link_type, **kwargs)
 
         if link_type in ['view', 'assign', 'follow', 'unfollow']:
             base_link = '/mail/%s' % link_type
         elif link_type == 'controller':
             controller = kwargs.get('controller')
-            params.pop('model')
             base_link = '%s' % controller
         else:
             return ''
 
-        if link_type not in ['view']:
+        if link_type != 'view':
             token = self._encode_link(base_link, params)
             params['token'] = token
 
@@ -3970,6 +3956,28 @@ class MailThread(models.AbstractModel):
         token = '%s?%s' % (base_link, ' '.join('%s=%s' % (key, params[key]) for key in sorted(params)))
         hm = hmac.new(secret.encode('utf-8'), token.encode('utf-8'), hashlib.sha1).hexdigest()
         return hm
+
+    def _get_action_link_params(self, link_type, **kwargs):
+        """ Parameters management for '_notify_get_action_link' """
+        params = {
+            'model': kwargs.get('model', self._name),
+            'res_id': kwargs.get('res_id', self.ids[0] if self else False),
+        }
+        # keep only accepted parameters:
+        # - action (deprecated), token (assign), access_token (view)
+        # - auth_signup: auth_signup_token and auth_login
+        # - portal: pid, hash
+        params.update({
+            key: value
+            for key, value in kwargs.items()
+            if key in ('action', 'token', 'access_token', 'auth_signup_token',
+                       'auth_login', 'pid', 'hash')
+        })
+        if link_type == 'controller':
+            params.pop('model')
+        elif link_type not in ['view', 'assign', 'follow', 'unfollow']:
+            return {}
+        return params
 
     @api.model
     def _get_model_description(self, model_name):
@@ -4615,7 +4623,7 @@ class MailThread(models.AbstractModel):
                 }
             }
         }
-        payload['options']['body'] = tools.html2plaintext(body)
+        payload['options']['body'] = html2plaintext(body, include_references=False)
         payload['options']['body'] += self._generate_tracking_message(message)
 
         return payload

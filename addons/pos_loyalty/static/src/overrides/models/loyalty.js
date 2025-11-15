@@ -363,7 +363,6 @@ patch(Order.prototype, {
             return this._updateLoyaltyPrograms().then(async () => {
                 // Try auto claiming rewards
                 const claimableRewards = this.getClaimableRewards(false, false, true);
-                let changed = false;
                 for (const { coupon_id, reward } of claimableRewards) {
                     if (
                         reward.program_id.rewards.length === 1 &&
@@ -372,14 +371,10 @@ patch(Order.prototype, {
                             (reward.reward_type == "product" && !reward.multi_product))
                     ) {
                         this._applyReward(reward, coupon_id);
-                        changed = true;
                     }
                 }
-                // Rewards may impact the number of points gained
-                if (changed) {
-                    await this._updateLoyaltyPrograms();
-                }
                 this._updateRewardLines();
+                await this._updateLoyaltyPrograms();
             });
         });
     },
@@ -491,6 +486,11 @@ patch(Order.prototype, {
             ) {
                 continue;
             }
+
+            //If there is only one possible reward we try to claim the most possible out of it
+            if (claimedReward.reward.reward_product_ids?.length === 1) {
+                delete claimedReward.args["quantity"];
+            }
             this._applyReward(claimedReward.reward, claimedReward.coupon_id, claimedReward.args);
         }
     },
@@ -533,7 +533,7 @@ patch(Order.prototype, {
             for (let idx = 0; idx < Math.min(pointsAdded.length, oldChanges.length); idx++) {
                 Object.assign(oldChanges[idx], pointsAdded[idx]);
             }
-            if (pointsAdded.length < oldChanges.length) {
+            if (pointsAdded.length < oldChanges.length || !this._programIsApplicable(program)) {
                 const removedIds = oldChanges.map((pe) => pe.coupon_id);
                 this.couponPointChanges = Object.fromEntries(
                     Object.entries(this.couponPointChanges).filter(([k, pe]) => {
@@ -623,6 +623,9 @@ patch(Order.prototype, {
      */
     _getPointsCorrection(program) {
         const rewardLines = this.orderlines.filter((line) => line.is_reward_line);
+        if (!this._canGenerateRewards(program, this.get_total_with_tax(), this.get_total_without_tax())) {
+            return 0;
+        }
         let res = 0;
         for (const rule of program.rules) {
             for (const line of rewardLines) {
@@ -757,7 +760,7 @@ patch(Order.prototype, {
      */
     pointsForPrograms(programs) {
         pointsForProgramsCountedRules = {};
-        const orderLines = this.get_orderlines().filter((line) => !line.refunded_orderline_id);
+        const orderLines = this.get_orderlines().filter((line) => !line.refunded_orderline_id && !line.comboParent);
         const linesPerRule = {};
         for (const line of orderLines) {
             const reward = line.reward_id ? this.pos.reward_by_id[line.reward_id] : undefined;
@@ -799,11 +802,11 @@ patch(Order.prototype, {
                 }
                 const linesForRule = linesPerRule[rule.id] ? linesPerRule[rule.id] : [];
                 const amountWithTax = linesForRule.reduce(
-                    (sum, line) => sum + line.get_price_with_tax(),
+                    (sum, line) => sum + (line.comboLines ? line.getComboTotalPrice() : line.get_price_with_tax()),
                     0
                 );
                 const amountWithoutTax = linesForRule.reduce(
-                    (sum, line) => sum + line.get_price_without_tax(),
+                    (sum, line) => sum + (line.comboLines ? line.getComboTotalPriceWithoutTax() : line.get_price_without_tax()),
                     0
                 );
                 const amountCheck =
@@ -842,7 +845,7 @@ patch(Order.prototype, {
                             qtyPerProduct[line.reward_product_id || line.get_product().id] =
                                 lineQty;
                         }
-                        orderedProductPaid += line.get_price_with_tax();
+                        orderedProductPaid += line.comboLines ? line.getComboTotalPrice() : line.get_price_with_tax();
                         if (!line.is_reward_line) {
                             totalProductQty += lineQty;
                         }
@@ -1705,5 +1708,10 @@ patch(Order.prototype, {
         } else {
             return super.removeOrderline(lineToRemove);
         }
+    },
+    async add_product(product, options) {
+        const res = await super.add_product(...arguments);
+        this._updateRewards();
+        return res;
     },
 });

@@ -1634,17 +1634,17 @@ def get_po_paths(module_name: str, lang: str):
 
 
 def get_po_paths_env(module_name: str, lang: str, env: odoo.api.Environment | None = None):
-    lang_base = lang.split('_')[0]
+    lang_base = lang.split('_', 1)[0]
     # Load the base as a fallback in case a translation is missing:
     po_names = [lang_base, lang]
     # Exception for Spanish locales: they have two bases, es and es_419:
     if lang_base == 'es' and lang not in ('es_ES', 'es_419'):
         po_names.insert(1, 'es_419')
-    po_paths = [
+    po_paths = (
         join(module_name, dir_, filename + '.po')
         for filename in po_names
         for dir_ in ('i18n', 'i18n_extra')
-    ]
+    )
     for path in po_paths:
         with suppress(FileNotFoundError):
             yield file_path(path, env=env)
@@ -1756,7 +1756,7 @@ def _get_translation_upgrade_queries(cr, field):
         """
         migrate_queries.append(cr.mogrify(query, [Model._name, translation_name]).decode())
 
-        query = "DELETE FROM _ir_translation WHERE type = 'model' AND name = %s"
+        query = "DELETE FROM _ir_translation WHERE type = 'model' AND state = 'translated' AND name = %s"
         cleanup_queries.append(cr.mogrify(query, [translation_name]).decode())
 
     # upgrade model_terms translation: one update per field per record
@@ -1830,7 +1830,7 @@ def _get_translation_upgrade_queries(cr, field):
             query = f'UPDATE "{Model._table}" SET "{field.name}" = %s WHERE id = %s'
             migrate_queries.append(cr.mogrify(query, [Json(new_values), id_]).decode())
 
-        query = "DELETE FROM _ir_translation WHERE type = 'model_terms' AND name = %s"
+        query = "DELETE FROM _ir_translation WHERE type = 'model_terms' AND state = 'translated' AND name = %s"
         cleanup_queries.append(cr.mogrify(query, [translation_name]).decode())
 
     return migrate_queries, cleanup_queries

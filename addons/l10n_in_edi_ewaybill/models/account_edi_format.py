@@ -28,7 +28,7 @@ class AccountEdiFormat(models.Model):
             1. base on IRN, IRN is number created when we do E-invoice
             2. direct call, when E-invoice not aplicable or it"s credit not
         """
-        if move.move_type == "out_refund":
+        if move.move_type == "out_refund" or move._get_debit_note_origin():
             return "direct"
         einvoice_in_edi_format = move.journal_id.edi_format_ids.filtered(lambda f: f.code == "in_einvoice_1_03")
         return einvoice_in_edi_format and einvoice_in_edi_format._get_move_applicability(move) and "irn" or "direct"
@@ -134,7 +134,7 @@ class AccountEdiFormat(models.Model):
         cancel_json = {
             "ewbNo": ewaybill_response_json.get("ewayBillNo") or ewaybill_response_json.get("EwbNo"),
             "cancelRsnCode": int(invoices.l10n_in_edi_cancel_reason),
-            "CnlRem": invoices.l10n_in_edi_cancel_remarks,
+            "cancelRmrk": invoices.l10n_in_edi_cancel_remarks,
         }
         response = self._l10n_in_edi_ewaybill_cancel(invoices.company_id, cancel_json)
         if response.get("error"):
@@ -523,9 +523,9 @@ class AccountEdiFormat(models.Model):
         extract_digits = self._l10n_in_edi_extract_digits
         tax_details_by_code = self._get_l10n_in_tax_details_by_line_code(line_tax_details.get("tax_details", {}))
         line_details = {
-            "productName": line.product_id.name,
+            "productName": line.product_id.name[:100] if line.product_id else "",
             "hsnCode": extract_digits(line.product_id.l10n_in_hsn_code),
-            "productDesc": line.name,
+            "productDesc": line.name[:100] if line.name else "",
             "quantity": line.quantity,
             "qtyUnit": line.product_uom_id.l10n_in_code and line.product_uom_id.l10n_in_code.split("-")[0] or "OTH",
             "taxableAmount": self._l10n_in_round_value(line.balance * sign),

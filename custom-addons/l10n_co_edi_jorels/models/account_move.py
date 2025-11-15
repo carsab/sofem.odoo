@@ -34,7 +34,8 @@ import qrcode
 import requests
 from num2words import num2words
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.misc import formatLang
 from odoo.tools.sql import column_exists, create_column
 
 _logger = logging.getLogger(__name__)
@@ -50,8 +51,7 @@ class AccountMove(models.Model):
 
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Edi Document type",
                                           copy=False, ondelete='RESTRICT',
-                                          compute='_compute_ei_type_document', store=True,
-                                          default=lambda self: self._compute_ei_type_document())
+                                          compute='_compute_ei_type_document_id', store=True)
     ei_type_document = fields.Selection(selection=[
         ('none', 'None'),
         ('invoice', 'Invoice'),
@@ -59,8 +59,7 @@ class AccountMove(models.Model):
         ('debit_note', 'Debit note'),
         ('doc_support', 'Document support'),
         ('note_support', 'Note support'),
-    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True,
-        default=lambda self: self._compute_ei_type_document())
+    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True)
 
     ei_customer = fields.Text(string="customer json", copy=False)
     ei_legal_monetary_totals = fields.Text(string="legal_monetary_totals json", copy=False)
@@ -71,9 +70,10 @@ class AccountMove(models.Model):
     ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
                                     default=lambda self: self.env.company.is_not_test,
                                     store=True, compute="_compute_ei_is_not_test")
+    ei_company_enable = fields.Boolean(string="Company Edi Enable", compute="_compute_ei_company_enable")
 
     # API Response:
-    ei_is_valid = fields.Boolean(string="Valid", copy=False)
+    ei_is_valid = fields.Boolean(string="DIAN Valid", copy=False)
     ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     ei_class = fields.Char("Class", copy=False, readonly=True)
@@ -198,7 +198,7 @@ class AccountMove(models.Model):
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution", ondelete='RESTRICT')
+                                    store=True, compute="_compute_resolution_id", ondelete='RESTRICT')
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='move_id')
 
@@ -255,6 +255,51 @@ class AccountMove(models.Model):
 
         return super()._auto_init()
 
+    @api.constrains('ei_type_document', 'resolution_id')
+    def _check_resolution_id_document_type_consistency(self):
+        """
+        Validate that resolution_id is consistent with ei_type_document field.
+
+        Based on DIAN requirements, each document type has specific allowed resolution types:
+        - none: Can have any resolution or no resolution
+        - invoice: Can have no resolution or type documents with IDs 1, 2, 101
+        - credit_note: Can have no resolution or type documents with IDs 5, 105
+        - debit_note: Can have no resolution or type documents with IDs 6, 106
+        - doc_support: Can have no resolution or type documents with ID 12
+        - note_support: Can have no resolution or type documents with ID 13
+        """
+        for record in self:
+            if not record.resolution_id:
+                # If no resolution is set, it's always valid
+                continue
+
+            # Get the type document ID from the resolution
+            resolution_type_doc_id = record.resolution_id.resolution_type_document_id.id if record.resolution_id.resolution_type_document_id else False
+
+            # Define allowed type document IDs for each ei_type_document
+            allowed_mappings = {
+                'none': None,  # Can have any resolution
+                'invoice': [1, 2, 101],  # Factura electrónica de venta, exportación, no electrónica
+                'credit_note': [5, 105],  # Nota de crédito electrónica, no electrónica
+                'debit_note': [6, 106],  # Nota de débito electrónica, no electrónica
+                'doc_support': [12],  # Documento soporte
+                'note_support': [13],  # Nota de ajuste al documento soporte
+            }
+
+            allowed_ids = allowed_mappings.get(record.ei_type_document)
+
+            # If allowed_ids is defined and resolution type doc ID is not in allowed list
+            if allowed_ids is not None and resolution_type_doc_id not in allowed_ids:
+                type_doc_names = self.env['l10n_co_edi_jorels.type_documents'].browse(allowed_ids).mapped('name')
+                allowed_names = ', '.join(type_doc_names) if type_doc_names else _('None')
+
+                current_type_doc_name = record.resolution_id.resolution_type_document_id.name if record.resolution_id.resolution_type_document_id else _(
+                    'Unknown')
+
+                raise ValidationError(_("The Edi document type is not compatible with resolution '%s'. \n"
+                                        "Allowed resolutions are: \n%s"
+                                        ) % (current_type_doc_name, allowed_names))
+
     def dian_preview(self):
         for rec in self:
             if rec.ei_uuid:
@@ -309,6 +354,11 @@ class AccountMove(models.Model):
                 rec.ei_is_not_test = (rec.ei_type_environment.id == 1)
             else:
                 rec.ei_is_not_test = rec.company_id.is_not_test
+
+    @api.depends('company_id.ei_enable')
+    def _compute_ei_company_enable(self):
+        for rec in self:
+            rec.ei_company_enable = rec.company_id.ei_enable
 
     def _default_payment_method_id(self):
         if not self.env['l10n_co_edi_jorels.payment_methods'].search_count([]):
@@ -402,6 +452,7 @@ class AccountMove(models.Model):
                 qr.add_data(rec.ei_qr_data)
                 qr.make(fit=True)
                 img = qr.make_image()
+                img = img.resize((216, 216))
                 temp = BytesIO()
                 img.save(temp, format="PNG")
                 qr_image = base64.b64encode(temp.getvalue())
@@ -1025,94 +1076,159 @@ class AccountMove(models.Model):
 
         return False
 
-    def is_pending_to_send_to_dian(self):
+    def _can_process_edi(self):
+        """
+        Check if the document can be processed for EDI.
+        Returns True if all basic conditions are met, False otherwise.
+        """
         self.ensure_one()
 
-        if not self.company_id.ei_enable:
-            return False
-        if self.is_journal_pos():
-            return False
-        if self.ei_is_valid:
-            return False
+        return (
+                self.company_id.ei_enable and
+                not self.is_journal_pos() and
+                not self.ei_is_valid
+        )
 
-        return self.should_send_document_to_dian()
+    def is_pending_to_send_to_dian(self):
+        """
+        Check if the document is pending to be sent to DIAN.
+        """
+        self.ensure_one()
 
-    @api.depends('is_out_country', 'ei_is_correction_without_reference', 'debit_origin_id', 'resolution_id',
-                 'move_type')
+        return (
+                self._can_process_edi() and
+                self.should_send_document_to_dian()
+        )
+
+    def is_pending_to_force_edi(self):
+        """
+        Check if the document is pending to force EDI processing.
+        """
+        self.ensure_one()
+
+        return (
+                self._can_process_edi() and
+                self.ei_uuid and
+                self.move_type in ('in_invoice', 'in_refund') and
+                not self.should_send_document_to_dian()
+        )
+
+    @api.depends('ei_is_correction_without_reference', 'debit_origin_id', 'journal_id', 'move_type')
     def _compute_ei_type_document(self):
+        """
+        Compute the electronic invoice document type based on record attributes.
+
+        This method determines the appropriate electronic document type for Colombian
+        electronic invoicing (EDI) based on the invoice type, debit scenarios, and
+        journal resolution configuration.
+
+        Document Types:
+            - 'invoice': Regular sales/purchase invoice
+            - 'credit_note': Credit note for refunds
+            - 'debit_note': Debit note for corrections/adjustments
+            - 'doc_support': Electronic document support (resolution type 12)
+            - 'note_support': Credit note for document support (resolution type 13)
+            - 'none': No electronic document type assigned
+
+        Business Logic:
+            - Debit scenarios occur when there's a debit_origin_id or correction without reference
+            - Document support (type 12) cannot have debit notes (raises UserError)
+            - Note support (type 13) is only for in_refund with specific resolution
+            - Different invoice types (out_invoice, in_invoice, etc.) follow different rules
+
+        Raises:
+            UserError: When attempting to create a debit note for document support
+        """
         for rec in self:
-            # Compute ei_type_document
-            if rec.move_type == 'out_invoice':
-                if (('debit_origin_id' in self) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
-                    # Debit note
-                    type_edi_document = 'debit_note'
-                else:
-                    # Sales invoice
-                    type_edi_document = 'invoice'
-            elif rec.move_type == 'out_refund':
-                # Credit note
-                type_edi_document = 'credit_note'
-            elif rec.move_type == 'in_invoice' \
-                    and rec.resolution_id \
-                    and rec.resolution_id.resolution_type_document_id.id == 12:
-                if (('debit_origin_id' in self) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
-                    # There is no debit note for document support
-                    raise UserError(_("There is not debit note for electronic document support"))
-                else:
-                    # Document support
+            # Determine if this is a debit scenario (correction with or without reference)
+            is_debit = (hasattr(rec,
+                                'debit_origin_id') and rec.debit_origin_id) or rec.ei_is_correction_without_reference
+
+            # Safely extract resolution type ID from journal sequence
+            try:
+                resolution_type_id = rec.journal_id.resolution_invoice_id.resolution_type_document_id.id
+            except AttributeError:
+                resolution_type_id = None
+
+            # Document type mapping for standard cases
+            type_mapping = {
+                'out_invoice': 'debit_note' if is_debit else 'invoice',
+                'out_refund': 'credit_note',
+                'in_refund': 'note_support' if resolution_type_id == 12 else 'credit_note',
+            }
+
+            # Handle special case: in_invoice with document support resolution
+            if rec.move_type == 'in_invoice':
+                if resolution_type_id == 12:  # Document support resolution
+                    if is_debit:
+                        raise UserError(_("There is not debit note for electronic document support"))
                     type_edi_document = 'doc_support'
-            elif rec.move_type == 'in_refund' \
-                    and rec.resolution_id \
-                    and rec.resolution_id.resolution_type_document_id.id == 13:
-                # Note Document Support
-                type_edi_document = 'note_support'
-            elif rec.move_type == 'in_invoice':
-                if (('debit_origin_id' in self) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
-                    # Debit note
-                    type_edi_document = 'debit_note'
                 else:
-                    # Sales invoice
-                    type_edi_document = 'invoice'
-            elif rec.move_type == 'in_refund':
-                # Credit note
-                type_edi_document = 'credit_note'
+                    # Regular in_invoice: debit note or invoice based on debit scenario
+                    type_edi_document = 'debit_note' if is_debit else 'invoice'
             else:
-                type_edi_document = 'none'
+                # Use mapping for all other invoice types, default to 'none' if not found
+                type_edi_document = type_mapping.get(rec.move_type, 'none')
 
-            # Compute ei_type_document_id
-            # For now the document type is always
-            # Electronic invoicing (Code '01')
-            # Export electronic invoicing (Code '02')
-            # Credit note (Code '91')
-            # Debit note (Code '92')
-            # Support document (Code '05')
-            # Credit note for support document (Code '95')
-            # The contingency and others are pending review
-            type_documents_env = self.env['l10n_co_edi_jorels.type_documents']
-            if type_edi_document == 'invoice':
-                # Sales invoice
-                if not rec.is_out_country:
-                    type_documents_rec = type_documents_env.search([('code', '=', '01')])
-                else:
-                    type_documents_rec = type_documents_env.search([('code', '=', '02')])
-            elif type_edi_document == 'credit_note':
-                # Credit note
-                type_documents_rec = type_documents_env.search([('code', '=', '91')])
-            elif type_edi_document == 'debit_note':
-                # Debit note
-                type_documents_rec = type_documents_env.search([('code', '=', '92')])
-            elif type_edi_document == 'doc_support':
-                # Document support
-                type_documents_rec = type_documents_env.search([('code', '=', '05')])
-            elif type_edi_document == 'note_support':
-                # Note Document Support
-                type_documents_rec = type_documents_env.search([('code', '=', '95')])
-            else:
-                type_documents_rec = None
-
-            # Store compute fields
             rec.ei_type_document = type_edi_document
-            rec.ei_type_document_id = type_documents_rec.id if type_documents_rec else None
+
+    @api.depends('is_out_country', 'ei_type_document')
+    def _compute_ei_type_document_id(self):
+        """
+        Compute the electronic invoice document type ID based on document type and country context.
+
+        This method maps electronic document types to their corresponding official codes
+        according to Colombian DIAN (tax authority) regulations, then finds the matching
+        record in the type_documents model.
+
+        Document Type Code Mapping (DIAN Official Codes):
+            - '01': Electronic invoicing (domestic sales)
+            - '02': Export electronic invoicing (international sales)
+            - '91': Credit note
+            - '92': Debit note
+            - '05': Support document
+            - '95': Credit note for support document
+
+        Business Logic:
+            - Invoice type depends on country context:
+              * Domestic sales (is_out_country=False) → Code '01'
+              * Export sales (is_out_country=True) → Code '02'
+            - Other document types have fixed codes regardless of country
+            - If no matching code is found, ei_type_document_id is set to False
+            - If code exists but no record found in type_documents, also set to False
+
+        Dependencies:
+            - is_out_country: Boolean indicating if sale is to foreign country
+            - ei_type_document: String with document type ('invoice', 'credit_note', etc.)
+
+        Related Model:
+            - l10n_co_edi_jorels.type_documents: Contains official document type records
+        """
+        # Official DIAN document type codes (excluding invoice types handled separately)
+        DOCUMENT_TYPE_CODES = {
+            'credit_note': '91',  # Credit note
+            'debit_note': '92',  # Debit note
+            'doc_support': '05',  # Support document
+            'note_support': '95',  # Credit note for support document
+        }
+
+        type_documents_env = self.env['l10n_co_edi_jorels.type_documents']
+
+        for rec in self:
+            # Handle invoice type with country-specific logic
+            if rec.ei_type_document == 'invoice':
+                code = '02' if rec.is_out_country else '01'  # Export vs domestic invoice
+            else:
+                # Get code from mapping for other document types
+                code = DOCUMENT_TYPE_CODES.get(rec.ei_type_document)
+
+            # Search for document type record and assign ID
+            if code:
+                type_documents_rec = type_documents_env.search([('code', '=', code)], limit=1)
+                rec.ei_type_document_id = type_documents_rec.id if type_documents_rec else False
+            else:
+                # No valid code found, clear the relation
+                rec.ei_type_document_id = False
 
     def get_ei_sync(self):
         self.ensure_one()
@@ -1124,24 +1240,47 @@ class AccountMove(models.Model):
         return self.ei_is_not_test
 
     @api.depends('journal_id', 'ei_type_document')
-    def _compute_resolution(self):
+    def _compute_resolution_id(self):
+        """
+        Compute the DIAN resolution ID based on journal configuration and document type.
+
+        This method assigns the appropriate DIAN (Colombian tax authority) resolution
+        to electronic documents based on the document type and journal sequence configuration.
+        DIAN resolutions authorize the use of specific number ranges for electronic documents.
+
+        Dependencies:
+            - journal_id: Account journal with sequence configuration
+            - ei_type_document: Electronic document type string
+        """
+        # Document types that use the journal's regular sequence
+        REGULAR_SEQUENCE_TYPES = {'invoice', 'doc_support'}
+        # Document types that use the journal's refund sequence
+        REFUND_SEQUENCE_TYPES = {'credit_note', 'note_support'}
+        # Document types that use the journal's debit sequence
+        DEBIT_SEQUENCE_TYPES = {'debit_note'}
+
         for rec in self:
-            type_edi_document = rec.ei_type_document
-            if type_edi_document:
-                if type_edi_document in ('invoice', 'doc_support') and rec.journal_id.resolution_invoice_id:
-                    # Sales invoice
-                    rec.resolution_id = rec.journal_id.resolution_invoice_id.id
-                elif type_edi_document in (
-                        'credit_note', 'note_support') and rec.journal_id.resolution_credit_note_id:
-                    # Credit note
-                    rec.resolution_id = rec.journal_id.resolution_credit_note_id.id
-                elif type_edi_document == 'debit_note' and rec.journal_id.resolution_debit_note_id:
-                    # Debit note
-                    rec.resolution_id = rec.journal_id.resolution_debit_note_id.id
+            # Safely determine resolution based on document type and journal sequences
+            try:
+                if rec.ei_type_document in REGULAR_SEQUENCE_TYPES:
+                    # Use main sequence resolution for regular documents
+                    resolution = rec.journal_id.resolution_invoice_id
+                elif rec.ei_type_document in REFUND_SEQUENCE_TYPES:
+                    # Use refund sequence resolution for credit notes
+                    resolution = rec.journal_id.resolution_credit_note_id
+                elif rec.ei_type_document in DEBIT_SEQUENCE_TYPES:
+                    # Use debit sequence resolution for debit notes
+                    resolution = rec.journal_id.resolution_debit_note_id
                 else:
-                    rec.resolution_id = None
-            else:
-                rec.resolution_id = None
+                    # Unknown document type, no resolution applicable
+                    resolution = False
+
+                # Assign resolution ID or False if resolution doesn't exist
+                rec.resolution_id = resolution.id if resolution else False
+
+            except AttributeError:
+                # Handle missing journal, sequence, or resolution chain gracefully
+                rec.resolution_id = False
 
     @api.depends('name', 'ref', 'journal_id')
     def compute_number_formatted(self):
@@ -1208,183 +1347,184 @@ class AccountMove(models.Model):
         else:
             return operation[self.ei_operation]
 
+    # Currently, the should_send_document_to_dian() function is always called first throughout the code in this module,
+    # so this validation was removed from within this function to optimize it. But if you want to use the function
+    # directly, it would be important to evaluate whether it's necessary to first perform this validation.
     def get_json_request(self, check_date=True):
-        for rec in self:
-            if rec.should_send_document_to_dian():
-                # Important for compatibility with old fields,
-                # third-party modules or manual changes to the database
-                if not rec.ei_number or not rec.number_formatted:
-                    rec.compute_number_formatted()
+        self.ensure_one()
 
-                # Check resolution
-                if not rec.resolution_id:
-                    raise UserError(
-                        _("This type of document does not have a DIAN resolution assigned: %s") % rec.name)
+        # Important for compatibility with old fields,
+        # third-party modules or manual changes to the database
+        if not self.ei_number or not self.number_formatted:
+            self.compute_number_formatted()
 
-                json_request = {
-                    'number': rec.ei_number,
-                    'type_document_code': rec.ei_type_document_id.id,
-                    'sync': rec.get_ei_sync(),
-                    'customer': rec.get_ei_customer(),
-                    'operation_code': rec.get_operation_code()
+        # Check resolution
+        if not self.resolution_id:
+            raise UserError(
+                _("This type of document does not have a DIAN resolution assigned: %s") % self.name)
+
+        json_request = {
+            'number': self.ei_number,
+            'type_document_code': self.ei_type_document_id.id,
+            'sync': self.get_ei_sync(),
+            'customer': self.get_ei_customer(),
+            'operation_code': self.get_operation_code()
+        }
+
+        if self.ei_type_document == 'invoice':
+            json_request['resolution'] = {
+                'prefix': self.resolution_id.resolution_prefix,
+                'resolution': self.resolution_id.resolution_resolution,
+                'resolution_date': fields.Date.to_string(self.resolution_id.resolution_resolution_date),
+                'technical_key': self.resolution_id.resolution_technical_key,
+                'number_from': self.resolution_id.resolution_from,
+                'number_to': self.resolution_id.resolution_to,
+                'date_from': fields.Date.to_string(self.resolution_id.resolution_date_from),
+                'date_to': fields.Date.to_string(self.resolution_id.resolution_date_to)
+            }
+        else:
+            json_request['resolution_code'] = self.resolution_id.resolution_id
+
+        # Due date
+        if self.invoice_date_due:
+            json_request['due_date'] = fields.Date.to_string(self.invoice_date_due)
+
+        # Issue date
+        if self.invoice_date:
+            if check_date and self.invoice_date != fields.Date.context_today(self):
+                raise UserError(_("The issue date must be today's date"))
+            json_request['date'] = fields.Date.to_string(self.invoice_date)
+
+        # Period
+        if self.date_start and self.date_end:
+            json_request['period'] = {
+                'date_start': fields.Date.to_string(self.date_start),
+                'date_end': fields.Date.to_string(self.date_end)
+            }
+
+        # Order reference
+        if self.order_ref_number:
+            json_request['order_reference'] = {
+                'number': self.order_ref_number
+            }
+            if self.order_ref_date:
+                json_request['order_reference']['issue_date'] = fields.Date.to_string(self.order_ref_date)
+
+        if not self.company_id.currency_id or self.company_id.currency_id.name != 'COP':
+            raise UserError(_('The company currency must be COP to report bills to DIAN. '
+                              'Set it up in the Companies configuration view in Odoo.'))
+
+        # Multi-currency compatibility
+        if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
+            company_currency_code = self.company_id.currency_id.name
+            invoice_currency_code = self.currency_id.name
+
+            if not self.journal_id.currency_id or self.journal_id.currency_id.name != 'COP':
+                raise UserError(_('The currency of their journal must be COP to report bills to DIAN. '
+                                  'Set it up in the Journals configuration view in Odoo.'))
+
+            type_currencies_env = self.env['l10n_co_edi_jorels.type_currencies']
+            company_currency_search = type_currencies_env.search([('code', '=', company_currency_code)])
+            invoice_currency_search = type_currencies_env.search([('code', '=', invoice_currency_code)])
+
+            # The if is to make sure the name in currency_id,
+            # have a match in the code in type_currencies of the DIAN
+            if company_currency_search and invoice_currency_search:
+                rate_date = self.date or self.invoice_date or fields.Date.context_today(self)
+                rate = self.currency_id.with_context(dict(self._context or {}, date=self.invoice_date)).rate
+
+                json_request['currency_code'] = company_currency_search.id
+                json_request['exchange_rate'] = {
+                    'code': invoice_currency_search.id,
+                    'rate': rate,
+                    'date': str(rate_date)
                 }
+            else:
+                raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
 
-                if rec.ei_type_document == 'invoice':
-                    json_request['resolution'] = {
-                        'prefix': rec.resolution_id.resolution_prefix,
-                        'resolution': rec.resolution_id.resolution_resolution,
-                        'resolution_date': fields.Date.to_string(rec.resolution_id.resolution_resolution_date),
-                        'technical_key': rec.resolution_id.resolution_technical_key,
-                        'number_from': rec.resolution_id.resolution_from,
-                        'number_to': rec.resolution_id.resolution_to,
-                        'date_from': fields.Date.to_string(rec.resolution_id.resolution_date_from),
-                        'date_to': fields.Date.to_string(rec.resolution_id.resolution_date_to)
+        if self.is_universal_discount():
+            if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
+                raise UserError(
+                    _("The universal discount module doesn't seem to be compatible with multi-currencies."))
+
+            if self.ks_amount_discount:
+                allowance_charges = []
+                allowance_charge = {
+                    'indicator': False,
+                    'discount_code': 2,
+                    'base_value': abs(self.amount_untaxed_signed),
+                    'value': self.ks_amount_discount,
+                    'reason': 'Descuento general'
+                }
+                allowance_charges.append(allowance_charge)
+                json_request['allowance_charges'] = allowance_charges
+
+        # json_request y billing_reference
+        billing_reference = False
+        type_edi_document = self.ei_type_document
+        invoice_rec = None
+        json_request['legal_monetary_totals'] = self.get_ei_legal_monetary_totals()
+        json_request['lines'] = self.get_ei_lines()
+        json_request['payment_forms'] = [self.get_ei_payment_form()]
+
+        withholding_tax_totals = self.get_ei_withholding_tax_totals(json_request['lines'])
+        if withholding_tax_totals:
+            json_request['withholding_tax_totals'] = withholding_tax_totals
+
+        if type_edi_document in ('invoice', 'doc_support'):
+            # Sales invoice
+            billing_reference = False
+        elif type_edi_document in ('credit_note', 'note_support'):
+            # Credit note
+            invoice_env = self.env['account.move']
+            invoice_rec = invoice_env.search([('id', '=', self.reversed_entry_id.id)])
+            billing_reference = True
+        elif type_edi_document == 'debit_note':
+            # Debit note
+            if self.is_debit_note_module():
+                if not self.ei_is_correction_without_reference:
+                    invoice_env = self.env['account.move']
+                    invoice_rec = invoice_env.search([('id', '=', self.debit_origin_id.id)])
+                billing_reference = True
+            else:
+                raise UserError(_("The debit notes module has not been installed."))
+
+        # Billing reference
+        if billing_reference:
+            self.compute_ei_correction_concept_id()
+            if self.ei_correction_concept_id:
+                json_request["discrepancy"] = {
+                    # "reference": None,
+                    "correction_code": self.ei_correction_concept_id.id,
+                    "description": self.ref if self.ref else ''
+                }
+            else:
+                raise UserError(_("You need to select a correction code first"))
+
+            if not self.ei_is_correction_without_reference:
+                if invoice_rec and invoice_rec.ei_uuid:
+                    json_request["reference"] = {
+                        "number": invoice_rec.number_formatted,
+                        "uuid": invoice_rec.ei_uuid,
+                        "issue_date": fields.Date.to_string(invoice_rec.ei_issue_date)
                     }
                 else:
-                    json_request['resolution_code'] = rec.resolution_id.resolution_id
+                    raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
+            elif type_edi_document == 'note_support':
+                raise UserError(
+                    _("The credit note for document support cannot be a correction without reference"))
 
-                # Due date
-                if rec.invoice_date_due:
-                    json_request['due_date'] = fields.Date.to_string(rec.invoice_date_due)
+        if self.ref or self.narration:
+            notes = []
+            if self.ref:
+                notes.append({'text': self.ref})
+            if self.narration:
+                narration = re.sub(r'<.*?>', '', self.narration)
+                if narration:
+                    notes.append({'text': narration})
+            json_request['notes'] = notes
 
-                # Issue date
-                if rec.invoice_date:
-                    if check_date and rec.invoice_date != fields.Date.context_today(rec):
-                        raise UserError(_("The issue date must be today's date"))
-                    json_request['date'] = fields.Date.to_string(rec.invoice_date)
-
-                # Period
-                if rec.date_start and rec.date_end:
-                    json_request['period'] = {
-                        'date_start': fields.Date.to_string(rec.date_start),
-                        'date_end': fields.Date.to_string(rec.date_end)
-                    }
-
-                # Order reference
-                if rec.order_ref_number:
-                    json_request['order_reference'] = {
-                        'number': rec.order_ref_number
-                    }
-                    if rec.order_ref_date:
-                        json_request['order_reference']['issue_date'] = fields.Date.to_string(rec.order_ref_date)
-
-                if not rec.company_id.currency_id or rec.company_id.currency_id.name != 'COP':
-                    raise UserError(_('The company currency must be COP to report bills to DIAN. '
-                                      'Set it up in the Companies configuration view in Odoo.'))
-
-                # Multi-currency compatibility
-                if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                    company_currency_code = rec.company_id.currency_id.name
-                    invoice_currency_code = rec.currency_id.name
-
-                    if not rec.journal_id.currency_id or rec.journal_id.currency_id.name != 'COP':
-                        raise UserError(_('The currency of their journal must be COP to report bills to DIAN. '
-                                          'Set it up in the Journals configuration view in Odoo.'))
-
-                    type_currencies_env = self.env['l10n_co_edi_jorels.type_currencies']
-                    company_currency_search = type_currencies_env.search([('code', '=', company_currency_code)])
-                    invoice_currency_search = type_currencies_env.search([('code', '=', invoice_currency_code)])
-
-                    # The if is to make sure the name in currency_id,
-                    # have a match in the code in type_currencies of the DIAN
-                    if company_currency_search and invoice_currency_search:
-                        rate_date = rec.date or rec.invoice_date or fields.Date.context_today(self)
-                        rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).rate
-
-                        json_request['currency_code'] = company_currency_search.id
-                        json_request['exchange_rate'] = {
-                            'code': invoice_currency_search.id,
-                            'rate': rate,
-                            'date': str(rate_date)
-                        }
-                    else:
-                        raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
-
-                if self.is_universal_discount():
-                    if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                        raise UserError(
-                            _("The universal discount module doesn't seem to be compatible with multi-currencies."))
-
-                    if rec.ks_amount_discount:
-                        allowance_charges = []
-                        allowance_charge = {
-                            'indicator': False,
-                            'discount_code': 2,
-                            'base_value': abs(rec.amount_untaxed_signed),
-                            'value': rec.ks_amount_discount,
-                            'reason': 'Descuento general'
-                        }
-                        allowance_charges.append(allowance_charge)
-                        json_request['allowance_charges'] = allowance_charges
-
-                # json_request y billing_reference
-                billing_reference = False
-                type_edi_document = rec.ei_type_document
-                invoice_rec = None
-                json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
-                json_request['lines'] = rec.get_ei_lines()
-                json_request['payment_forms'] = [rec.get_ei_payment_form()]
-
-                withholding_tax_totals = rec.get_ei_withholding_tax_totals(json_request['lines'])
-                if withholding_tax_totals:
-                    json_request['withholding_tax_totals'] = withholding_tax_totals
-
-                if type_edi_document in ('invoice', 'doc_support'):
-                    # Sales invoice
-                    billing_reference = False
-                elif type_edi_document in ('credit_note', 'note_support'):
-                    # Credit note
-                    invoice_env = self.env['account.move']
-                    invoice_rec = invoice_env.search([('id', '=', rec.reversed_entry_id.id)])
-                    billing_reference = True
-                elif type_edi_document == 'debit_note':
-                    # Debit note
-                    if self.is_debit_note_module():
-                        if not rec.ei_is_correction_without_reference:
-                            invoice_env = self.env['account.move']
-                            invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
-                        billing_reference = True
-                    else:
-                        raise UserError(_("The debit notes module has not been installed."))
-
-                # Billing reference
-                if billing_reference:
-                    rec.compute_ei_correction_concept_id()
-                    if rec.ei_correction_concept_id:
-                        json_request["discrepancy"] = {
-                            # "reference": None,
-                            "correction_code": rec.ei_correction_concept_id.id,
-                            "description": rec.ref if rec.ref else ''
-                        }
-                    else:
-                        raise UserError(_("You need to select a correction code first"))
-
-                    if not rec.ei_is_correction_without_reference:
-                        if invoice_rec and invoice_rec.ei_uuid:
-                            json_request["reference"] = {
-                                "number": invoice_rec.number_formatted,
-                                "uuid": invoice_rec.ei_uuid,
-                                "issue_date": fields.Date.to_string(invoice_rec.ei_issue_date)
-                            }
-                        else:
-                            raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
-                    elif type_edi_document == 'note_support':
-                        raise UserError(
-                            _("The credit note for document support cannot be a correction without reference"))
-
-                if rec.ref or rec.narration:
-                    notes = []
-                    if rec.ref:
-                        notes.append({'text': rec.ref})
-                    if rec.narration:
-                        narration = re.sub(r'<.*?>', '', rec.narration)
-                        if narration:
-                            notes.append({'text': narration})
-                    json_request['notes'] = notes
-            else:
-                raise UserError(_("This type of document does not need to be sent to DIAN"))
-
-            return json_request
+        return json_request
 
     def validate_dian_generic(self, is_test):
         for rec in self:
@@ -1392,16 +1532,14 @@ class AccountMove(models.Model):
                 if not rec.company_id.ei_enable:
                     continue
 
-                # raise UserError(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-                _logger.debug("DIAN Validation Request: %s",
-                              json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-
                 if rec.state == 'draft':
                     raise UserError(_("The invoice must first be validated in Odoo, before being sent to the DIAN."))
 
                 type_edi_document = rec.ei_type_document
                 if rec.is_pending_to_send_to_dian():
                     requests_data = rec.get_json_request()
+                    _logger.debug("DIAN Validation Request: %s",
+                                  json.dumps(requests_data, indent=2, sort_keys=False))
 
                     if rec.company_id.api_key:
                         token = rec.company_id.api_key
@@ -1481,15 +1619,17 @@ class AccountMove(models.Model):
                             raise UserError(_('The document could not be validated in DIAN.'))
                     else:
                         raise UserError(_("No logical response was obtained from the API."))
+                elif rec.is_pending_to_force_edi():
+                    rec.write({'ei_is_valid': True})
                 else:
                     _logger.debug("This document does not need to be sent to the DIAN")
             except Exception as e:
-                _logger.debug("Failed to process the request for document: %s: %s", (rec.name, e))
+                _logger.debug("Failed to process the DIAN request for document: %s: %s", (rec.name, e))
                 if not rec.company_id.ei_always_validate:
-                    raise UserError(_("Failed to process the request for document: %s: %s") % (rec.name, e))
+                    raise UserError(_("Failed to process the DIAN request for document: %s: %s") % (rec.name, e))
                 else:
                     rec.message_post(body=_("DIAN Electronic invoicing: "
-                                            "Failed to process the request for document: %s: %s") % (rec.name, e))
+                                            "Failed to process the DIAN request for document: %s: %s") % (rec.name, e))
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
@@ -1534,8 +1674,8 @@ class AccountMove(models.Model):
             # Invoices in DIAN cannot be validated with zero total
             to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total))
             if to_paid_invoices and not self.company_id.ei_allow_zero_total:
-                raise UserError(
-                    _('Please check your invoice again. Are you really billing something? To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
+                raise UserError(_('Please check your invoice again. Are you really billing something? '
+                                  'To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
 
             # Validate invoices
             to_electronic_invoices = to_edi.filtered(lambda inv: inv.state == 'posted'
@@ -1553,6 +1693,13 @@ class AccountMove(models.Model):
                 if to_test_invoices:
                     to_test_invoices.validate_dian_generic(True)
 
+        to_force_edi = self.filtered(lambda inv: inv.is_pending_to_force_edi())
+        if to_force_edi:
+            # Validate invoices
+            to_force_invoices = to_force_edi.filtered(lambda inv: inv.state == 'posted')
+            if to_force_invoices:
+                to_force_invoices.write({'ei_is_valid': True})
+
         return res
 
     def status_document(self):
@@ -1561,11 +1708,11 @@ class AccountMove(models.Model):
                 continue
 
             try:
-                # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
-                requests_data = rec.get_json_request(check_date=False)
-                _logger.debug('Customer data: %s', requests_data)
-
                 if rec.should_send_document_to_dian():
+                    # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
+                    requests_data = rec.get_json_request(check_date=False)
+                    _logger.debug('Customer data: %s', requests_data)
+
                     if rec.ei_zip_key or rec.ei_uuid:
                         requests_data = {}
                         _logger.debug('API Requests: %s', requests_data)
@@ -1631,8 +1778,8 @@ class AccountMove(models.Model):
                 else:
                     raise UserError(_("This type of document does not need to be sent to the DIAN"))
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                _logger.debug("Failed to process the DIAN request: %s", e)
+                raise UserError(_("Failed to process the DIAN request: %s") % e)
 
     def status_document_log(self):
         for rec in self:
@@ -1640,12 +1787,12 @@ class AccountMove(models.Model):
                 continue
 
             try:
-                # This line ensures that the electronic fields of the invoice are updated in Odoo,
-                # before request
-                requests_data = rec.get_json_request(check_date=False)
-                _logger.debug('Customer data: %s', requests_data)
-
                 if rec.should_send_document_to_dian():
+                    # This line ensures that the electronic fields of the invoice are updated in Odoo,
+                    # before request
+                    requests_data = rec.get_json_request(check_date=False)
+                    _logger.debug('Customer data: %s', requests_data)
+
                     if rec.number_formatted:
                         requests_data = {}
                         _logger.debug('API Requests: %s', requests_data)
@@ -1730,6 +1877,7 @@ class AccountMove(models.Model):
                                         qr.add_data(rec.ei_qr_data)
                                         qr.make(fit=True)
                                         img = qr.make_image()
+                                        img = img.resize((240, 240))
                                         temp = BytesIO()
                                         img.save(temp, format="PNG")
                                         qr_image = base64.b64encode(temp.getvalue())
@@ -1764,10 +1912,10 @@ class AccountMove(models.Model):
                     rec.message_post(body=_("Log DIAN Electronic invoicing: "
                                             "This type of document does not need to be sent to DIAN."))
             except Exception as e:
-                # self.env.user.notify_warning(message=_("Failed to process the request"))
-                _logger.debug("Failed to process the request: %s", e)
+                # self.env.user.notify_warning(message=_("Failed to process the DIAN request"))
+                _logger.debug("Failed to process the DIAN request: %s", e)
                 rec.message_post(body=_("Log DIAN Electronic invoicing: "
-                                        "Failed to process the request for document: %s: %s") % (rec.name, e))
+                                        "Failed to process the DIAN request for document: %s: %s") % (rec.name, e))
 
     @api.depends('ei_attached_document_base64_bytes')
     def _is_attached_document_matched(self):

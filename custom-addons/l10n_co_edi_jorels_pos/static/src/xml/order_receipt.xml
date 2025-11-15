@@ -27,8 +27,8 @@
                 <span class="pos-receipt-right-align">Vr. Total</span>
             </div>
             <div>
-                <span class="pos-receipt-left-align">----------------</span>
-                <span class="pos-receipt-right-align">-----------</span>
+                <span class="pos-receipt-left-align">------------------------</span>
+                <span class="pos-receipt-right-align">-----------------------</span>
             </div>
         </xpath>
     </t>
