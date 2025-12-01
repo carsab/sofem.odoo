@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extensión de PartnerListScreen para agregar botón de búsqueda DIAN -->
+    <t t-name="pos_dian_partner_search.PartnerListScreen" t-inherit="point_of_sale.PartnerListScreen" t-inherit-mode="extension">
+        
+        <!-- Agregar botón de búsqueda DIAN después del search bar -->
+        <xpath expr="//div[hasclass('search-bar-container')]" position="after">
+            <div class="dian-search-container d-flex gap-2 px-2 mt-2" t-if="!state.detailIsShown">
+                <button 
+                    class="btn btn-secondary flex-fill dian-search-btn"
+                    t-on-click="openAdvancedSearch">
+                    <i class="fa fa-search-plus me-2"/> 
+                    <span>Búsqueda DIAN</span>
+                </button>
+            </div>
+        </xpath>
+
+    </t>
+
+</templates>

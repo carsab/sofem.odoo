@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Extensión de PartnerLine para mostrar badge DIAN -->
+    <t t-name="pos_dian_partner_search.PartnerLine" t-inherit="point_of_sale.PartnerLine" t-inherit-mode="extension">        
+        <!-- Agregar badge DIAN después del nombre del partner -->
+        <xpath expr="//td[1]" position="inside">
+            <span t-if="props.partner.dian_search_attempted" class="dian-badge ms-2">
+                <i class="fa fa-check-circle"/> DIAN
+            </span>
+        </xpath>
+    </t>
+
+</templates>

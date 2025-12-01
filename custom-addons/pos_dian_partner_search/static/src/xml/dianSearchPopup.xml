@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="pos_dian_partner_search.DianSearchPopup">
+        <div class="popup dian-search-popup">
+            <header class="title drag-handle">
+                <t t-esc="props.title" />
+            </header>
+
+            <main class="body">
+                <div class="form-group">
+                    <label for="identification-type">Identification Type:</label>
+                    <select 
+                        id="identification-type"
+                        class="form-control"
+                        t-on-change="onChangeType"
+                        t-model="state.identificationType">
+                        <t t-foreach="identificationTypes" t-as="type" t-key="type.code">
+                            <option t-att-value="type.code">
+                                <t t-esc="type.name" />
+                            </option>
+                        </t>
+                    </select>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label for="identification-number">Identification Number:</label>
+                    <input 
+                        type="text"
+                        id="identification-number"
+                        class="form-control"
+                        placeholder="Enter identification number"
+                        t-on-input="onChangeNumber"
+                        t-model="state.identificationNumber"
+                        autofocus="autofocus" />
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="fa fa-info-circle"/> 
+                    This will search the partner in DIAN database. If found, 
+                    it will be automatically created in your system.
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="button-group">
+                    <button class="button cancel" t-on-click="cancel">
+                        <t t-esc="props.cancelText || 'Cancel'" />
+                    </button>
+                    <button class="button confirm" t-on-click="confirm">
+                        <i class="fa fa-search"/> 
+                        <t t-esc="props.confirmText || 'Search'" />
+                    </button>
+                </div>
+            </footer>
+        </div>
+    </t>
+
+</templates>
